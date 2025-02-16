@@ -1,0 +1,221 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+
+import Header from '~/components/widgets/Header.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
+import Features from '~/components/widgets/Features.astro';
+import Steps2 from '~/components/widgets/Steps2.astro';
+import Content from '~/components/widgets/Content.astro';
+import Pricing from '~/components/widgets/Pricing.astro';
+
+import { headerData } from '~/navigation';
+import FAQs from '~/components/widgets/FAQs.astro';
+import BlogLatestPosts from '~/components/widgets/BlogLatestPosts.astro';
+
+const metadata = {
+  title: 'HebergTonServ - Hébergement FiveM Premium',
+};
+---
+
+<Layout metadata={metadata}>
+  <Fragment slot="header">
+    <Header
+      {...headerData}
+      actions={[
+        {
+          variant: 'secondary',
+          text: 'Connexion',
+          href: '#',
+        },
+        {
+          variant: 'primary',
+          text: 'Inscription',
+          href: '#',
+        },
+      ]}
+      isSticky
+    />
+  </Fragment>
+
+  <!-- Hero Section -->
+
+  <Hero2
+    tagline="Hébergement FiveM Premium"
+    actions={[
+      { variant: 'primary', target: '_blank', text: 'Commander maintenant', href: '#' },
+      { text: 'En savoir plus', href: '#features' },
+    ]}
+    image={{
+      src: 'https://hebergtonserv.twic.pics/offer-fivem-background.webp',
+      alt: 'Hébergeur FiveM - Serveur FiveM RP',
+    }}
+  >
+    <Fragment slot="title">
+      Découvrez l'hébergement FiveM n°1 : <br />
+      <span class="text-accent dark:text-white highlight">HebergTonServ</span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      Profitez d'une infrastructure haut de gamme pour vos serveurs RP. Bénéficiez de processeurs AMD Ryzen, stockage SSD NVMe, et d'une protection Anti-DDoS avancée. Testez gratuitement pendant 24 heures !
+    </Fragment>
+  </Hero2>
+
+  <!-- Features Section -->
+
+  <Features
+    id="features"
+    title="Pourquoi choisir HebergTonServ ?"
+    subtitle="Découvrez les avantages de notre hébergement FiveM."
+    columns={2}
+    items={[
+      {
+        title: 'Performance optimale',
+        description:
+          'Nos serveurs sont équipés de processeurs AMD Ryzen 9 et de disques SSD NVMe pour des performances inégalées.',
+        icon: 'tabler:gauge',
+      },
+      {
+        title: 'Protection Anti-DDoS avancée',
+        description: 'Protégez votre serveur contre les attaques grâce à notre partenariat avec CosmicGuard.',
+        icon: 'tabler:shield-check',
+      },
+      {
+        title: 'Support technique 24/7',
+        description: 'Notre équipe est disponible à tout moment pour répondre à vos questions.',
+        icon: 'tabler:headset',
+      },
+      {
+        title: 'Interface intuitive',
+        description: 'Gérez facilement votre serveur avec notre panneau de contrôle ergonomique.',
+        icon: 'tabler:settings',
+      },
+    ]}
+  />
+
+  <!-- Pricing Section -->
+
+  <Pricing
+    title="Nos offres d'hébergement FiveM"
+    prices={[
+      {
+        title: 'Essai Gratuit',
+        subtitle: 'Testez gratuitement notre hébergement pendant 24 heures.',
+        price: '0',
+        period: '/ 24h',
+        callToAction: {
+          target: '_blank',
+          text: 'Essayer gratuitement',
+          href: '#',
+        },
+      },
+      {
+        title: 'Starter',
+        subtitle: 'Idéal pour les petites communautés RP.',
+        price: 4.90,
+        period: '/ mois',
+        callToAction: {
+          target: '_blank',
+          text: 'Commander Starter',
+          href: '#',
+        },
+      },
+      {
+        title: 'Pro',
+        subtitle: 'Pour les serveurs en pleine croissance.',
+        price: 6.90,
+        period: '/ mois',
+        callToAction: {
+          target: '_blank',
+          text: 'Commander Pro',
+          href: '#',
+        },
+      },
+      {
+        title: 'Communautaire',
+        subtitle: 'Pour les grandes communautés RP.',
+        price: 13.90,
+        period: '/ mois',
+        callToAction: {
+          target: '_blank',
+          text: 'Commander Communautaire',
+          href: '#',
+        },
+      },
+      {
+        title: 'Infinity',
+        subtitle: 'Hébergement illimité pour projets ambitieux.',
+        price: 34.90,
+        period: '/ mois',
+        callToAction: {
+          target: '_blank',
+          text: 'Commander Infinity',
+          href: '#',
+        },
+      },
+    ]}
+  />
+
+  <!-- FAQs Section -->
+
+  <FAQs
+    title="Questions fréquentes"
+    items={[
+      {
+        title: 'Puis-je mettre à niveau mon serveur ?',
+        description:
+          'Oui, vous pouvez mettre à niveau ou rétrograder votre serveur à tout moment depuis votre espace client.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Quels modes de paiement acceptez-vous ?',
+        description:
+          'Nous acceptons les cartes de crédit, le virement, Paysafecard, et les crypto-monnaies.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Comment protéger mon serveur contre les attaques DDoS ?',
+        description:
+          'Nous offrons une protection Anti-DDoS avancée grâce à notre partenariat avec CosmicGuard.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Comment administrer mon serveur ?',
+        description:
+          'Utilisez notre interface intuitive TxAdmin pour gérer facilement votre serveur.',
+        icon: 'tabler:chevrons-right',
+      },
+    ]}
+  >
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </FAQs>
+
+  <!-- Contact Section -->
+
+  <Steps2
+    title="Contactez-nous"
+    subtitle="Une question ? Notre équipe est là pour vous aider."
+    callToAction={{
+      text: 'Nous contacter',
+      href: '/',
+    }}
+    items={[
+      {
+        title: 'Email',
+        description: 'support@hebergtonserv.com',
+        icon: 'tabler:mail',
+      },
+      {
+        title: 'Téléphone',
+        description: '+33 1 23 45 67 89',
+        icon: 'tabler:headset',
+      },
+      {
+        title: 'Discord',
+        description: 'Rejoignez notre communauté Discord',
+        icon: 'tabler:brand-discord',
+      },
+    ]}
+  />
+</Layout>
