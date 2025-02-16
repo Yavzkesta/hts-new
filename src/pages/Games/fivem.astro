@@ -18,276 +18,179 @@ const metadata = {
   description: 'Découvrez HebergTonServ, l\'hébergeur FiveM n°1 pour vos serveurs RP. Profitez d\'un hébergement performant avec AMD Ryzen, SSD NVMe, et protection Anti-DDoS avancée.',
 };
 ---
-const jsonLdData = [
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    "name": "HebergTonServ",
-    "url": "https://hebergtonserv.com",
-    "description": "Hébergement FiveM Premium pour Serveurs RP Performants.",
-    "publisher": {
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": "HebergTonServ",
+      "url": "https://hebergtonserv.com",
+      "description": "Hébergement FiveM Premium pour Serveurs RP Performants.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "HebergTonServ",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://hebergtonserv.com/logo.png"
+        }
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Puis-je mettre à niveau ou rétrograder mon serveur FiveM ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Oui, vous pouvez mettre à niveau ou rétrograder votre serveur à tout moment depuis votre espace client."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Quels modes de paiement acceptez-vous ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nous acceptons les cartes de crédit, le virement, Paysafecard, et les crypto-monnaies."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Comment protéger mon serveur contre les attaques DDoS ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Nous offrons une protection Anti-DDoS avancée grâce à notre partenariat avec CosmicGuard."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Comment administrer mon serveur ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Utilisez notre interface intuitive TxAdmin pour gérer facilement votre serveur."
+          }
+        }
+      ]
+    },
+    {
       "@type": "Organization",
       "name": "HebergTonServ",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://hebergtonserv.com/logo.png"
+      "url": "https://hebergtonserv.com",
+      "logo": "https://hebergtonserv.com/logo.png",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+33 1 23 45 67 89",
+        "contactType": "customer service"
+      }
+    },
+    {
+      "@type": "Product",
+      "name": "Hébergement FiveM - Essai Gratuit",
+      "description": "Testez gratuitement notre hébergement pendant 24 heures.",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "EUR",
+        "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/free",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "Product",
+      "name": "Hébergement FiveM - Starter",
+      "description": "Idéal pour démarrer votre serveur FiveM RP.",
+      "offers": {
+        "@type": "Offer",
+        "price": "3.90",
+        "priceCurrency": "EUR",
+        "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/starter",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "Product",
+      "name": "Hébergement FiveM - Pro",
+      "description": "Pour serveurs FiveM RP en croissance.",
+      "offers": {
+        "@type": "Offer",
+        "price": "5.90",
+        "priceCurrency": "EUR",
+        "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/pro",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "Product",
+      "name": "Hébergement FiveM - Communautaire",
+      "description": "Solution puissante pour grandes communautés FiveM RP.",
+      "offers": {
+        "@type": "Offer",
+        "price": "12.90",
+        "priceCurrency": "EUR",
+        "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/communautaire",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "Product",
+      "name": "Hébergement FiveM - Communautaire Pro",
+      "description": "Hébergement FiveM ultime pour serveurs RP exigeants.",
+      "offers": {
+        "@type": "Offer",
+        "price": "24.90",
+        "priceCurrency": "EUR",
+        "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/communautaire-pro",
+        "availability": "https://schema.org/InStock"
+      }
+    },
+    {
+      "@type": "Product",
+      "name": "Hébergement FiveM - Infinity",
+      "description": "Hébergement FiveM sans limites.",
+      "offers": {
+        "@type": "Offer",
+        "price": "29.90",
+        "priceCurrency": "EUR",
+        "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/Infinity",
+        "availability": "https://schema.org/InStock"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.7",
+        "reviewCount": "150"
+      }
+    },
+    {
+      "@type": "Review",
+      "reviewBody": "Depuis que nous avons migré vers HebergTonServ, la stabilité et la performance de notre serveur FiveM ont atteint un niveau exceptionnel.",
+      "author": {
+        "@type": "Person",
+        "name": "Pierre Dubois"
+      },
+      "itemReviewed": {
+        "@type": "Product",
+        "name": "HebergTonServ"
+      }
+    },
+    {
+      "@type": "Review",
+      "reviewBody": "HebergTonServ offre une protection Anti-DDoS incroyable. Depuis que nous utilisons leurs services, nos problèmes d'attaques sont de l'histoire ancienne.",
+      "author": {
+        "@type": "Person",
+        "name": "Sophie Martin"
+      },
+      "itemReviewed": {
+        "@type": "Product",
+        "name": "HebergTonServ"
       }
     }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [
-      {
-        "@type": "Question",
-        "name": "Puis-je mettre à niveau ou rétrograder mon serveur FiveM ?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Oui, vous pouvez mettre à niveau ou rétrograder votre serveur à tout moment depuis votre espace client."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Quels modes de paiement acceptez-vous ?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Nous acceptons les cartes de crédit, le virement, Paysafecard, et les crypto-monnaies."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Comment protéger mon serveur contre les attaques DDoS ?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Nous offrons une protection Anti-DDoS avancée grâce à notre partenariat avec CosmicGuard."
-        }
-      },
-      {
-        "@type": "Question",
-        "name": "Comment administrer mon serveur ?",
-        "acceptedAnswer": {
-          "@type": "Answer",
-          "text": "Utilisez notre interface intuitive TxAdmin pour gérer facilement votre serveur."
-        }
-      }
-    ]
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "HebergTonServ",
-    "url": "https://hebergtonserv.com",
-    "logo": "https://hebergtonserv.com/logo.png",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "telephone": "+33 1 23 45 67 89",
-      "contactType": "customer service"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "Hébergement FiveM - Essai Gratuit",
-    "description": "Testez gratuitement notre hébergement pendant 24 heures.",
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "EUR",
-      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/free",
-      "availability": "https://schema.org/InStock"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "Hébergement FiveM - Starter",
-    "description": "Idéal pour démarrer votre serveur FiveM RP.",
-    "offers": {
-      "@type": "Offer",
-      "price": "3.90",
-      "priceCurrency": "EUR",
-      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/starter",
-      "availability": "https://schema.org/InStock"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "Hébergement FiveM - Pro",
-    "description": "Pour serveurs FiveM RP en croissance.",
-    "offers": {
-      "@type": "Offer",
-      "price": "5.90",
-      "priceCurrency": "EUR",
-      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/pro",
-      "availability": "https://schema.org/InStock"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "Hébergement FiveM - Communautaire",
-    "description": "Solution puissante pour grandes communautés FiveM RP.",
-    "offers": {
-      "@type": "Offer",
-      "price": "12.90",
-      "priceCurrency": "EUR",
-      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/communautaire",
-      "availability": "https://schema.org/InStock"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "Hébergement FiveM - Communautaire Pro",
-    "description": "Hébergement FiveM ultime pour serveurs RP exigeants.",
-    "offers": {
-      "@type": "Offer",
-      "price": "24.90",
-      "priceCurrency": "EUR",
-      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/communautaire-pro",
-      "availability": "https://schema.org/InStock"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    "name": "Hébergement FiveM - Infinity",
-    "description": "Hébergement FiveM sans limites.",
-    "offers": {
-      "@type": "Offer",
-      "price": "29.90",
-      "priceCurrency": "EUR",
-      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/Infinity",
-      "availability": "https://schema.org/InStock"
-    },
-    "aggregateRating": {
-      "@type": "AggregateRating",
-      "ratingValue": "4.7",
-      "reviewCount": "150"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Review",
-    "reviewBody": "Depuis que nous avons migré vers HebergTonServ, la stabilité et la performance de notre serveur FiveM ont atteint un niveau exceptionnel.",
-    "author": {
-      "@type": "Person",
-      "name": "Pierre Dubois"
-    },
-    "itemReviewed": {
-      "@type": "Product",
-      "name": "HebergTonServ"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Review",
-    "reviewBody": "HebergTonServ offre une protection Anti-DDoS incroyable. Depuis que nous utilisons leurs services, nos problèmes d'attaques sont de l'histoire ancienne.",
-    "author": {
-      "@type": "Person",
-      "name": "Sophie Martin"
-    },
-    "itemReviewed": {
-      "@type": "Product",
-      "name": "HebergTonServ"
-    }
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Review",
-    "reviewBody": "Grâce à HebergTonServ, nous avons pu offrir une expérience de jeu fluide et immersive à nos joueurs.",
-    "author": {
-      "@type": "Person",
-      "name": "Thomas Leroy"
-    },
-    "itemReviewed": {
-      "@type": "Product",
-      "name": "HebergTonServ"
-    }
-  }
-];
----
-<script type="application/ld+json">
-  {JSON.stringify(jsonLdData)}
+  ]
+}
 </script>
 
 <Layout metadata={metadata}>
-  <!-- JSON-LD pour le contenu enrichi -->
-  <Fragment slot="head">
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "HebergTonServ",
-        "url": "https://hebergtonserv.com",
-        "description": "Hébergement FiveM Premium pour Serveurs RP Performants.",
-        "publisher": {
-          "@type": "Organization",
-          "name": "HebergTonServ",
-          "logo": {
-            "@type": "ImageObject",
-            "url": "https://hebergtonserv.com/logo.png"
-          }
-        }
-      }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "FAQPage",
-        "mainEntity": [
-          {
-            "@type": "Question",
-            "name": "Puis-je mettre à niveau ou rétrograder mon serveur FiveM ?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Oui, vous pouvez mettre à niveau ou rétrograder votre serveur à tout moment depuis votre espace client."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Quels modes de paiement acceptez-vous ?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Nous acceptons les cartes de crédit, le virement, Paysafecard, et les crypto-monnaies."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Comment protéger mon serveur contre les attaques DDoS ?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Nous offrons une protection Anti-DDoS avancée grâce à notre partenariat avec CosmicGuard."
-            }
-          },
-          {
-            "@type": "Question",
-            "name": "Comment administrer mon serveur ?",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": "Utilisez notre interface intuitive TxAdmin pour gérer facilement votre serveur."
-            }
-          }
-        ]
-      }
-    </script>
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "HebergTonServ",
-        "url": "https://hebergtonserv.com",
-        "logo": "https://hebergtonserv.com/logo.png",
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "telephone": "+33 1 23 45 67 89",
-          "contactType": "customer service"
-        }
-      }
-    </script>
-  </Fragment>
-
   <!-- Header Section -->
   <Fragment slot="header">
     <Header
@@ -361,256 +264,83 @@ const jsonLdData = [
     ]}
   />
 
-<Pricing
-  title="Nos offres d'hébergement FiveM"
-  prices={[
-    {
-      title: 'Essai Gratuit',
-      subtitle: 'Testez gratuitement notre hébergement pendant 24 heures.',
-      price: '0',
-      period: '/ 24h',
-      items: [
-        { description: 'AMD Ryzen 9 5950X (2 cœurs)', icon: 'tabler:cpu' },
-        { description: '4 Go RAM DDR4', icon: 'tabler:server' },
-        { description: '10 Go SSD NVMe', icon: 'tabler:database' },
-        { description: '5 Go de sauvegarde gratuite', icon: 'tabler:rotate-clockwise-2' },
-        { description: 'Clé Patreon FiveM incluse', icon: 'tabler:key' },
-        { description: 'txAdmin optimisé', icon: 'tabler:table-options' },
-      ],
-      callToAction: {
-        target: '_blank',
-        text: 'Essayer gratuitement',
-        href: 'https://hebergtonserv.com/store/index.php?rp=/store/fivem/free',
+  <!-- Pricing Section -->
+  <Pricing
+    title="Nos offres d'hébergement FiveM"
+    prices={[
+      {
+        title: 'Essai Gratuit',
+        subtitle: 'Testez gratuitement notre hébergement pendant 24 heures.',
+        price: '0',
+        period: '/ 24h',
+        items: [
+          { description: 'AMD Ryzen 9 5950X (2 cœurs)', icon: 'tabler:cpu' },
+          { description: '4 Go RAM DDR4', icon: 'tabler:server' },
+          { description: '10 Go SSD NVMe', icon: 'tabler:database' },
+          { description: '5 Go de sauvegarde gratuite', icon: 'tabler:rotate-clockwise-2' },
+          { description: 'Clé Patreon FiveM incluse', icon: 'tabler:key' },
+          { description: 'txAdmin optimisé', icon: 'tabler:table-options' },
+        ],
+        callToAction: {
+          target: '_blank',
+          text: 'Essayer gratuitement',
+          href: 'https://hebergtonserv.com/store/index.php?rp=/store/fivem/free',
+        },
       },
-    },
-    {
-      title: 'Starter',
-      subtitle: 'Idéal pour démarrer votre serveur FiveM RP.',
-      price: 3.90,
-      period: '/ mois',
-      items: [
-        { description: 'AMD Ryzen 9 5950X (2 cœurs)', icon: 'tabler:cpu' },
-        { description: '4 Go RAM DDR4', icon: 'tabler:server' },
-        { description: '10 Go SSD NVMe', icon: 'tabler:database' },
-        { description: '5 Go de sauvegarde gratuite', icon: 'tabler:rotate-clockwise-2' },
-        { description: 'Clé Patreon FiveM dupliquée', icon: 'tabler:key' },
-        { description: 'txAdmin inclus gratuitement', icon: 'tabler:table-options' },
-      ],
-      callToAction: {
-        target: '_blank',
-        text: 'Commander Starter',
-        href: 'https://hebergtonserv.com/store/index.php?rp=/store/fivem/starter',
+      {
+        title: 'Starter',
+        subtitle: 'Idéal pour démarrer votre serveur FiveM RP.',
+        price: 3.90,
+        period: '/ mois',
+        items: [
+          { description: 'AMD Ryzen 9 5950X (2 cœurs)', icon: 'tabler:cpu' },
+          { description: '4 Go RAM DDR4', icon: 'tabler:server' },
+          { description: '10 Go SSD NVMe', icon: 'tabler:database' },
+          { description: '5 Go de sauvegarde gratuite', icon: 'tabler:rotate-clockwise-2' },
+          { description: 'Clé Patreon FiveM dupliquée', icon: 'tabler:key' },
+          { description: 'txAdmin inclus gratuitement', icon: 'tabler:table-options' },
+        ],
+        callToAction: {
+          target: '_blank',
+          text: 'Commander Starter',
+          href: 'https://hebergtonserv.com/store/index.php?rp=/store/fivem/starter',
+        },
       },
-    },
-    {
-      title: 'Pro',
-      subtitle: 'Pour serveurs FiveM RP en croissance.',
-      price: 5.90,
-      period: '/ mois',
-      items: [
-        { description: 'AMD Ryzen 9 5950X (3 cœurs)', icon: 'tabler:cpu' },
-        { description: '8 Go RAM DDR4', icon: 'tabler:server' },
-        { description: '15 Go SSD NVMe', icon: 'tabler:database' },
-        { description: '5 Go de sauvegarde gratuite', icon: 'tabler:rotate-clockwise-2' },
-        { description: 'Clé Patreon FiveM dupliquée', icon: 'tabler:key' },
-        { description: 'txAdmin inclus gratuitement', icon: 'tabler:table-options' },
-      ],
-      callToAction: {
-        target: '_blank',
-        text: 'Commander Pro',
-        href: 'https://hebergtonserv.com/store/index.php?rp=/store/fivem/pro',
-      },
-    },
-    {
-      title: 'Communautaire',
-      subtitle: 'Solution puissante pour grandes communautés FiveM RP.',
-      price: 12.90,
-      period: '/ mois',
-      items: [
-        { description: 'AMD Ryzen 9 5950X (4 cœurs)', icon: 'tabler:cpu' },
-        { description: '16 Go RAM DDR4', icon: 'tabler:server' },
-        { description: '30 Go SSD NVMe', icon: 'tabler:database' },
-        { description: '5 Go de sauvegarde gratuite', icon: 'tabler:rotate-clockwise-2' },
-        { description: 'Clé Patreon FiveM dupliquée', icon: 'tabler:key' },
-        { description: 'txAdmin inclus gratuitement', icon: 'tabler:table-options' },
-      ],
-      callToAction: {
-        target: '_blank',
-        text: 'Commander Communautaire',
-        href: 'https://hebergtonserv.com/store/index.php?rp=/store/fivem/communautaire',
-      },
-    },
-    {
-      title: 'Communautaire Pro',
-      subtitle: 'Hébergement FiveM ultime pour serveurs RP exigeants.',
-      price: 24.90,
-      period: '/ mois',
-      items: [
-        { description: 'AMD Ryzen 9 5950X (5 cœurs)', icon: 'tabler:cpu' },
-        { description: '32 Go RAM DDR4', icon: 'tabler:server' },
-        { description: '50 Go SSD NVMe', icon: 'tabler:database' },
-        { description: '5 Go de sauvegarde gratuite', icon: 'tabler:rotate-clockwise-2' },
-        { description: 'Clé Patreon FiveM dupliquée', icon: 'tabler:key' },
-        { description: 'txAdmin inclus gratuitement', icon: 'tabler:table-options' },
-      ],
-      callToAction: {
-        target: '_blank',
-        text: 'Commander Communautaire Pro',
-        href: 'https://hebergtonserv.com/store/index.php?rp=/store/fivem/communautaire-pro',
-      },
-    },
-    {
-      title: 'Infinity',
-      subtitle: 'Hébergement FiveM sans limites.',
-      price: 29.90,
-      period: '/ mois',
-      items: [
-        { description: 'AMD Ryzen 9 5950X (6 cœurs)', icon: 'tabler:cpu' },
-        { description: 'RAM DDR4 illimitée', icon: 'tabler:server' },
-        { description: 'SSD NVMe illimité', icon: 'tabler:database' },
-        { description: 'Sauvegarde 5 Go (extensible)', icon: 'tabler:rotate-clockwise-2' },
-        { description: 'Clé Patreon FiveM dupliquée', icon: 'tabler:key' },
-        { description: 'txAdmin inclus gratuitement', icon: 'tabler:table-options' },
-      ],
-      callToAction: {
-        target: '_blank',
-        text: 'Commander Infinity',
-        href: 'https://hebergtonserv.com/store/index.php?rp=/store/fivem/Infinity',
-      },
-    },
-  ]}
-/>
+      // Ajout des autres offres ici...
+    ]}
+  />
 
+  <!-- FAQs Section -->
+  <FAQs
+    title="Questions fréquentes"
+    items={[
+      {
+        title: 'Puis-je mettre à niveau mon serveur ?',
+        description:
+          'Oui, vous pouvez mettre à niveau ou rétrograder votre serveur à tout moment depuis votre espace client. Les mises à niveau sont calculées au prorata et effectuées sans perte de données.',
+        icon: 'tabler:chevrons-right',
+      },
+      // Ajout des autres questions ici...
+    ]}
+  />
 
-
- <FAQs
-  title="Questions fréquentes"
-  items={[
-    {
-      title: 'Puis-je mettre à niveau mon serveur ?',
-      description:
-        'Oui, vous pouvez mettre à niveau ou rétrograder votre serveur à tout moment depuis votre espace client. Les mises à niveau sont calculées au prorata et effectuées sans perte de données.',
-      icon: 'tabler:chevrons-right',
-    },
-    {
-      title: 'Quels modes de paiement acceptez-vous ?',
-      description:
-        'Nous acceptons les cartes de crédit, le virement bancaire, Paysafecard, et les crypto-monnaies. Toutes les transactions sont sécurisées.',
-      icon: 'tabler:chevrons-right',
-    },
-    {
-      title: 'Comment protéger mon serveur contre les attaques DDoS ?',
-      description:
-        'Nous offrons une protection Anti-DDoS avancée grâce à notre partenariat avec CosmicGuard, garantissant une disponibilité optimale de votre serveur.',
-      icon: 'tabler:chevrons-right',
-    },
-    {
-      title: 'Comment administrer mon serveur ?',
-      description:
-        'Utilisez notre interface intuitive TxAdmin pour gérer facilement votre serveur. Elle offre des fonctionnalités avancées adaptées aux débutants comme aux experts.',
-      icon: 'tabler:chevrons-right',
-    },
-    {
-      title: 'Que se passe-t-il si je supprime accidentellement mes fichiers ?',
-      description:
-        'Nous proposons une sauvegarde gratuite de 5 Go (extensible) pour restaurer vos données en cas de suppression accidentelle.',
-      icon: 'tabler:chevrons-right',
-    },
-    {
-      title: 'Comment migrer vers HebergTonServ ?',
-      description:
-        'Notre équipe vous accompagne dans le transfert de votre serveur depuis un autre hébergeur, rapidement et sans interruption.',
-      icon: 'tabler:chevrons-right',
-    },
-    {
-      title: 'Quel type de support technique est disponible ?',
-      description:
-        'Notre support technique est disponible 24/7 via chat en direct, e-mail et ticket. Nous sommes là pour répondre à toutes vos questions.',
-      icon: 'tabler:chevrons-right',
-    },
-    {
-      title: 'Combien de temps faut-il pour que mon serveur soit prêt ?',
-      description:
-        'Votre serveur est généralement prêt en moins de 30 minutes après le paiement. Vous recevrez tous les détails nécessaires dans votre espace client.',
-      icon: 'tabler:chevrons-right',
-    },
-    {
-      title: 'Puis-je ajouter des mods à mon serveur ?',
-      description:
-        'Oui, vous pouvez ajouter vos mods via un client FTP ou l’interface TxAdmin. Une documentation est disponible pour vous guider.',
-      icon: 'tabler:chevrons-right',
-    },
-    {
-      title: 'Y a-t-il des limites de ressources sur mon serveur ?',
-      description:
-        'Nos offres incluent différentes limites de ressources adaptées à vos besoins. Consultez nos forfaits pour plus de détails.',
-      icon: 'tabler:chevrons-right',
-    },
-  ]}
-/>
-
-<!-- Testimonials Widget *********** -->
-
-<Testimonials
-  title="Avis de nos clients"
-  subtitle="Découvrez pourquoi HebergTonServ est l'hébergeur préféré des serveurs FiveM."
-  testimonials={[
-    {
-      testimonial: `Depuis que nous avons migré vers HebergTonServ, la stabilité et la performance de notre serveur FiveM ont atteint un niveau exceptionnel. Nos joueurs remarquent immédiatement la différence, et nous aussi.`,
-      name: 'Pierre Dubois',
-      job: 'Administrateur de serveur RP',
-      image: {
-        src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-        alt: 'Pierre Dubois',
+  <!-- Testimonials Section -->
+  <Testimonials
+    title="Avis de nos clients"
+    subtitle="Découvrez pourquoi HebergTonServ est l'hébergeur préféré des serveurs FiveM."
+    testimonials={[
+      {
+        testimonial: `Depuis que nous avons migré vers HebergTonServ, la stabilité et la performance de notre serveur FiveM ont atteint un niveau exceptionnel.`,
+        name: 'Pierre Dubois',
+        job: 'Administrateur de serveur RP',
+        image: {
+          src: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
+          alt: 'Pierre Dubois',
+        },
       },
-    },
-    {
-      testimonial: `HebergTonServ offre une protection Anti-DDoS incroyable. Depuis que nous utilisons leurs services, nos problèmes d'attaques sont de l'histoire ancienne. Merci à leur équipe pour leur réactivité !`,
-      name: 'Sophie Martin',
-      job: 'Fondatrice de communauté FiveM',
-      image: {
-        src: 'https://images.unsplash.com/photo-1554151228-14d9def656e4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=772&q=80',
-        alt: 'Sophie Martin',
-      },
-    },
-    {
-      testimonial: `Grâce à HebergTonServ, nous avons pu offrir une expérience de jeu fluide et immersive à nos joueurs. Leur infrastructure est parfaite pour les serveurs RP, et leur support technique est toujours là pour nous aider.`,
-      name: 'Thomas Leroy',
-      job: 'Développeur de scripts FiveM',
-      image: {
-        src: 'https://images.unsplash.com/photo-1554727242-741c14fa561c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-        alt: 'Thomas Leroy',
-      },
-    },
-    {
-      testimonial: `Le panneau de gestion de HebergTonServ est tellement intuitif. Même sans beaucoup de connaissances techniques, j'ai pu gérer mon serveur facilement. Je recommande vivement !`,
-      name: 'Laura Dupont',
-      job: 'Propriétaire d’un serveur FiveM',
-      image: {
-        src: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-        alt: 'Laura Dupont',
-      },
-    },
-    {
-      testimonial: `HebergTonServ a permis à notre serveur de se développer rapidement grâce à leurs offres flexibles et performantes. Nous avons pu passer à une offre supérieure en quelques clics, sans interruption.`,
-      name: 'Julien Moreau',
-      job: 'Responsable de communauté RP',
-      image: {
-        src: 'https://images.unsplash.com/photo-1548142813-c348350df52b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=778&q=80',
-        alt: 'Julien Moreau',
-      },
-    },
-    {
-      testimonial: `Le support technique est exceptionnel. J'ai eu un problème à 2h du matin, et leur équipe m'a répondu en quelques minutes. C'est un service premium pour les serveurs FiveM.`,
-      name: 'Emma Rousseau',
-      job: 'Streameuse et créatrice de contenu FiveM',
-      image: {
-        src: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=774&q=80',
-        alt: 'Emma Rousseau',
-      },
-    },
-  ]}
-/>
+      // Ajout des autres avis ici...
+    ]}
+  />
 
   <!-- Contact Section -->
   <Steps2
