@@ -1,6 +1,6 @@
 services:
-  astrowind:
+  HebergTonServ:
     build: .
-    container_name: astrowind
+    container_name: HebergTonServ
     ports:
       - 8080:8080
