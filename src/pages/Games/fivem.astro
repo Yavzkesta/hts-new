@@ -18,6 +18,199 @@ const metadata = {
   description: 'Découvrez HebergTonServ, l\'hébergeur FiveM n°1 pour vos serveurs RP. Profitez d\'un hébergement performant avec AMD Ryzen, SSD NVMe, et protection Anti-DDoS avancée.',
 };
 ---
+const jsonLdData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "HebergTonServ",
+    "url": "https://hebergtonserv.com",
+    "description": "Hébergement FiveM Premium pour Serveurs RP Performants.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "HebergTonServ",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://hebergtonserv.com/logo.png"
+      }
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Puis-je mettre à niveau ou rétrograder mon serveur FiveM ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Oui, vous pouvez mettre à niveau ou rétrograder votre serveur à tout moment depuis votre espace client."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Quels modes de paiement acceptez-vous ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nous acceptons les cartes de crédit, le virement, Paysafecard, et les crypto-monnaies."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment protéger mon serveur contre les attaques DDoS ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Nous offrons une protection Anti-DDoS avancée grâce à notre partenariat avec CosmicGuard."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Comment administrer mon serveur ?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Utilisez notre interface intuitive TxAdmin pour gérer facilement votre serveur."
+        }
+      }
+    ]
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "HebergTonServ",
+    "url": "https://hebergtonserv.com",
+    "logo": "https://hebergtonserv.com/logo.png",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+33 1 23 45 67 89",
+      "contactType": "customer service"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Hébergement FiveM - Essai Gratuit",
+    "description": "Testez gratuitement notre hébergement pendant 24 heures.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "EUR",
+      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/free",
+      "availability": "https://schema.org/InStock"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Hébergement FiveM - Starter",
+    "description": "Idéal pour démarrer votre serveur FiveM RP.",
+    "offers": {
+      "@type": "Offer",
+      "price": "3.90",
+      "priceCurrency": "EUR",
+      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/starter",
+      "availability": "https://schema.org/InStock"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Hébergement FiveM - Pro",
+    "description": "Pour serveurs FiveM RP en croissance.",
+    "offers": {
+      "@type": "Offer",
+      "price": "5.90",
+      "priceCurrency": "EUR",
+      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/pro",
+      "availability": "https://schema.org/InStock"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Hébergement FiveM - Communautaire",
+    "description": "Solution puissante pour grandes communautés FiveM RP.",
+    "offers": {
+      "@type": "Offer",
+      "price": "12.90",
+      "priceCurrency": "EUR",
+      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/communautaire",
+      "availability": "https://schema.org/InStock"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Hébergement FiveM - Communautaire Pro",
+    "description": "Hébergement FiveM ultime pour serveurs RP exigeants.",
+    "offers": {
+      "@type": "Offer",
+      "price": "24.90",
+      "priceCurrency": "EUR",
+      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/communautaire-pro",
+      "availability": "https://schema.org/InStock"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "Hébergement FiveM - Infinity",
+    "description": "Hébergement FiveM sans limites.",
+    "offers": {
+      "@type": "Offer",
+      "price": "29.90",
+      "priceCurrency": "EUR",
+      "url": "https://hebergtonserv.com/store/index.php?rp=/store/fivem/Infinity",
+      "availability": "https://schema.org/InStock"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.7",
+      "reviewCount": "150"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "reviewBody": "Depuis que nous avons migré vers HebergTonServ, la stabilité et la performance de notre serveur FiveM ont atteint un niveau exceptionnel.",
+    "author": {
+      "@type": "Person",
+      "name": "Pierre Dubois"
+    },
+    "itemReviewed": {
+      "@type": "Product",
+      "name": "HebergTonServ"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "reviewBody": "HebergTonServ offre une protection Anti-DDoS incroyable. Depuis que nous utilisons leurs services, nos problèmes d'attaques sont de l'histoire ancienne.",
+    "author": {
+      "@type": "Person",
+      "name": "Sophie Martin"
+    },
+    "itemReviewed": {
+      "@type": "Product",
+      "name": "HebergTonServ"
+    }
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Review",
+    "reviewBody": "Grâce à HebergTonServ, nous avons pu offrir une expérience de jeu fluide et immersive à nos joueurs.",
+    "author": {
+      "@type": "Person",
+      "name": "Thomas Leroy"
+    },
+    "itemReviewed": {
+      "@type": "Product",
+      "name": "HebergTonServ"
+    }
+  }
+];
+---
+<script type="application/ld+json">
+  {JSON.stringify(jsonLdData)}
+</script>
 
 <Layout metadata={metadata}>
   <!-- JSON-LD pour le contenu enrichi -->
