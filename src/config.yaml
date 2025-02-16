@@ -11,7 +11,7 @@ metadata:
   title:
     default: HebergTonServ
     template: '%s — HebergTonServ'
-  description: "\U0001F680 Suitable for Startups, Small Business, Sass Websites, Professional Portfolios, Marketing Websites, Landing Pages & Blogs."
+  description: "\U0001F680 HebergTonServ est le choix privilégié pour l'hébergement de jeux en ligne. Nous proposons des serveurs performants, une latence minimale et une assistance experte pour garantir une expérience de jeu ininterrompue et fluide. Que vous souhaitiez héberger un serveur Minecraft, Fivem ou tout autre jeu populaire, faites confiance à HebergTonServ pour une expérience de jeu optimale."
   robots:
     index: true
     follow: true
