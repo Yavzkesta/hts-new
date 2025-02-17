@@ -64,7 +64,82 @@ const postCollection = defineCollection({
     metadata: metadataDefinition(),
   }),
 });
+const gameCollection = defineCollection({
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    metadata: z.object({
+      title: z.string(),
+      description: z.string(),
+    }),
+    hero: z.object({
+      tagline: z.string(),
+      title: z.string(),
+      subtitle: z.string(),
+      image: z.object({
+        src: z.string(),
+        alt: z.string(),
+      }),
+      actions: z.array(
+        z.object({
+          variant: z.string(),
+          text: z.string(),
+          href: z.string(),
+        })
+      ),
+    }),
+    features: z.array(
+      z.object({
+        title: z.string(),
+        description: z.string(),
+        icon: z.string(),
+      })
+    ),
+    pricing: z.array(
+      z.object({
+        title: z.string(),
+        subtitle: z.string(),
+        price: z.string(),
+        period: z.string(),
+        items: z.array(
+          z.object({
+            description: z.string(), // Description de l'item
+            icon: z.string().optional(), // Icône optionnelle
+          })
+        ),
+        callToAction: z.object({
+          text: z.string(),
+          href: z.string(),
+        }),
+      })
+    ),
+    faqs: z.array(
+      z.object({
+        title: z.string(),
+        description: z.string(),
+        icon: z.string(),
+      })
+    ),
+    testimonials: z.array(
+      z.object({
+        testimonial: z.string(),
+        name: z.string(),
+        job: z.string(),
+      })
+    ),
+    contact: z.array(
+      z.object({
+        title: z.string(),
+        description: z.string(),
+        icon: z.string(),
+      })
+    ),
+  }),
+});
+
+
 
 export const collections = {
   post: postCollection,
+  game: gameCollection,
 };
