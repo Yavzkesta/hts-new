@@ -32,29 +32,8 @@ export const headerData = {
       ],
     },
     {
-      text: 'Services',
-      links: [
-        {
-          text: 'Infogérance',
-          href: getPermalink('/services/infogerance'),
-        },
-        {
-          text: 'Migration de Sites',
-          href: getPermalink('/services/migration'),
-        },
-        {
-          text: 'Sauvegardes Automatiques',
-          href: getPermalink('/services/sauvegardes'),
-        },
-        {
-          text: 'Protection Anti-DDoS',
-          href: getPermalink('/services/anti-ddos'),
-        },
-        {
-          text: 'SSL et Sécurité',
-          href: getPermalink('/services/ssl-securite'),
-        },
-      ],
+      text: 'Docs',
+      href: getPermalink('/docs')
     },
     {
       text: 'À propos',

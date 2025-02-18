@@ -22,6 +22,10 @@ if (!game) {
   throw new Error(`Contenu introuvable pour le slug : ${slug}`);
 }
 
+// Récupération de l'image du héros
+const heroImage = game.data.hero?.image?.src || "https://hebergtonserv.com/default-image.png";
+
+// Création du JSON-LD
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -39,6 +43,28 @@ const jsonLd = {
         }
       }
     },
+    ...(Array.isArray(game.data.pricing)
+      ? game.data.pricing.map((plan) => ({
+          "@type": "Product",
+          "name": plan.title || "Nom du produit par défaut",
+          "description": plan.subtitle || "Description par défaut",
+          "image": heroImage, // Utilisation de l'image du héros pour tous les produits
+          "offers": {
+            "@type": "Offer",
+            "price": plan.price || "0.00",
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "url": plan.callToAction?.href || "https://hebergtonserv.com"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.7", // Note moyenne
+            "reviewCount": "150", // Nombre d'avis
+            "bestRating": "5",
+            "worstRating": "1"
+          }
+        }))
+      : []),
     {
       "@type": "FAQPage",
       "mainEntity": Array.isArray(game.data.faqs)
@@ -51,36 +77,22 @@ const jsonLd = {
             }
           }))
         : []
-    },
-    ...(Array.isArray(game.data.pricing)
-      ? game.data.pricing.map((plan) => ({
-          "@type": "Product",
-          "name": plan.title || "Plan par défaut",
-          "description": plan.subtitle || "Description par défaut",
-          "offers": {
-            "@type": "Offer",
-            "price": plan.price || "0.00",
-            "priceCurrency": "EUR",
-            "availability": "https://schema.org/InStock",
-            "url": plan.callToAction?.href || "https://hebergtonserv.com"
-          }
-        }))
-      : [])
+    }
   ]
 };
-console.log(JSON.stringify(jsonLd, null, 2));
-console.log(game.data.faqs);
-
 ---
 
 <Layout metadata={game.data.metadata}>
   <!-- Intégration du JSON-LD -->
-<script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')}></script>
 
   <!-- Contenu principal -->
   <Hero2 {...game.data.hero} />
   <Features title="Caractéristiques principales" items={game.data.features || []} />
-  <Pricing title="Nos offres" prices={game.data.pricing || []} />
+  <Pricing 
+    title="Nos offres" 
+    prices={game.data.pricing || []} 
+  />
   <FAQs title="Questions fréquentes" items={game.data.faqs || []} />
   <Testimonials title="Avis clients" testimonials={game.data.testimonials || []} />
 </Layout>
