@@ -13,21 +13,38 @@ export function useTranslations(lang: keyof typeof ui) {
 }
 
 export function getLocalizedPathname(pathname: string, lang: string) {
-  // Si c'est la page d'accueil
-  if (pathname === '/' || pathname === '/fr' || pathname === '/en') {
+  // Si c'est la langue par défaut (français) et la page d'accueil, 
+  // on retourne simplement "/" pour garder l'URL propre
+  if (lang === defaultLang && (pathname === '/' || pathname === '/fr' || pathname === '/en')) {
+    return '/';
+  }
+  
+  // Si c'est une autre langue que le français, on ajoute le préfixe de langue
+  if (lang !== defaultLang && (pathname === '/' || pathname === '/fr' || pathname === '/en')) {
     return `/${lang}`;
   }
   
-  // Si c'est déjà une URL avec langue, remplacer la partie langue
+  // Si c'est déjà une URL avec préfixe de langue
   if (pathname.match(/^\/(fr|en)\//)) {
+    // Si on passe à la langue par défaut (français), on enlève le préfixe
+    if (lang === defaultLang) {
+      return pathname.replace(/^\/(fr|en)\//, '/');
+    }
+    // Sinon on remplace juste le préfixe de langue
     return pathname.replace(/^\/(fr|en)\//, `/${lang}/`);
-}
-  
-  // Si c'est une URL de jeu sans préfixe de langue
-  if (pathname.match(/^\/games\//)) {
-    return `/${lang}${pathname}`;
   }
   
-  // Sinon, ajouter le préfixe de langue
-  return `/${lang}${pathname}`;
+  // Si c'est une URL sans préfixe de langue
+  if (!pathname.match(/^\/(fr|en)\//)) {
+    // Si on est déjà en français (langue par défaut), on garde l'URL sans préfixe
+    if (lang === defaultLang) {
+      return pathname;
+    }
+    // Sinon on ajoute le préfixe de langue
+    const cleanPath = pathname.startsWith('/') ? pathname.substring(1) : pathname;
+    return `/${lang}/${cleanPath}`;
+  }
+  
+  // Cas par défaut
+  return pathname;
 }
