@@ -62,7 +62,7 @@ export const getHeaderData = (lang = 'fr') => {
       },
     ],
     actions: [
-      { text: t.clientArea, href: getPermalink(`/${lang}/client`), target: '_self' },
+      { text: t.clientArea, href: getPermalink(`https://hebergtonserv.com/store/login`), target: '_self' },
     ],
     languageSelector: [
       { code: 'fr', label: 'Français' },
