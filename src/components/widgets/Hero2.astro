@@ -5,8 +5,6 @@ import type { CallToAction } from '~/types';
 
 // Import des images statiques
 import gta5Image from '~/assets/images/gta5.png';
-import defaultImage from '~/assets/images/default.png';
-import heroImage from '~/assets/images/hero-image.png';
 import vpsImage from '~/assets/images/vps.png';
 import minecraftImage from '~/assets/images/minecraft.png';
 
@@ -37,11 +35,9 @@ const isImportedImage = image?.src && typeof image.src === 'object';
 // Fonction pour obtenir l'image en fonction du chemin
 function getImageByPath(path: string) {
   if (path.includes('gta5.png')) return gta5Image;
-  if (path.includes('default.png')) return defaultImage;
-  if (path.includes('hero-image.png')) return heroImage;
   if (path.includes('vps.png')) return vpsImage;
   if (path.includes('minecraft.png')) return minecraftImage;
-  return defaultImage; // Image par défaut si aucune correspondance
+  return vpsImage; // Image par défaut si aucune correspondance
 }
 
 // Déterminer si l'image est une URL externe

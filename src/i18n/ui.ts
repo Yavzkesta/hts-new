@@ -16,7 +16,7 @@ export const ui = {
     'action.createAccount': 'Créer un Compte',
     'action.login': 'Se Connecter',
     'hero.title': 'Hébergement de jeux',
-    'hero.highlight': 'Premium',
+    'hero.highlight': ' Premium',
     'hero.subtitle': 'Profitez d\'une latence minimale, d\'une installation instantanée et d\'une assistance experte pour vos serveurs Minecraft, FiveM, Garry\'s Mod, et bien plus.',
     'hero.action.discover': 'Découvrir nos offres',
     'hero.action.learnMore': 'En savoir plus',
