@@ -10,6 +10,7 @@ import Metadata from '~/components/common/Metadata.astro';
 import SiteVerification from '~/components/common/SiteVerification.astro';
 import ApplyColorMode from '~/components/common/ApplyColorMode.astro';
 import BasicScripts from '~/components/common/BasicScripts.astro';
+import CriticalStyles from '~/components/common/CriticalStyles.astro';
 
 import type { MetaData } from '~/types';
 
@@ -26,15 +27,27 @@ const { metadata = {} } = Astro.props;
     <CommonMeta />
     <Metadata {...metadata} />
     <Favicons />
-    <CustomStyles />
+    <CriticalStyles />
+    <!-- CustomStyles est maintenant géré via CriticalStyles -->
     <SiteVerification />
     <Analytics />
     <ViewTransitions />
+    
+    <!-- Préchargement des ressources importantes -->
+    <link rel="preload" as="image" href="/assets/images/1.png" />
   </head>
 
   <body class="antialiased text-default bg-page tracking-tight">
     <ApplyColorMode />
     <slot />
     <BasicScripts />
+    
+    <!-- Chargement différé des styles non critiques -->
+    <script>
+      // Fonction pour charger les ressources de manière différée
+      window.addEventListener('load', function() {
+        // Aucune action supplémentaire nécessaire car Critters gère déjà l'optimisation CSS
+      });
+    </script>
   </body>
 </html>
