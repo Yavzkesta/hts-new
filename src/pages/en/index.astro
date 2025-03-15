@@ -1,0 +1,208 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import { getLangFromUrl, useTranslations } from '~/i18n/utils';
+
+import Hero from '~/components/widgets/Hero.astro';
+import Features from '~/components/widgets/Features.astro';
+import Content from '~/components/widgets/Content.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import Stats from '~/components/widgets/Stats.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+
+const lang = getLangFromUrl(Astro.url);
+const t = useTranslations(lang);
+
+const metadata = {
+  title: 'HebergTonServ — Premium Game Hosting',
+  ignoreTitleTemplate: true,
+};
+---
+
+<Layout metadata={metadata}>
+  <!-- Hero Section **************** -->
+
+  <Hero
+    actions={[
+      {
+        variant: 'primary',
+        text: t('hero.action.discover'),
+        href: `/${lang}/offres`,
+        icon: 'tabler:download',
+      },
+      { text: t('hero.action.learnMore'), href: '#features' },
+    ]}
+    image={{ src: '~/assets/images/hero-image.png', alt: 'HebergTonServ Hero Image' }}
+  >
+    <Fragment slot="title">
+      {t('hero.title')} <span class="text-accent dark:text-white highlight">{t('hero.highlight')}</span>
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      {t('hero.subtitle')}
+    </Fragment>
+  </Hero>
+
+  <!-- Features Section ************ -->
+
+  <Features
+    id="features"
+    tagline={t('features.tagline')}
+    title={t('features.title')}
+    subtitle={t('features.subtitle')}
+    items={[
+      {
+        title: t('features.item1.title'),
+        description: t('features.item1.description'),
+        icon: 'tabler:server',
+      },
+      {
+        title: t('features.item2.title'),
+        description: t('features.item2.description'),
+        icon: 'tabler:rocket',
+      },
+      {
+        title: t('features.item3.title'),
+        description: t('features.item3.description'),
+        icon: 'tabler:headset',
+      },
+      {
+        title: t('features.item4.title'),
+        description: t('features.item4.description'),
+        icon: 'tabler:network',
+      },
+      {
+        title: t('features.item5.title'),
+        description: t('features.item5.description'),
+        icon: 'tabler:shield-check',
+      },
+      {
+        title: t('features.item6.title'),
+        description: t('features.item6.description'),
+        icon: 'tabler:settings',
+      },
+    ]}
+  />
+
+  <!-- Content Section: Game Servers -->
+
+  <Content
+    isReversed
+    tagline={t('content.games.tagline')}
+    title={t('content.games.title')}
+    items={[
+      {
+        title: t('content.games.item1.title'),
+        description: t('content.games.item1.description'),
+      },
+      {
+        title: t('content.games.item2.title'),
+        description: t('content.games.item2.description'),
+      },
+      {
+        title: t('content.games.item3.title'),
+        description: t('content.games.item3.description'),
+      },
+    ]}
+    image={{
+      src: '~/assets/images/hero-image.png',
+      alt: 'Game servers',
+    }}
+  >
+    <Fragment slot="content">
+      {t('content.games.description')}
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content>
+
+  <!-- Content Section: Web Hosting -->
+
+  <Content
+    isAfterContent
+    tagline={t('content.web.tagline')}
+    title={t('content.web.title')}
+    items={[
+      {
+        title: t('content.web.item1.title'),
+        description: t('content.web.item1.description'),
+      },
+      {
+        title: t('content.web.item2.title'),
+        description: t('content.web.item2.description'),
+      },
+      {
+        title: t('content.web.item3.title'),
+        description: t('content.web.item3.description'),
+      },
+    ]}
+    image={{
+      src: '~/assets/images/hero-image.png',
+      alt: 'Web solutions',
+    }}
+  >
+    <Fragment slot="content">
+      {t('content.web.description')}
+    </Fragment>
+
+    <Fragment slot="bg">
+      <div class="absolute inset-0 bg-blue-50 dark:bg-transparent"></div>
+    </Fragment>
+  </Content>
+
+  <!-- FAQs Widget **************** -->
+
+  <FAQs
+    title={t('faq.title')}
+    subtitle={t('faq.subtitle')}
+    tagline={t('faq.tagline')}
+    classes={{ container: 'max-w-6xl' }}
+    items={[
+      {
+        title: t('faq.item1.title'),
+        description: t('faq.item1.description'),
+      },
+      {
+        title: t('faq.item2.title'),
+        description: t('faq.item2.description'),
+      },
+      {
+        title: t('faq.item3.title'),
+        description: t('faq.item3.description'),
+      },
+    ]}
+  />
+
+  <!-- Stats Widget **************** -->
+
+  <Stats
+    stats={[
+      { title: t('stats.clients'), amount: '15K+' },
+      { title: t('stats.servers'), amount: '8K+' },
+      { title: t('stats.uptime'), amount: '99.99%' },
+      { title: t('stats.support'), amount: '100%' },
+    ]}
+  />
+
+  <!-- CallToAction Widget *********** -->
+
+  <CallToAction
+    actions={[
+      {
+        variant: 'primary',
+        text: t('cta.action'),
+        href: `/${lang}/offres`,
+        icon: 'tabler:arrow-right',
+      },
+    ]}
+  >
+    <Fragment slot="title">
+      {t('cta.title')}
+    </Fragment>
+
+    <Fragment slot="subtitle">
+      {t('cta.subtitle')}
+    </Fragment>
+  </CallToAction>
+</Layout>

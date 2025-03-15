@@ -1,0 +1,95 @@
+---
+import { Icon } from 'astro-icon/components';
+import { getLangFromUrl, getLocalizedPathname } from '~/i18n/utils';
+import { languages } from '~/i18n/ui';
+
+const url = Astro.url;
+const currentLang = getLangFromUrl(url);
+const pathname = url.pathname;
+
+// Obtenir le nom de la langue actuelle pour l'afficher dans le dropdown
+const currentLanguageName = languages[currentLang];
+---
+
+<div class="language-selector relative" x-data="{ open: false }">
+  <button
+    @click="open = !open"
+    @click.outside="open = false"
+    class="flex items-center gap-1 py-1.5 px-2.5 rounded-md text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+    aria-label="Select language"
+  >
+    <span class="hidden sm:inline">{currentLanguageName}</span>
+    <span class="inline sm:hidden uppercase">{currentLang}</span>
+    <Icon name="tabler:chevron-down" class="w-4 h-4" />
+  </button>
+  
+  <div
+    x-show="open"
+    x-transition:enter="transition ease-out duration-100"
+    x-transition:enter-start="transform opacity-0 scale-95"
+    x-transition:enter-end="transform opacity-100 scale-100"
+    x-transition:leave="transition ease-in duration-75"
+    x-transition:leave-start="transform opacity-100 scale-100"
+    x-transition:leave-end="transform opacity-0 scale-95"
+    class="absolute right-0 mt-1 w-40 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5 z-50"
+    style="display: none;"
+  >
+    <div class="py-1" role="menu" aria-orientation="vertical">
+      {Object.entries(languages).map(([lang, label]) => (
+        <a
+          href={getLocalizedPathname(pathname, lang)}
+          class={`block px-4 py-2 text-sm ${currentLang === lang 
+            ? 'bg-gray-100 dark:bg-gray-700 text-accent dark:text-white font-medium' 
+            : 'text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+          role="menuitem"
+          data-lang-link
+        >
+          {label}
+        </a>
+      ))}
+    </div>
+  </div>
+</div>
+
+<script>
+  // Préserver le thème lors du changement de langue
+  document.addEventListener('DOMContentLoaded', () => {
+    const langLinks = document.querySelectorAll('[data-lang-link]');
+    langLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        // Obtenir l'URL actuelle
+        const href = link.getAttribute('href');
+        if (!href) return;
+        
+        // Vérifier si le thème sombre est actif
+        const isDarkMode = document.documentElement.classList.contains('dark');
+        
+        // Si le thème sombre est actif, ajouter un paramètre à l'URL
+        if (isDarkMode) {
+          e.preventDefault();
+          const separator = href.includes('?') ? '&' : '?';
+          window.location.href = `${href}${separator}theme=dark`;
+  }
+        // Sinon, laisser le comportement par défaut
+      });
+    });
+    
+    // Vérifier si l'URL contient un paramètre de thème
+    const urlParams = new URLSearchParams(window.location.search);
+    const theme = urlParams.get('theme');
+    if (theme === 'dark' && !document.documentElement.classList.contains('dark')) {
+      document.documentElement.classList.add('dark');
+      localStorage.theme = 'dark';
+      
+      // Nettoyer l'URL en supprimant le paramètre de thème
+      urlParams.delete('theme');
+      const newUrl = window.location.pathname + (urlParams.toString() ? `?${urlParams.toString()}` : '');
+      window.history.replaceState({}, document.title, newUrl);
+    }
+  });
+</script>
+<style>
+  .language-selector {
+    display: inline-block;
+  }
+</style>

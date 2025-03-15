@@ -1,4 +1,6 @@
 ---
+language: "fr"
+translationKey: "fivem"
 title: "HebergTonServ - Hébergement FiveM Premium"
 description: "Découvrez HebergTonServ, l'hébergeur FiveM n°1 pour vos serveurs RP. Profitez d'un hébergement performant avec AMD Ryzen, SSD NVMe, et protection Anti-DDoS avancée."
 metadata:
@@ -14,7 +16,7 @@ hero:
   actions:
     - variant: "primary"
       text: "Commander maintenant"
-      href: "#"
+      href: "#pricing"
     - variant: "secondary"
       text: "En savoir plus"
       href: "#features"
@@ -25,17 +27,17 @@ features:
   - title: "Gestionnaire de fichiers pour votre hébergement FiveM"
     description: "Gérez facilement les fichiers de votre serveur avec un gestionnaire de fichiers intuitif et performant."
     icon: "tabler:file"
-  - title: "Ajouter vos amis à utiliser votre serveur FiveM"
+  - title: "Ajoutez vos amis pour administrer votre serveur FiveM"
     description: "Invitez vos amis ou collaborateurs à gérer et administrer votre serveur FiveM avec des permissions personnalisées."
     icon: "tabler:users"
-  - title: "Gestion simplifiée de vos bases de données sur votre hébergement FiveM"
-    description: "Administrez vos bases de données avec une interface simple et efficace pour garantir une gestion optimale."
+  - title: "Gestion simplifiée de vos bases de données"
+    description: "Administrez vos bases de données avec une interface simple et efficace pour garantir une gestion optimale de votre serveur FiveM."
     icon: "tabler:database"
   - title: "Actions rapides sur votre serveur FiveM"
-    description: "Effectuez des actions rapides comme redémarrer, arrêter ou modifier votre serveur en un clic."
+    description: "Effectuez des actions rapides comme redémarrer, arrêter ou modifier votre serveur en un clic depuis votre panneau d'administration."
     icon: "tabler:bolt"
-  - title: "Interface de communication design et intuitive pour votre hébergement FiveM"
-    description: "Profitez d'une interface moderne et ergonomique pour une expérience utilisateur optimale."
+  - title: "Interface intuitive et moderne"
+    description: "Profitez d'une interface moderne et ergonomique pour une expérience utilisateur optimale lors de la gestion de votre serveur FiveM."
     icon: "tabler:layout-dashboard"
 pricing:
   - title: "Essai Gratuit"
@@ -57,7 +59,7 @@ pricing:
         icon: "tabler:check"
     callToAction:
       text: "Essayer gratuitement"
-      href: "#"
+      href: "https://hebergtonserv.com/fivem"
   - title: "Starter"
     subtitle: "Idéal pour démarrer votre serveur FiveM RP."
     price: "3.90"
@@ -77,7 +79,7 @@ pricing:
         icon: "tabler:check"
     callToAction:
       text: "Commander Starter"
-      href: "#"
+      href: "https://hebergtonserv.com/fivem"
   - title: "Pro"
     subtitle: "Pour serveurs FiveM RP en croissance."
     price: "5.90"
@@ -97,7 +99,7 @@ pricing:
         icon: "tabler:check"
     callToAction:
       text: "Commander Pro"
-      href: "#"
+      href: "https://hebergtonserv.com/fivem"
   - title: "Communautaire"
     subtitle: "Solution puissante pour grandes communautés FiveM RP."
     price: "12.90"
@@ -117,7 +119,7 @@ pricing:
         icon: "tabler:check"
     callToAction:
       text: "Commander Communautaire"
-      href: "#"
+      href: "https://hebergtonserv.com/fivem"
   - title: "Communautaire Pro"
     subtitle: "Hébergement FiveM ultime pour serveurs RP exigeants."
     price: "24.90"
@@ -137,7 +139,7 @@ pricing:
         icon: "tabler:check"
     callToAction:
       text: "Commander Communautaire Pro"
-      href: "#"
+      href: "https://hebergtonserv.com/fivem"
   - title: "Infinity"
     subtitle: "Hébergement FiveM sans limites."
     price: "29.90"
@@ -157,13 +159,13 @@ pricing:
         icon: "tabler:check"
     callToAction:
       text: "Commander Infinity"
-      href: "#"
+      href: "https://hebergtonserv.com/fivem"
 faqs:
   - title: "Puis-je mettre à niveau ou rétrograder mon serveur FiveM ?"
     description: "Absolument ! Vous pouvez mettre à niveau ou rétrograder votre serveur FiveM à tout moment et ne payer que la différence, calculée au prorata. Les mises à niveau peuvent être effectuées automatiquement depuis votre espace client. Cela vous permet de toujours avoir les ressources adaptées à vos besoins, sans perte de données ou de configuration."
     icon: "tabler:chevrons-right"
   - title: "Quelles sont les méthodes de paiement acceptées ?"
-    description: "Nous acceptons plusieurs méthodes de paiement, y compris les cartes de crédit, Virement, Paysafecard et les crypto-monnaies. Pour plus d'informations, consultez notre section de paiement dans l'espace client. Nous veillons à ce que chaque transaction soit sécurisée pour garantir la protection de vos informations personnelles et financières."
+    description: "Nous acceptons plusieurs méthodes de paiement, y compris les cartes de crédit, virements bancaires, Paysafecard et les crypto-monnaies. Pour plus d'informations, consultez notre section de paiement dans l'espace client. Nous veillons à ce que chaque transaction soit sécurisée pour garantir la protection de vos informations personnelles et financières."
     icon: "tabler:chevrons-right"
   - title: "Quelles sont les mesures de sécurité pour protéger mon serveur FiveM contre les attaques DDoS ?"
     description: "Nous prenons la sécurité de votre serveur FiveM très au sérieux et nous sommes fiers de notre partenariat avec CosmicGuard pour fournir une protection Anti-DDoS de pointe. Cette protection est capable de filtrer et d'atténuer les attaques DDoS, assurant que votre serveur reste en ligne et accessible, même en cas d'attaque. Notre infrastructure est conçue pour détecter et neutraliser les menaces rapidement et efficacement."
@@ -197,15 +199,15 @@ faqs:
     icon: "tabler:chevrons-right"
 testimonials:
   - testimonial: "Depuis que nous avons migré vers HebergTonServ, la stabilité et la performance de notre serveur FiveM ont atteint un niveau exceptionnel."
-    name: "Pierre Dubois"
+    name: "Pierre Dupont"
     job: "Administrateur de serveur RP"
   - testimonial: "HebergTonServ offre une protection Anti-DDoS incroyable. Depuis que nous utilisons leurs services, nos problèmes d'attaques sont de l'histoire ancienne."
     name: "Sophie Martin"
     job: "Fondatrice de communauté FiveM"
-  - testimonial: "En tant que développeuse, j'apprécie vraiment la flexibilité et la puissance de l'hébergement FiveM proposé par HebergTonServ."
+  - testimonial: "En tant que développeur, j'apprécie vraiment la flexibilité et la puissance de l'hébergement FiveM proposé par HebergTonServ."
     name: "Emma R."
     job: "Développeuse de scripts FiveM"
-  - testimonial: "HebergTonServ est de loin le meilleur hébergeur FiveM. La stabilité et les performances sont incomparables !"
+  - testimonial: "HebergTonServ est de loin le meilleur hébergeur FiveM. La stabilité et les performances sont inégalées !"
     name: "Thomas B."
     job: "Administrateur de communauté RP"
 contact:
@@ -219,3 +221,21 @@ contact:
     description: "Rejoignez notre communauté Discord"
     icon: "tabler:brand-discord"
 ---
+
+## Hébergement FiveM Premium pour Vos Serveurs RP
+
+HebergTonServ vous offre un **hébergement FiveM** de qualité supérieure, spécialement conçu pour les serveurs RP (Roleplay). Notre infrastructure haute performance garantit une expérience de jeu fluide et sans lag pour vous et vos joueurs.
+
+### Pourquoi Choisir HebergTonServ pour Votre Serveur FiveM ?
+
+- **Performance Inégalée** : Nos serveurs sont équipés de processeurs AMD Ryzen 9 5950X et de SSD NVMe ultra-rapides pour des temps de chargement minimaux.
+- **Protection Anti-DDoS Avancée** : Grâce à notre partenariat avec CosmicGuard, votre serveur est protégé contre les attaques DDoS 24/7.
+- **Support Technique Expert** : Notre équipe de support est disponible à tout moment pour vous aider avec toutes vos questions techniques.
+- **Interface Intuitive** : Gérez facilement votre serveur FiveM avec notre panneau d'administration convivial.
+- **Clé Patreon FiveM Incluse** : Profitez des avantages Patreon sans frais supplémentaires.
+
+### Des Offres Adaptées à Tous les Besoins
+
+Que vous lanciez un petit serveur RP entre amis ou que vous gériez une grande communauté, nous avons l'offre qu'il vous faut. Nos forfaits évolutifs vous permettent de commencer petit et de grandir selon vos besoins.
+
+Commencez dès aujourd'hui avec notre essai gratuit de 24 heures et découvrez pourquoi HebergTonServ est le choix numéro 1 des communautés FiveM RP en France !

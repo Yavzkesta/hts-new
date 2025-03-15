@@ -11,5 +11,9 @@
   "yaml.schemas": {
     "./.vscode/HebergTonServ/config-schema.json": "/src/config.yaml"
   },
-  "eslint.useFlatConfig": true
+  "eslint.useFlatConfig": true,
+  "monica-code.enableDebugLogs": true,
+  "monica-code.enableQuickActions": true,
+  "monica-code.pauseCodebaseIndexOnStart": true,
+  "monica-code.pauseTabAutocompleteOnBattery": true
 }

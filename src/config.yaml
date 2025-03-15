@@ -11,7 +11,9 @@ metadata:
   title:
     default: HebergTonServ
     template: '%s — HebergTonServ'
-  description: "\U0001F680 HebergTonServ est le choix privilégié pour l'hébergement de jeux en ligne. Nous proposons des serveurs performants, une latence minimale et une assistance experte pour garantir une expérience de jeu ininterrompue et fluide. Que vous souhaitiez héberger un serveur Minecraft, Fivem ou tout autre jeu populaire, faites confiance à HebergTonServ pour une expérience de jeu optimale."
+  description:
+    fr: "🚀 HebergTonServ est le choix privilégié pour l'hébergement de jeux en ligne. Nous proposons des serveurs performants, une latence minimale et une assistance experte pour garantir une expérience de jeu ininterrompue et fluide. Que vous souhaitiez héberger un serveur Minecraft, Fivem ou tout autre jeu populaire, faites confiance à HebergTonServ pour une expérience de jeu optimale."
+    en: "🚀 HebergTonServ is the preferred choice for online game hosting. We offer high-performance servers, minimal latency, and expert support to ensure an uninterrupted and smooth gaming experience. Whether you want to host a Minecraft server, Fivem, or any other popular game, trust HebergTonServ for an optimal gaming experience."
   robots:
     index: true
     follow: true
@@ -28,7 +30,8 @@ metadata:
     cardType: summary_large_image
 
 i18n:
-  language: fr
+  languages: ['fr', 'en']
+  defaultLanguage: 'fr'
   textDirection: ltr
 
 apps:

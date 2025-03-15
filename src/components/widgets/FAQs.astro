@@ -1,33 +1,108 @@
 ---
-import Headline from '~/components/ui/Headline.astro';
-import ItemGrid from '~/components/ui/ItemGrid.astro';
-import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
-import type { Faqs as Props } from '~/types';
+import { Icon } from 'astro-icon/components';
+import type { FAQItem } from '~/types';
 
+export interface Props {
+  title?: string;
+  subtitle?: string;
+  tagline?: string;
+  items: Array<FAQItem>;
+  columns?: number;
+  classes?: Record<string, string>;
+}
 const {
   title = '',
   subtitle = '',
   tagline = '',
   items = [],
-  columns = 2,
-
-  id,
-  isDark = false,
+  columns = 2, // Par défaut à 2 colonnes maintenant
   classes = {},
-  bg = await Astro.slots.render('bg'),
 } = Astro.props;
 ---
 
-<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-7xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
-  <Headline title={title} subtitle={subtitle} tagline={tagline} />
-  <ItemGrid
-    items={items}
-    columns={columns}
-    defaultIcon="tabler:chevron-right"
-    classes={{
-      container: `${columns === 1 ? 'max-w-4xl' : ''} gap-y-8 md:gap-y-12`,
-      panel: 'max-w-none',
-      icon: 'flex-shrink-0 mt-1 w-6 h-6 text-primary',
-    }}
-  />
-</WidgetWrapper>
+<section class="relative py-16 md:py-20">
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
+  <div class="relative max-w-7xl mx-auto px-4 sm:px-6 -mb-12">
+    <div class="mb-10 md:mx-auto text-center md:mb-12 max-w-3xl">
+      {tagline && (
+        <p
+          class="text-base text-primary dark:text-blue-200 font-semibold tracking-wide uppercase"
+          set:html={tagline}
+        />
+      )}
+      {title && (
+        <h2
+          class="text-4xl md:text-5xl font-bold leading-tighter tracking-tighter mb-4 font-heading"
+          set:html={title}
+        />
+      )}
+      {subtitle && (
+        <p class="max-w-3xl mx-auto sm:text-center text-xl text-muted dark:text-slate-400" set:html={subtitle} />
+      )}
+    </div>
+    <div class="mx-auto max-w-6xl"> <!-- Augmenté la largeur maximale pour accommoder 2 colonnes -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {
+          items.map((item, index) => (
+            <div>
+              <div class="bg-white dark:bg-slate-900 rounded-lg shadow-md hover:shadow-lg transition duration-300 p-5 h-full">
+                <details class="group h-full">
+                  <summary class="flex justify-between items-center cursor-pointer">
+                    <div class="flex items-center">
+                      {item.icon && <Icon name={item.icon} class="w-6 h-6 mr-2 text-primary dark:text-blue-300" />}
+                      <h3 class="text-lg font-medium">{item.title}</h3>
+                    </div>
+                    <span class="transition group-open:rotate-180">
+                      <Icon name="tabler:chevron-down" class="w-5 h-5 text-primary dark:text-blue-300" />
+                    </span>
+                  </summary>
+                  <div class="mt-4 text-muted dark:text-slate-400">
+                    <p set:html={item.description} />
+                  </div>
+                </details>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  details > summary {
+    list-style: none;
+  }
+  details > summary::-webkit-details-marker {
+    display: none;
+  }
+  details[open] summary {
+    margin-bottom: 1rem;
+  }
+</style>
+
+<script>
+  // Script pour gérer l'ouverture/fermeture des accordéons
+  document.addEventListener('DOMContentLoaded', () => {
+    const details = document.querySelectorAll('details');
+    
+    details.forEach((detail) => {
+      detail.addEventListener('toggle', () => {
+        if (detail.open) {
+          // Fermer tous les autres accordéons dans la même colonne
+          const parent = detail.closest('.md\\:grid-cols-2 > div');
+          const column = Array.from(parent.parentNode.children).indexOf(parent) % 2;
+          const sameColumnDetails = Array.from(parent.parentNode.children)
+            .filter((el, i) => i % 2 === column)
+            .map(el => el.querySelector('details'))
+            .filter(el => el !== detail);
+          sameColumnDetails.forEach(otherDetail => {
+            if (otherDetail && otherDetail.open) {
+              otherDetail.open = false;
+            }
+          });
+        }
+      });
+    });
+  });
+</script>

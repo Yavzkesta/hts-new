@@ -1,98 +1,139 @@
 ---
-import Image from '~/components/common/Image.astro';
-import Button from '~/components/ui/Button.astro';
+import { Icon } from 'astro-icon/components';
+import { Image } from 'astro:assets';
+import type { CallToAction } from '~/types';
 
-import type { Hero as Props } from '~/types';
+// Import des images statiques
+import gta5Image from '~/assets/images/gta5.png';
+import defaultImage from '~/assets/images/default.png';
+import heroImage from '~/assets/images/hero-image.png';
+
+export interface Props {
+  tagline?: string;
+  title?: string;
+  subtitle?: string;
+  actions?: Array<CallToAction>;
+  image?: {
+    src: string;
+    alt?: string;
+  };
+  compact?: boolean;
+}
 
 const {
+  tagline,
   title = await Astro.slots.render('title'),
   subtitle = await Astro.slots.render('subtitle'),
-  tagline,
-
-  content = await Astro.slots.render('content'),
   actions = await Astro.slots.render('actions'),
   image = await Astro.slots.render('image'),
-
-  id,
-  bg = await Astro.slots.render('bg'),
+  compact = false,
 } = Astro.props;
+
+// Fonction pour obtenir l'image en fonction du chemin
+function getImageByPath(path: string) {
+  if (path.includes('gta5.png')) return gta5Image;
+  if (path.includes('default.png')) return defaultImage;
+  if (path.includes('hero-image.png')) return heroImage;
+  return defaultImage; // Image par défaut si aucune correspondance
+}
+
+// Déterminer si l'image est une URL externe
+const isExternalImage = image?.src && typeof image.src === 'string' && (
+  image.src.startsWith('http://') || 
+  image.src.startsWith('https://')
+);
+
+// Déterminer si l'image fait référence à une image locale
+const isLocalImage = image?.src && typeof image.src === 'string' && (
+  image.src.includes('assets/images') || 
+  image.src.startsWith('~/') ||
+  image.src.startsWith('/')
+);
+
+// Obtenir l'image importée si c'est une image locale
+const localImage = isLocalImage ? getImageByPath(image.src) : null;
 ---
 
-<section class="relative md:-mt-[76px] not-prose" {...id ? { id } : {}}>
-  <div class="absolute inset-0 pointer-events-none" aria-hidden="true">
-    <slot name="bg">
-      {bg ? <Fragment set:html={bg} /> : null}
-    </slot>
-  </div>
+<section class={`relative ${compact ? 'py-4 md:py-6' : 'py-6 md:py-8'}`}>
+  <div class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
   <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
-    <div class="pt-0 md:pt-[76px] pointer-events-none"></div>
-    <div class="py-12 md:py-20 lg:py-0 lg:flex lg:items-center lg:h-screen lg:gap-8">
-      <div class="basis-1/2 text-center lg:text-left pb-10 md:pb-16 mx-auto">
+    <div class="pt-0 pointer-events-none"></div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <!-- Texte à gauche -->
+      <div class="text-left">
+        {tagline && (
+          <p
+            class="text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase mb-1"
+            set:html={tagline}
+          />
+        )}
+        {title && (
+          <h1
+            class={`text-4xl md:text-5xl font-bold leading-tighter tracking-tighter ${compact ? 'mb-2 md:mb-3' : 'mb-3 md:mb-4'} font-heading`}
+            set:html={title}
+          />
+        )}
+        {subtitle && (
+          <p
+            class={`text-xl text-muted dark:text-slate-300 ${compact ? 'mb-3' : 'mb-4'}`}
+            set:html={subtitle}
+          />
+        )}
         {
-          tagline && (
-            <p
-              class="text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase intersect-once motion-safe:md:intersect:animate-fade motion-safe:md:opacity-0 intersect-quarter"
-              set:html={tagline}
-            />
-          )
-        }
-        {
-          title && (
-            <h1
-              class="text-5xl md:text-6xl font-bold leading-tighter tracking-tighter mb-4 font-heading dark:text-gray-200 intersect-once motion-safe:md:intersect:animate-fade motion-safe:md:opacity-0 intersect-quarter"
-              set:html={title}
-            />
-          )
-        }
-        <div class="max-w-3xl mx-auto lg:max-w-none">
-          {
-            subtitle && (
-              <p
-                class="text-xl text-muted mb-6 dark:text-slate-300 intersect-once motion-safe:md:intersect:animate-fade motion-safe:md:opacity-0 intersect-quarter"
-                set:html={subtitle}
-              />
-            )
-          }
-
-          {
-            actions && (
-              <div class="max-w-xs sm:max-w-md m-auto flex flex-nowrap flex-col sm:flex-row sm:justify-center gap-4 lg:justify-start lg:m-0 lg:max-w-7xl intersect-once motion-safe:md:intersect:animate-fade motion-safe:md:opacity-0 intersect-quarter">
-                {Array.isArray(actions) ? (
-                  actions.map((action) => (
-                    <div class="flex w-full sm:w-auto">
-                      <Button {...(action || {})} class="w-full sm:mb-0" />
-                    </div>
-                  ))
-                ) : (
-                  <Fragment set:html={actions} />
-                )}
-              </div>
-            )
-          }
-        </div>
-        {content && <Fragment set:html={content} />}
-      </div>
-      <div class="basis-1/2">
-        {
-          image && (
-            <div class="relative m-auto max-w-5xl intersect-once intercept-no-queue motion-safe:md:intersect:animate-fade motion-safe:md:opacity-0 intersect-quarter">
-              {typeof image === 'string' ? (
-                <Fragment set:html={image} />
+          actions && (
+            <div class="mt-6 flex flex-wrap gap-3">
+              {Array.isArray(actions) ? (
+                actions.map((action) => (
+                  <a
+                    class={`btn text-white bg-primary hover:bg-secondary dark:bg-blue-700 dark:hover:bg-blue-800 sm:mb-0 ${
+                      action.variant === 'primary' ? 'btn-primary' : ''
+                    } ${action.variant === 'secondary' ? 'btn-secondary' : ''}`}
+                    href={action.href}
+                    target={action.target}
+                    rel={action.rel}
+                  >
+                    {action.icon && (
+                      <Icon name={action.icon} class="w-5 h-5 mr-1 -ml-1.5" />
+                    )}
+                    {action.text}
+                  </a>
+                ))
               ) : (
-                <Image
-                  class="mx-auto rounded-md w-full"
-                  widths={[400, 768, 1024, 2040]}
-                  sizes="(max-width: 767px) 400px, (max-width: 1023px) 768px, (max-width: 2039px) 1024px, 2040px"
-                  loading="eager"
-                  width={600}
-                  height={600}
-                  {...image}
-                />
+                <Fragment set:html={actions} />
               )}
             </div>
           )
         }
       </div>
+      
+      <!-- Image à droite -->
+      {
+        image && (
+          <div class="relative order-first md:order-last">
+            {typeof image === 'string' ? (
+              <Fragment set:html={image} />
+            ) : isExternalImage ? (
+              <img
+                src={image.src}
+                alt={image.alt || ''}
+                class="mx-auto rounded-md w-full h-auto object-cover"
+                loading="eager"
+              />
+            ) : localImage ? (
+              <Image
+                src={localImage}
+                alt={image.alt || ''}
+                class="mx-auto rounded-md w-full h-auto object-cover"
+                loading="eager"
+              />
+            ) : (
+              <div class="bg-gray-200 rounded-md w-full h-[300px] flex items-center justify-center">
+                <p class="text-gray-500">Image non disponible</p>
+              </div>
+            )}
+          </div>
+        )
+      }
     </div>
   </div>
 </section>

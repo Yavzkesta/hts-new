@@ -1,98 +1,26 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '~/layouts/PageLayout.astro';
-import Hero2 from '~/components/widgets/Hero2.astro';
-import Features from '~/components/widgets/Features.astro';
-import Pricing from '~/components/widgets/Pricing.astro';
-import FAQs from '~/components/widgets/FAQs.astro';
-import Testimonials from '~/components/widgets/Testimonials.astro';
-
+import { defaultLang } from '~/i18n/ui';
 export async function getStaticPaths() {
-  const games = await getCollection('game');
-  return games.map((game) => ({
-    params: { slug: game.slug },
+  const allGames = await getCollection('game');
+  const uniqueSlugs = new Set();
+  
+  allGames.forEach(game => {
+    // Extraire le slug de base (sans le suffixe de langue)
+    const baseSlug = game.slug.replace(/-(fr|en)$/, '');
+    uniqueSlugs.add(baseSlug);
+  });
+  return Array.from(uniqueSlugs).map(slug => ({
+    params: { slug },
   }));
 }
 
 const { slug } = Astro.params;
-const games = await getCollection('game');
-const game = games.find((g) => g.slug === slug);
-
-if (!game) {
-  throw new Error(`Contenu introuvable pour le slug : ${slug}`);
-}
-
-// Récupération de l'image du héros
-const heroImage = game.data.hero?.image?.src || "https://hebergtonserv.com/default-image.png";
-
-// Création du JSON-LD
-const jsonLd = {
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "WebSite",
-      "name": game.data.metadata?.title || "Titre par défaut",
-      "url": game.data.metadata?.url || "https://hebergtonserv.com",
-      "description": game.data.metadata?.description || "Description par défaut",
-      "publisher": {
-        "@type": "Organization",
-        "name": "HebergTonServ",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://hebergtonserv.com/logo.png"
-        }
-      }
-    },
-    ...(Array.isArray(game.data.pricing)
-      ? game.data.pricing.map((plan) => ({
-          "@type": "Product",
-          "name": plan.title || "Nom du produit par défaut",
-          "description": plan.subtitle || "Description par défaut",
-          "image": heroImage, // Utilisation de l'image du héros pour tous les produits
-          "offers": {
-            "@type": "Offer",
-            "price": plan.price || "0.00",
-            "priceCurrency": "EUR",
-            "availability": "https://schema.org/InStock",
-            "url": plan.callToAction?.href || "https://hebergtonserv.com"
-          },
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.7", // Note moyenne
-            "reviewCount": "150", // Nombre d'avis
-            "bestRating": "5",
-            "worstRating": "1"
-          }
-        }))
-      : []),
-    {
-      "@type": "FAQPage",
-      "mainEntity": Array.isArray(game.data.faqs)
-        ? game.data.faqs.map((faq) => ({
-            "@type": "Question",
-            "name": faq.title || "Question par défaut",
-            "acceptedAnswer": {
-              "@type": "Answer",
-              "text": faq.description || "Réponse par défaut"
-            }
-          }))
-        : []
-    }
-  ]
-};
 ---
 
-<Layout metadata={game.data.metadata}>
-  <!-- Intégration du JSON-LD -->
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')}></script>
+<meta http-equiv="refresh" content={`0;url=/${defaultLang}/games/${slug}`} />
 
-  <!-- Contenu principal -->
-  <Hero2 {...game.data.hero} />
-  <Features title="Caractéristiques principales" items={game.data.features || []} />
-  <Pricing 
-    title="Nos offres" 
-    prices={game.data.pricing || []} 
-  />
-  <FAQs title="Questions fréquentes" items={game.data.faqs || []} />
-  <Testimonials title="Avis clients" testimonials={game.data.testimonials || []} />
-</Layout>
+<script define:vars={{ defaultLang, slug }}>
+  // Client-side redirection
+  window.location.pathname = `/${defaultLang}/games/${slug}`;
+</script>

@@ -1,0 +1,114 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';  // Utiliser PageLayout
+import Hero2 from '~/components/widgets/Hero2.astro';
+import Features from '~/components/widgets/Features.astro';
+import Pricing from '~/components/widgets/Pricing.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import Testimonials from '~/components/widgets/Testimonials.astro';
+
+export async function getStaticPaths() {
+  const allGames = await getCollection('game');
+  
+  // Créer un mapping des slugs de base aux contenus en anglais
+  const slugToGameMap = new Map();
+  
+  allGames.forEach(game => {
+    // Si le contenu est en anglais ou si nous n'avons pas encore trouvé de contenu pour ce slug
+    if (game.data.language === 'en') {
+      // Extraire le slug de base (sans le suffixe de langue si présent)
+      const baseSlug = game.slug.replace(/-en$/, '');
+      slugToGameMap.set(baseSlug, game);
+    }
+  });
+  
+  // Créer les chemins statiques
+  return Array.from(slugToGameMap.entries()).map(([baseSlug, game]) => ({
+    params: { slug: baseSlug },
+    props: { game },
+  }));
+}
+
+const { game } = Astro.props;
+
+// Get hero image for JSON-LD
+const heroImage = game.data.hero?.image?.src || "https://hebergtonserv.com/default-image.png";
+
+// Create JSON-LD
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "name": game.data.metadata?.title || "Default Title",
+      "url": game.data.metadata?.url || "https://hebergtonserv.com",
+      "description": game.data.metadata?.description || "Default Description",
+      "publisher": {
+        "@type": "Organization",
+        "name": "HebergTonServ",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://hebergtonserv.com/logo.png"
+        }
+      }
+    },
+    ...(Array.isArray(game.data.pricing)
+      ? game.data.pricing.map((plan) => ({
+          "@type": "Product",
+          "name": plan.title || "Default Product Name",
+          "description": plan.subtitle || "Default Description",
+          "image": heroImage, // Using hero image for all products
+          "offers": {
+            "@type": "Offer",
+            "price": plan.price || "0.00",
+            "priceCurrency": "EUR",
+            "availability": "https://schema.org/InStock",
+            "url": plan.callToAction?.href || "https://hebergtonserv.com"
+          },
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.7", // Average rating
+            "reviewCount": "150", // Number of reviews
+            "bestRating": "5",
+            "worstRating": "1"
+          }
+        }))
+      : []),
+    {
+      "@type": "FAQPage",
+      "mainEntity": Array.isArray(game.data.faqs)
+        ? game.data.faqs.map((faq) => ({
+            "@type": "Question",
+            "name": faq.title || "Default Question",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": faq.description || "Default Answer"
+            }
+          }))
+        : []
+    }
+  ]
+};
+
+// Transform game faqs to FAQItem format
+const faqItems = game.data.faqs?.map(faq => ({
+  title: faq.title,
+  description: faq.description,
+  icon: faq.icon
+})) || [];
+---
+
+<PageLayout metadata={game.data.metadata}>
+  <!-- JSON-LD Integration -->
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')}></script>
+
+  <!-- Main Content with compact hero -->
+  <Hero2 {...game.data.hero} compact={true} />
+  <Features title="Main Features" items={game.data.features || []} />
+  <Pricing 
+    title="Our Plans" 
+    prices={game.data.pricing || []} 
+  />
+  <FAQs title="Frequently Asked Questions" items={faqItems} />
+  <Testimonials title="Customer Reviews" testimonials={game.data.testimonials || []} />
+</PageLayout>

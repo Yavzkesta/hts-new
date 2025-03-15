@@ -1,7 +1,5 @@
 ---
 import { UI } from 'HebergTonServ:config';
-
-// TODO: This code is temporary
 ---
 
 <script is:inline define:vars={{ defaultTheme: UI.theme || 'system' }}>
@@ -20,14 +18,32 @@ import { UI } from 'HebergTonServ:config';
     }
   }
 
-  if ((defaultTheme && defaultTheme.endsWith(':only')) || (!localStorage.theme && defaultTheme !== 'system')) {
-    applyTheme(defaultTheme.replace(':only', ''));
-  } else if (
-    localStorage.theme === 'dark' ||
-    (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  ) {
-    applyTheme('dark');
-  } else {
-    applyTheme('light');
+  function initTheme() {
+    // Récupérer le thème sauvegardé ou utiliser le thème par défaut
+    if ((defaultTheme && defaultTheme.endsWith(':only')) || (!localStorage.theme && defaultTheme !== 'system')) {
+      applyTheme(defaultTheme.replace(':only', ''));
+    } else if (
+      localStorage.theme === 'dark' ||
+      (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
+    ) {
+      applyTheme('dark');
+    } else {
+      applyTheme('light');
+    }
   }
+
+  // Appliquer le thème au chargement initial
+  initTheme();
+
+  // Réappliquer le thème lors des navigations avec l'API History
+  document.addEventListener('astro:after-swap', () => {
+    initTheme();
+  });
+
+  // Observer les changements de thème
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.theme) {
+      applyTheme(e.matches ? 'dark' : 'light');
+    }
+  });
 </script>

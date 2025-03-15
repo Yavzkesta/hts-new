@@ -23,17 +23,21 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^12.2.1",
+    "@astrojs/markdown-remark": "^6.3.0",
     "@astrojs/rss": "^4.0.11",
     "@astrojs/sitemap": "^3.2.1",
+    "@astrojs/studio": "^0.1.4",
     "@astrolib/analytics": "^0.6.1",
     "@astrolib/seo": "^1.0.0-beta.8",
     "@fontsource-variable/inter": "^5.1.1",
     "astro": "^5.1.8",
     "astro-embed": "^0.9.0",
     "astro-icon": "^1.1.5",
+    "dotenv": "^16.4.7",
     "limax": "4.1.0",
     "lodash.merge": "^4.6.2",
-    "unpic": "^3.22.0"
+    "unpic": "^3.22.0",
+    "vite": "^6.2.2"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",

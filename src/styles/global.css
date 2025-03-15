@@ -1,0 +1,25 @@
+/* Ajoutez ou modifiez ces styles dans votre fichier CSS global */
+
+/* Réduire l'espacement entre les sections pour les pages de jeux */
+.game-page section {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
+@media (min-width: 768px) {
+  .game-page section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+
+/* Ajuster l'espacement des titres de section */
+.game-page section h2 {
+  margin-bottom: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .game-page section h2 {
+    margin-bottom: 2rem;
+  }
+}
