@@ -1,6 +1,15 @@
 ---
 import { getCollection } from 'astro:content';
 import { defaultLang } from '~/i18n/ui';
+import Layout from '~/layouts/PageLayout.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
+import Features from '~/components/widgets/Features.astro';
+import Pricing from '~/components/widgets/Pricing.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import Testimonials from '~/components/widgets/Testimonials.astro';
+import Header from '~/components/widgets/Header.astro';
+import { getHeaderData } from '~/navigation';
+
 export async function getStaticPaths() {
   const allGames = await getCollection('game');
   const uniqueSlugs = new Set();
@@ -16,11 +25,79 @@ export async function getStaticPaths() {
 }
 
 const { slug } = Astro.params;
+
+// Récupérer le contenu du jeu pour la langue par défaut
+const allGames = await getCollection('game');
+const gameContent = allGames.find(game => {
+  const baseSlug = game.slug.replace(/-(fr|en)$/, '');
+  return baseSlug === slug && game.data.language === defaultLang;
+});
+
+// Si le contenu est trouvé, l'utiliser, sinon rediriger
+const headerData = getHeaderData(defaultLang);
+
+// Transformer les faqs du jeu en format FAQItem si disponible
+const faqItems = gameContent?.data.faqs?.map(faq => ({
+  title: faq.title,
+  description: faq.description,
+  icon: faq.icon || 'tabler:chevrons-right'
+})) || [];
 ---
 
-<meta http-equiv="refresh" content={`0;url=/${defaultLang}/games/${slug}`} />
+{gameContent ? (
+  <Layout metadata={gameContent.data.metadata}>
+    <Fragment slot="header">
+      <Header {...headerData} isSticky />
+    </Fragment>
 
-<script define:vars={{ defaultLang, slug }}>
-  // Client-side redirection
-  window.location.pathname = `/${defaultLang}/games/${slug}`;
-</script>
+    <!-- Contenu principal avec héros -->
+    <Hero2 
+      tagline={gameContent.data.hero?.tagline}
+      title={gameContent.data.hero?.title}
+      subtitle={gameContent.data.hero?.subtitle}
+      image={gameContent.data.hero?.image}
+      actions={gameContent.data.hero?.actions}
+    />
+    
+    {gameContent.data.features && (
+      <Features 
+        title="Caractéristiques principales" 
+        items={gameContent.data.features} 
+      />
+    )}
+    
+    {gameContent.data.pricing && (
+      <Pricing 
+        title="Nos offres" 
+        prices={gameContent.data.pricing} 
+      />
+    )}
+    
+    {faqItems.length > 0 && (
+      <FAQs 
+        title="Questions fréquentes" 
+        items={faqItems} 
+      />
+    )}
+    
+    {gameContent.data.testimonials && (
+      <Testimonials 
+        title="Avis clients" 
+        testimonials={gameContent.data.testimonials} 
+      />
+    )}
+    
+    <!-- Contenu Markdown du jeu -->
+    <div class="container mx-auto px-4 py-8 prose dark:prose-invert max-w-none">
+      <Fragment set:html={gameContent.body} />
+    </div>
+  </Layout>
+) : (
+  <>
+    <meta http-equiv="refresh" content={`0;url=/${defaultLang}/games/${slug}`} />
+    <script define:vars={{ defaultLang, slug }}>
+      // Client-side redirection
+      window.location.pathname = `/${defaultLang}/games/${slug}`;
+    </script>
+  </>
+)}

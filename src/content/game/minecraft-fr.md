@@ -11,7 +11,7 @@ hero:
   title: "Découvrez l'hébergement Minecraft n°1 : HebergTonServ"
   subtitle: "Profitez d'une infrastructure haut de gamme pour vos serveurs Minecraft. Bénéficiez de processeurs AMD Ryzen, stockage SSD NVMe, et d'une protection Anti-DDoS avancée. Testez gratuitement pendant 24 heures !"
   image:
-    src: "~/assets/images/gta5.png"
+    src: "~/assets/images/minecraft.png"
     alt: "Hébergeur Minecraft - Serveur Minecraft"
   actions:
     - variant: "primary"

@@ -7,6 +7,8 @@ import type { CallToAction } from '~/types';
 import gta5Image from '~/assets/images/gta5.png';
 import defaultImage from '~/assets/images/default.png';
 import heroImage from '~/assets/images/hero-image.png';
+import vpsImage from '~/assets/images/vps.png';
+import minecraftImage from '~/assets/images/minecraft.png';
 
 export interface Props {
   tagline?: string;
@@ -14,7 +16,7 @@ export interface Props {
   subtitle?: string;
   actions?: Array<CallToAction>;
   image?: {
-    src: string;
+    src: string | any; // Modifié pour accepter des objets d'image importés
     alt?: string;
   };
   compact?: boolean;
@@ -29,22 +31,27 @@ const {
   compact = false,
 } = Astro.props;
 
+// Vérifier si l'image est un objet importé (comme avec import vpsImage from '...')
+const isImportedImage = image?.src && typeof image.src === 'object';
+
 // Fonction pour obtenir l'image en fonction du chemin
 function getImageByPath(path: string) {
   if (path.includes('gta5.png')) return gta5Image;
   if (path.includes('default.png')) return defaultImage;
   if (path.includes('hero-image.png')) return heroImage;
+  if (path.includes('vps.png')) return vpsImage;
+  if (path.includes('minecraft.png')) return minecraftImage;
   return defaultImage; // Image par défaut si aucune correspondance
 }
 
 // Déterminer si l'image est une URL externe
-const isExternalImage = image?.src && typeof image.src === 'string' && (
+const isExternalImage = !isImportedImage && image?.src && typeof image.src === 'string' && (
   image.src.startsWith('http://') || 
   image.src.startsWith('https://')
 );
 
 // Déterminer si l'image fait référence à une image locale
-const isLocalImage = image?.src && typeof image.src === 'string' && (
+const isLocalImage = !isImportedImage && image?.src && typeof image.src === 'string' && (
   image.src.includes('assets/images') || 
   image.src.startsWith('~/') ||
   image.src.startsWith('/')
@@ -112,6 +119,13 @@ const localImage = isLocalImage ? getImageByPath(image.src) : null;
           <div class="relative order-first md:order-last">
             {typeof image === 'string' ? (
               <Fragment set:html={image} />
+            ) : isImportedImage ? (
+              <Image
+                src={image.src}
+                alt={image.alt || ''}
+                class="mx-auto rounded-md w-full h-auto object-cover"
+                loading="eager"
+              />
             ) : isExternalImage ? (
               <img
                 src={image.src}
@@ -136,4 +150,3 @@ const localImage = isLocalImage ? getImageByPath(image.src) : null;
       }
     </div>
   </div>
-</section>

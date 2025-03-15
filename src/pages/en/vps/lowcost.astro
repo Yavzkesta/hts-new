@@ -1,0 +1,285 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Header from '~/components/widgets/Header.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
+import Features from '~/components/widgets/Features.astro';
+import Pricing from '~/components/widgets/Pricing.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import Testimonials from '~/components/widgets/Testimonials.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import { getHeaderData } from '~/navigation';
+import vpsImage from '~/assets/images/vps.png';
+
+const metadata = {
+  title: 'Low Cost VPS - Affordable Virtual Private Servers | HebergTonServ',
+  description: 'Discover our affordable Low Cost VPS solutions with high performance, SSD storage, and 24/7 support. Perfect for small projects and startups.',
+  ignoreTitleTemplate: true,
+};
+
+const headerData = getHeaderData('en');
+---
+
+<Layout metadata={metadata}>
+  <Fragment slot="header">
+    <Header {...headerData} isSticky />
+  </Fragment>
+
+  <!-- Hero Widget ******************* -->
+  <Hero2
+    tagline="Low Cost VPS"
+    title="Affordable Virtual Private Servers"
+    subtitle="Get started with our budget-friendly VPS solutions without compromising on performance or reliability"
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Order Now',
+        href: '#pricing',
+      },
+      {
+        variant: 'secondary',
+        text: 'Learn More',
+        href: '#features',
+      },
+    ]}
+    image={{
+      src: vpsImage,
+      alt: 'Low Cost VPS Servers',
+    }}
+  />
+
+  <!-- Features Widget *************** -->
+  <Features
+    id="features"
+    title="Why Choose Our Low Cost VPS?"
+    subtitle="Our affordable VPS solutions offer exceptional value without compromising on essential features"
+    items={[
+      {
+        title: 'SSD Storage',
+        description: 'All our VPS plans include high-speed SSD storage for faster data access and improved performance.',
+        icon: 'tabler:database',
+      },
+      {
+        title: 'Guaranteed Resources',
+        description: 'Dedicated CPU cores and RAM resources exclusively for your VPS, ensuring consistent performance.',
+        icon: 'tabler:cpu',
+      },
+      {
+        title: 'DDoS Protection',
+        description: 'Advanced DDoS protection included with all plans to keep your services safe and online.',
+        icon: 'tabler:shield',
+      },
+      {
+        title: '99.9% Uptime',
+        description: 'We guarantee 99.9% uptime for all our VPS services, backed by our service level agreement.',
+        icon: 'tabler:chart-line',
+      },
+      {
+        title: 'Easy Management',
+        description: 'User-friendly control panel to manage your VPS, with one-click installations for popular applications.',
+        icon: 'tabler:dashboard',
+      },
+      {
+        title: '24/7 Technical Support',
+        description: 'Our technical support team is available 24/7 to assist you with any issues or questions.',
+        icon: 'tabler:headset',
+      },
+    ]}
+  />
+
+  <!-- Pricing Widget *************** -->
+  <Pricing
+    id="pricing"
+    title="Low Cost VPS Plans"
+    subtitle="Choose the perfect VPS plan for your needs with our affordable options"
+    prices={[
+      {
+        title: 'Starter VPS',
+        subtitle: 'Perfect for small websites and applications',
+        price: 3.99,
+        period: '/ month',
+        items: [
+          {
+            description: '1 vCPU Core',
+            icon: 'tabler:check',
+          },
+          {
+            description: '2 GB RAM',
+            icon: 'tabler:check',
+          },
+          {
+            description: '20 GB SSD Storage',
+            icon: 'tabler:check',
+          },
+          {
+            description: '1 TB Bandwidth',
+            icon: 'tabler:check',
+          },
+          {
+            description: 'DDoS Protection',
+            icon: 'tabler:check',
+          },
+          {
+            description: '24/7 Support',
+            icon: 'tabler:check',
+          },
+        ],
+        callToAction: {
+          text: 'Order Now',
+          href: 'https://hebergtonserv.com/store/vps-lowcost/starter',
+        },
+      },
+      {
+        title: 'Basic VPS',
+        subtitle: 'Ideal for growing websites and small businesses',
+        price: 5.99,
+        period: '/ month',
+        items: [
+          {
+            description: '2 vCPU Cores',
+            icon: 'tabler:check',
+          },
+          {
+            description: '4 GB RAM',
+            icon: 'tabler:check',
+          },
+          {
+            description: '40 GB SSD Storage',
+            icon: 'tabler:check',
+          },
+          {
+            description: '2 TB Bandwidth',
+            icon: 'tabler:check',
+          },
+          {
+            description: 'DDoS Protection',
+            icon: 'tabler:check',
+          },
+          {
+            description: '24/7 Support',
+            icon: 'tabler:check',
+          },
+        ],
+        callToAction: {
+          text: 'Order Now',
+          href: 'https://hebergtonserv.com/store/vps-lowcost/basic',
+        },
+        hasRibbon: true,
+        ribbonTitle: 'Popular',
+      },
+      {
+        title: 'Advanced VPS',
+        subtitle: 'For established websites and applications',
+        price: 9.99,
+        period: '/ month',
+        items: [
+          {
+            description: '4 vCPU Cores',
+            icon: 'tabler:check',
+          },
+          {
+            description: '8 GB RAM',
+            icon: 'tabler:check',
+          },
+          {
+            description: '80 GB SSD Storage',
+            icon: 'tabler:check',
+          },
+          {
+            description: '4 TB Bandwidth',
+            icon: 'tabler:check',
+          },
+          {
+            description: 'DDoS Protection',
+            icon: 'tabler:check',
+          },
+          {
+            description: 'Priority Support',
+            icon: 'tabler:check',
+          },
+        ],
+        callToAction: {
+          text: 'Order Now',
+          href: 'https://hebergtonserv.com/store/vps-lowcost/advanced',
+        },
+      },
+    ]}
+  />
+
+  <!-- FAQs Widget ******************* -->
+  <FAQs
+    title="Frequently Asked Questions"
+    subtitle="Find answers to common questions about our Low Cost VPS services"
+    items={[
+      {
+        title: 'What operating systems do you support?',
+        description: 'We support a wide range of operating systems including Ubuntu, Debian, CentOS, Windows Server, and more. You can choose your preferred OS during the ordering process.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Can I upgrade my VPS plan later?',
+        description: 'Yes, you can easily upgrade your VPS plan as your needs grow. The upgrade process is seamless and can be done from your client area without any data loss.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Do you provide backups for VPS?',
+        description: 'We offer automated backup solutions as an add-on service for all VPS plans. You can also create manual backups from your control panel at any time.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'What is your uptime guarantee?',
+        description: 'We guarantee 99.9% uptime for all our VPS services. In the unlikely event that we fail to meet this guarantee, you will receive credit according to our SLA.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'How quickly will my VPS be set up?',
+        description: 'Most VPS are set up automatically and immediately after payment confirmation. In some cases, it might take up to 30 minutes for the setup to complete.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Do you offer a control panel?',
+        description: 'Yes, we provide a user-friendly control panel that allows you to manage all aspects of your VPS including reboots, OS reinstallations, and resource monitoring.',
+        icon: 'tabler:chevrons-right',
+      },
+    ]}
+  />
+
+  <!-- Testimonials Widget *********** -->
+  <Testimonials
+    title="What Our Customers Say"
+    testimonials={[
+      {
+        testimonial: "HebergTonServ's Low Cost VPS has been perfect for my small business website. Great performance at an affordable price!",
+        name: 'John Davis',
+        job: 'Small Business Owner',
+      },
+      {
+        testimonial: "I've been using their VPS for my development projects, and the speed and reliability have been outstanding. Highly recommended!",
+        name: 'Emily Johnson',
+        job: 'Web Developer',
+      },
+      {
+        testimonial: "The support team is incredibly responsive. When I had an issue with my configuration, they helped me resolve it within minutes.",
+        name: 'Michael Smith',
+        job: 'IT Consultant',
+      },
+    ]}
+  />
+
+  <!-- CallToAction Widget *********** -->
+  <CallToAction
+    title="Ready to get started with our Low Cost VPS?"
+    subtitle="Experience high performance at affordable prices with our Low Cost VPS solutions."
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Order Now',
+        href: '#pricing',
+      },
+      {
+        variant: 'secondary',
+        text: 'Contact Sales',
+        href: '/en/contact',
+      },
+    ]}
+  />
+</Layout>

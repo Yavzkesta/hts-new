@@ -1,0 +1,284 @@
+---
+import Layout from '~/layouts/PageLayout.astro';
+import Header from '~/components/widgets/Header.astro';
+import Hero2 from '~/components/widgets/Hero2.astro';
+import Features from '~/components/widgets/Features.astro';
+import Pricing from '~/components/widgets/Pricing.astro';
+import FAQs from '~/components/widgets/FAQs.astro';
+import Testimonials from '~/components/widgets/Testimonials.astro';
+import CallToAction from '~/components/widgets/CallToAction.astro';
+import { getHeaderData } from '~/navigation';
+
+const metadata = {
+  title: 'VPS Low Cost - Serveurs Virtuels Privés Abordables | HebergTonServ',
+  description: 'Découvrez nos solutions VPS Low Cost abordables avec des performances élevées, un stockage SSD et un support 24/7. Parfait pour les petits projets et les startups.',
+  ignoreTitleTemplate: true,
+};
+
+const headerData = getHeaderData('fr');
+---
+
+<Layout metadata={metadata}>
+  <Fragment slot="header">
+    <Header {...headerData} isSticky />
+  </Fragment>
+
+  <!-- Hero Widget ******************* -->
+  <Hero2
+    tagline="VPS Low Cost"
+    title="Serveurs Virtuels Privés Abordables"
+    subtitle="Commencez avec nos solutions VPS économiques sans compromettre les performances ou la fiabilité"
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Commander maintenant',
+        href: '#pricing',
+      },
+      {
+        variant: 'secondary',
+        text: 'En savoir plus',
+        href: '#features',
+      },
+    ]}
+    image={{
+      src: '~/assets/images/vps.png',
+      alt: 'Serveurs VPS Low Cost',
+    }}
+  />
+
+  <!-- Features Widget *************** -->
+  <Features
+    id="features"
+    title="Pourquoi choisir nos VPS Low Cost ?"
+    subtitle="Nos solutions VPS abordables offrent une valeur exceptionnelle sans compromettre les fonctionnalités essentielles"
+    items={[
+      {
+        title: 'Stockage SSD',
+        description: 'Tous nos plans VPS incluent un stockage SSD haute vitesse pour un accès plus rapide aux données et des performances améliorées.',
+        icon: 'tabler:database',
+      },
+      {
+        title: 'Ressources garanties',
+        description: 'Des cœurs CPU dédiés et des ressources RAM exclusivement pour votre VPS, garantissant des performances constantes.',
+        icon: 'tabler:cpu',
+      },
+      {
+        title: 'Protection DDoS',
+        description: 'Protection avancée contre les attaques DDoS incluse dans tous les plans pour sécuriser vos services.',
+        icon: 'tabler:shield',
+      },
+      {
+        title: 'Disponibilité de 99,9 %',
+        description: 'Nous garantissons une disponibilité de 99,9 % pour tous nos services VPS, soutenue par notre accord de niveau de service.',
+        icon: 'tabler:chart-line',
+      },
+      {
+        title: 'Gestion simplifiée',
+        description: 'Panneau de contrôle convivial pour gérer votre VPS, avec des installations en un clic pour les applications populaires.',
+        icon: 'tabler:dashboard',
+      },
+      {
+        title: 'Support technique 24/7',
+        description: 'Notre équipe de support technique est disponible 24/7 pour vous assister avec tout problème ou question.',
+        icon: 'tabler:headset',
+      },
+    ]}
+  />
+
+  <!-- Pricing Widget *************** -->
+  <Pricing
+    id="pricing"
+    title="Plans VPS Low Cost"
+    subtitle="Choisissez le plan VPS parfait pour vos besoins avec nos options abordables"
+    prices={[
+      {
+        title: 'VPS Starter',
+        subtitle: 'Parfait pour les petits sites web et applications',
+        price: 3.99,
+        period: '/ mois',
+        items: [
+          {
+            description: '1 cœur vCPU',
+            icon: 'tabler:check',
+          },
+          {
+            description: '2 Go de RAM',
+            icon: 'tabler:check',
+          },
+          {
+            description: '20 Go de stockage SSD',
+            icon: 'tabler:check',
+          },
+          {
+            description: '1 To de bande passante',
+            icon: 'tabler:check',
+          },
+          {
+            description: 'Protection DDoS',
+            icon: 'tabler:check',
+          },
+          {
+            description: 'Support 24/7',
+            icon: 'tabler:check',
+          },
+        ],
+        callToAction: {
+          text: 'Commander maintenant',
+          href: 'https://hebergtonserv.com/store/vps-lowcost/starter',
+        },
+      },
+      {
+        title: 'VPS Basic',
+        subtitle: 'Idéal pour les sites web en croissance et les petites entreprises',
+        price: 5.99,
+        period: '/ mois',
+        items: [
+          {
+            description: '2 cœurs vCPU',
+            icon: 'tabler:check',
+          },
+          {
+            description: '4 Go de RAM',
+            icon: 'tabler:check',
+          },
+          {
+            description: '40 Go de stockage SSD',
+            icon: 'tabler:check',
+          },
+          {
+            description: '2 To de bande passante',
+            icon: 'tabler:check',
+          },
+          {
+            description: 'Protection DDoS',
+            icon: 'tabler:check',
+          },
+          {
+            description: 'Support 24/7',
+            icon: 'tabler:check',
+          },
+        ],
+        callToAction: {
+          text: 'Commander maintenant',
+          href: 'https://hebergtonserv.com/store/vps-lowcost/basic',
+        },
+        hasRibbon: true,
+        ribbonTitle: 'Populaire',
+      },
+      {
+        title: 'VPS Advanced',
+        subtitle: 'Pour les sites web et applications établis',
+        price: 9.99,
+        period: '/ mois',
+        items: [
+          {
+            description: '4 cœurs vCPU',
+            icon: 'tabler:check',
+          },
+          {
+            description: '8 Go de RAM',
+            icon: 'tabler:check',
+          },
+          {
+            description: '80 Go de stockage SSD',
+            icon: 'tabler:check',
+          },
+          {
+            description: '4 To de bande passante',
+            icon: 'tabler:check',
+          },
+          {
+            description: 'Protection DDoS',
+            icon: 'tabler:check',
+          },
+          {
+            description: 'Support prioritaire',
+            icon: 'tabler:check',
+          },
+        ],
+        callToAction: {
+          text: 'Commander maintenant',
+          href: 'https://hebergtonserv.com/store/vps-lowcost/advanced',
+        },
+      },
+    ]}
+  />
+
+  <!-- FAQs Widget ******************* -->
+  <FAQs
+    title="Foire aux questions"
+    subtitle="Trouvez des réponses aux questions fréquentes sur nos services VPS Low Cost"
+    items={[
+      {
+        title: 'Quels systèmes d’exploitation supportez-vous ?',
+        description: 'Nous supportons une large gamme de systèmes d’exploitation, y compris Ubuntu, Debian, CentOS, Windows Server, et plus encore. Vous pouvez choisir votre OS préféré lors du processus de commande.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Puis-je upgrader mon plan VPS plus tard ?',
+        description: 'Oui, vous pouvez facilement upgrader votre plan VPS à mesure que vos besoins augmentent. Le processus de mise à niveau est transparent et peut être effectué depuis votre espace client sans perte de données.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Proposez-vous des sauvegardes pour les VPS ?',
+        description: 'Nous proposons des solutions de sauvegarde automatisées en tant qu’option supplémentaire pour tous les plans VPS. Vous pouvez également créer des sauvegardes manuelles depuis votre panneau de contrôle à tout moment.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Quelle est votre garantie de disponibilité ?',
+        description: 'Nous garantissons une disponibilité de 99,9 % pour tous nos services VPS. En cas d’échec de cette garantie, vous recevrez un crédit conforme à notre SLA.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Combien de temps faut-il pour configurer mon VPS ?',
+        description: 'La plupart des VPS sont configurés automatiquement et immédiatement après la confirmation du paiement. Dans certains cas, cela peut prendre jusqu’à 30 minutes.',
+        icon: 'tabler:chevrons-right',
+      },
+      {
+        title: 'Proposez-vous un panneau de contrôle ?',
+        description: 'Oui, nous fournissons un panneau de contrôle convivial qui vous permet de gérer tous les aspects de votre VPS, y compris les redémarrages, les réinstallations d’OS et la surveillance des ressources.',
+        icon: 'tabler:chevrons-right',
+      },
+    ]}
+  />
+
+  <!-- Testimonials Widget *********** -->
+  <Testimonials
+    title="Ce que disent nos clients"
+    testimonials={[
+      {
+        testimonial: "Le VPS Low Cost de HebergTonServ est parfait pour le site web de ma petite entreprise. Excellentes performances à un prix abordable !",
+        name: 'John Davis',
+        job: 'Propriétaire de petite entreprise',
+      },
+      {
+        testimonial: "J’utilise leur VPS pour mes projets de développement, et la vitesse et la fiabilité sont exceptionnelles. Hautement recommandé !",
+        name: 'Emily Johnson',
+        job: 'Développeuse web',
+      },
+      {
+        testimonial: "L’équipe de support est incroyablement réactive. Lorsque j’ai eu un problème avec ma configuration, ils m’ont aidé à le résoudre en quelques minutes.",
+        name: 'Michael Smith',
+        job: 'Consultant IT',
+      },
+    ]}
+  />
+
+  <!-- CallToAction Widget *********** -->
+  <CallToAction
+    title="Prêt à commencer avec nos VPS Low Cost ?"
+    subtitle="Découvrez des performances élevées à des prix abordables avec nos solutions VPS Low Cost."
+    actions={[
+      {
+        variant: 'primary',
+        text: 'Commander maintenant',
+        href: '#pricing',
+      },
+      {
+        variant: 'secondary',
+        text: 'Contacter les ventes',
+        href: '/fr/contact',
+      },
+    ]}
+  />
+</Layout>
