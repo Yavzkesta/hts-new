@@ -59,7 +59,7 @@ const t = useTranslations(lang);
 <header
   class:list={[
     { sticky: isSticky, relative: !isSticky, dark: isDark },
-    'top-0 z-40 flex-none mx-auto w-full border-b border-gray-50/0 transition-[opacity] ease-in-out',
+    'top-0 z-40 flex-none mx-auto w-full border-b border-gray-50/0 transition-[opacity] ease-in-out bg-white dark:bg-[#050A1B] shadow-md',
   ]}
   {...id ? { id } : {}}
 >
@@ -174,3 +174,21 @@ const t = useTranslations(lang);
     </div>
   </div>
 </header>
+
+<style>
+  .dropdown:hover .dropdown-menu {
+    display: block;
+  }
+
+  [data-aw-toggle-menu].expanded .line1 {
+    transform: rotate(-45deg) translate(-4px, 4px);
+  }
+
+  [data-aw-toggle-menu].expanded .line2 {
+    opacity: 0;
+  }
+
+  [data-aw-toggle-menu].expanded .line3 {
+    transform: rotate(45deg) translate(-4px, -4px);
+  }
+</style>
