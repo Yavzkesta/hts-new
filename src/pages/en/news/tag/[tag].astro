@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import NewsGrid from '~/components/news/NewsGrid.astro';
+import NewsSidebar from '~/components/news/NewsSidebar.astro';
+
+export async function getStaticPaths() {
+  const allArticles = await getCollection('news', ({ data }) => {
+    return data.language === 'en' && !data.draft;
+  });
+
+  // Extract all unique tags
+  const allTags = allArticles.flatMap(article => article.data.tags || []);
+  const uniqueTags = [...new Set(allTags)];
+
+  return uniqueTags.map(tag => ({
+    params: { tag: tag.toLowerCase() },
+    props: { tag }
+  }));
+}
+
+const { tag } = Astro.props;
+
+// Get all articles with this tag
+const allArticles = await getCollection('news', ({ data }) => {
+  return data.language === 'en' && !data.draft && (data.tags || []).includes(tag);
+});
+
+// Sort articles by publication date (newest first)
+const sortedArticles = allArticles.sort(
+  (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime()
+);
+
+// Get all categories for the sidebar
+const allEnArticles = await getCollection('news', ({ data }) => {
+  return data.language === 'en' && !data.draft;
+});
+
+// Extract all unique categories with their article count
+const categories = [...new Set(allEnArticles.map(article => article.data.category))]
+  .map(cat => ({
+    name: cat,
+    count: allEnArticles.filter(article => article.data.category === cat).length
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+// Extract all unique tags with their article count
+const allTags = allEnArticles.flatMap(article => article.data.tags || []);
+const tags = [...new Set(allTags)]
+  .map(t => ({
+    name: t,
+    count: allTags.filter(tagName => tagName === t).length
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+// Page metadata
+const metadata = {
+  title: `#${tag} | News`,
+  description: `Discover all our articles with the tag #${tag}.`,
+};
+---
+
+<PageLayout metadata={metadata}>
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <div class="mb-8 text-center">
+        <h1 class="mb-4 text-4xl font-bold text-white">Tag: <span class="text-primary-400">#{tag}</span></h1>
+        <p class="mx-auto max-w-2xl text-xl text-slate-300">
+          All articles with the tag #{tag}
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
+        <!-- Sidebar with categories and tags -->
+        <div class="lg:col-span-1">
+          <NewsSidebar 
+            categories={categories} 
+            tags={tags} 
+            currentTag={tag.toLowerCase()}
+            lang="en"
+          />
+        </div>
+
+        <!-- Article list -->
+        <div class="lg:col-span-3">
+          {sortedArticles.length > 0 ? (
+            <NewsGrid articles={sortedArticles} lang="en" />
+          ) : (
+            <div class="rounded-lg border border-slate-700 bg-slate-900 p-8 text-center">
+              <p class="text-lg text-slate-300">No articles found with this tag.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+</PageLayout>

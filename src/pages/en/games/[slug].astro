@@ -1,28 +1,31 @@
 ---
 import { getCollection } from 'astro:content';
-import PageLayout from '~/layouts/PageLayout.astro';  // Utiliser PageLayout
+import PageLayout from '~/layouts/PageLayout.astro';
 import Hero2 from '~/components/widgets/Hero2.astro';
 import Features from '~/components/widgets/Features.astro';
 import Pricing from '~/components/widgets/Pricing.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import Testimonials from '~/components/widgets/Testimonials.astro';
+import RelatedArticles from '~/components/widgets/RelatedArticles.astro';
+import GameFeaturePanel from '~/components/widgets/GameFeaturePanel.astro';
+import { getHeaderData } from '~/navigation';
 
 export async function getStaticPaths() {
   const allGames = await getCollection('game');
-  
-  // Créer un mapping des slugs de base aux contenus en anglais
+
+  // Create mapping of base slugs to English content
   const slugToGameMap = new Map();
-  
+
   allGames.forEach(game => {
-    // Si le contenu est en anglais ou si nous n'avons pas encore trouvé de contenu pour ce slug
+    // If the content is in English
     if (game.data.language === 'en') {
-      // Extraire le slug de base (sans le suffixe de langue si présent)
+      // Extract the base slug (without language suffix if present)
       const baseSlug = game.slug.replace(/-en$/, '');
       slugToGameMap.set(baseSlug, game);
     }
   });
-  
-  // Créer les chemins statiques
+
+  // Create static paths
   return Array.from(slugToGameMap.entries()).map(([baseSlug, game]) => ({
     params: { slug: baseSlug },
     props: { game },
@@ -30,6 +33,30 @@ export async function getStaticPaths() {
 }
 
 const { game } = Astro.props;
+
+// Get related articles for this game (by category)
+const relatedArticles = await getCollection('news', ({ data, slug: articleSlug }) => {
+  return (data.language === 'en' || articleSlug.startsWith('en/')) && 
+         !data.draft && 
+         data.category?.toLowerCase() === game.data.translationKey?.toLowerCase();
+});
+
+// Sort articles by publish date (newest to oldest)
+function getPublishTimestamp(article) {
+  const publishDate = article.data.publishDate;
+
+  if (publishDate instanceof Date) {
+    return publishDate.getTime();
+  } else if (typeof publishDate === 'string') {
+    return new Date(publishDate).getTime();
+  } else {
+    return 0;
+  }
+}
+
+const sortedArticles = relatedArticles.sort(
+  (a, b) => getPublishTimestamp(b) - getPublishTimestamp(a)
+);
 
 // Get hero image for JSON-LD
 const heroImage = game.data.hero?.image?.src || "https://hebergtonserv.com/default-image.png";
@@ -57,7 +84,7 @@ const jsonLd = {
           "@type": "Product",
           "name": plan.title || "Default Product Name",
           "description": plan.subtitle || "Default Description",
-          "image": heroImage, // Using hero image for all products
+          "image": heroImage,
           "offers": {
             "@type": "Offer",
             "price": plan.price || "0.00",
@@ -67,8 +94,8 @@ const jsonLd = {
           },
           "aggregateRating": {
             "@type": "AggregateRating",
-            "ratingValue": "4.7", // Average rating
-            "reviewCount": "150", // Number of reviews
+            "ratingValue": "4.7",
+            "reviewCount": "150",
             "bestRating": "5",
             "worstRating": "1"
           }
@@ -96,11 +123,14 @@ const faqItems = game.data.faqs?.map(faq => ({
   description: faq.description,
   icon: faq.icon
 })) || [];
+
+// Get header data for the page
+const headerData = getHeaderData('en');
 ---
 
 <PageLayout metadata={game.data.metadata}>
   <!-- JSON-LD Integration -->
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')}></script>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\u003c')}></script>
 
   <!-- Main Content with compact hero -->
   <Hero2 {...game.data.hero} compact={true} />
@@ -109,6 +139,22 @@ const faqItems = game.data.faqs?.map(faq => ({
     title="Our Plans" 
     prices={game.data.pricing || []} 
   />
+
+  <!-- Game Feature Panel Section -->
+  {game.data.panelFeatures && (
+    <GameFeaturePanel
+      title={game.data.panelFeatures.title}
+      features={game.data.panelFeatures.features}
+    />
+  )}
+
   <FAQs title="Frequently Asked Questions" items={faqItems} />
   <Testimonials title="Customer Reviews" testimonials={game.data.testimonials || []} />
+
+  <!-- Related Articles Section -->
+  <RelatedArticles 
+    articles={sortedArticles} 
+    sectionTitle={`News about ${game.data.title}`} 
+    lang="en" 
+  />
 </PageLayout>

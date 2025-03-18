@@ -1,0 +1,94 @@
+---
+import { defaultLang } from '~/i18n/ui';
+
+interface Props {
+  categories: { name: string; count: number }[];
+  tags: { name: string; count: number }[];
+  currentCategory?: string;
+  currentTag?: string;
+  lang: string;
+}
+
+const { categories, tags, currentCategory, currentTag, lang } = Astro.props;
+
+// Traductions
+const translations = {
+  fr: {
+    categories: 'Catégories',
+    tags: 'Mots-clés',
+    all: 'Toutes les actualités',
+  },
+  en: {
+    categories: 'Categories',
+    tags: 'Tags',
+    all: 'All news',
+  }
+};
+
+const t = translations[lang as keyof typeof translations];
+
+// Fonction pour générer les URLs en fonction de la langue
+function getNewsUrl() {
+  return lang === defaultLang ? '/news' : `/${lang}/news`;
+}
+
+function getCategoryUrl(category: string) {
+  return lang === defaultLang 
+    ? `/news/category/${category.toLowerCase()}` 
+    : `/${lang}/news/category/${category.toLowerCase()}`;
+}
+
+function getTagUrl(tag: string) {
+  return lang === defaultLang 
+    ? `/news/tag/${tag.toLowerCase()}` 
+    : `/${lang}/news/tag/${tag.toLowerCase()}`;
+}
+---
+
+<div class="space-y-8">
+  <!-- Catégories -->
+  <div class="rounded-lg border border-slate-700 bg-slate-900 p-6 shadow-sm">
+    <h3 class="mb-4 text-lg font-bold text-white">{t.categories}</h3>
+    <ul class="space-y-2">
+      <li>
+        <a 
+          href={getNewsUrl()} 
+          class={`block rounded px-3 py-2 transition-colors text-slate-300 ${!currentCategory ? 'bg-slate-800 text-blue-300 font-medium' : 'hover:bg-slate-800'}`}
+        >
+          {t.all}
+        </a>
+      </li>
+      {categories.map((category) => (
+        <li>
+          <a 
+            href={getCategoryUrl(category.name)} 
+            class={`block rounded px-3 py-2 transition-colors text-slate-300 ${currentCategory === category.name.toLowerCase() ? 'bg-slate-800 text-blue-300 font-medium' : 'hover:bg-slate-800'}`}
+          >
+            {category.name} <span class="ml-1 text-sm text-slate-500">({category.count})</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <!-- Tags -->
+  {tags.length > 0 && (
+    <div class="rounded-lg border border-slate-700 bg-slate-900 p-6 shadow-sm">
+      <h3 class="mb-4 text-lg font-bold text-white">{t.tags}</h3>
+      <div class="flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <a 
+            href={getTagUrl(tag.name)} 
+            class={`rounded-full px-3 py-1 text-sm transition-colors ${
+              currentTag === tag.name.toLowerCase() 
+                ? 'bg-slate-800 text-blue-300 font-medium border border-blue-700' 
+                : 'bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300'
+            }`}
+          >
+            #{tag.name} <span class="text-xs text-slate-500">({tag.count})</span>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+</div>

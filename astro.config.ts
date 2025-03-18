@@ -15,11 +15,6 @@ import HebergTonServ from './vendor/integration';
 
 import { readingTimeRemarkPlugin, responsiveTablesRehypePlugin, lazyImagesRehypePlugin } from './src/utils/frontmatter';
 
-
-
-
-
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const hasExternalScripts = false;
@@ -66,7 +61,13 @@ export default defineConfig({
   })],
 
   image: {
-    domains: ['cdn.pixabay.com'],
+    domains: [
+      'cdn.pixabay.com',
+      'res.cloudinary.com' // Ajout du domaine Cloudinary
+    ],
+    remotePatterns: [
+      { protocol: 'https', hostname: 'res.cloudinary.com' } // Configuration spécifique pour Cloudinary
+    ],
   },
 
   markdown: {
@@ -81,6 +82,4 @@ export default defineConfig({
       },
     },
   },
-
-
 });

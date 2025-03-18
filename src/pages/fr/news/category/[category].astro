@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import NewsGrid from '~/components/news/NewsGrid.astro';
+import NewsSidebar from '~/components/news/NewsSidebar.astro';
+
+export async function getStaticPaths() {
+  const allArticles = await getCollection('news', ({ data }) => {
+    return data.language === 'fr' && !data.draft;
+  });
+
+  // Extraire toutes les catégories uniques
+  const categories = [...new Set(allArticles.map(article => article.data.category))];
+
+  return categories.map(category => ({
+    params: { category: category.toLowerCase() },
+    props: { category }
+  }));
+}
+
+const { category } = Astro.props;
+
+// Récupérer tous les articles de cette catégorie
+const allArticles = await getCollection('news', ({ data }) => {
+  return data.language === 'fr' && !data.draft && data.category === category;
+});
+
+// Trier les articles par date de publication (du plus récent au plus ancien)
+const sortedArticles = allArticles.sort(
+  (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime()
+);
+
+// Récupérer toutes les catégories pour la sidebar
+const allFrArticles = await getCollection('news', ({ data }) => {
+  return data.language === 'fr' && !data.draft;
+});
+
+// Extraire toutes les catégories uniques avec leur nombre d'articles
+const categories = [...new Set(allFrArticles.map(article => article.data.category))]
+  .map(cat => ({
+    name: cat,
+    count: allFrArticles.filter(article => article.data.category === cat).length
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+// Extraire tous les tags uniques avec leur nombre d'articles
+const allTags = allFrArticles.flatMap(article => article.data.tags || []);
+const tags = [...new Set(allTags)]
+  .map(tag => ({
+    name: tag,
+    count: allTags.filter(t => t === tag).length
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+// Métadonnées de la page
+const metadata = {
+  title: `${category} | Actualités`,
+  description: `Découvrez tous nos articles dans la catégorie ${category}.`,
+};
+---
+
+<PageLayout metadata={metadata}>
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <div class="mb-8 text-center">
+        <h1 class="mb-4 text-4xl font-bold text-white">Catégorie : <span class="text-primary-400">{category}</span></h1>
+        <p class="mx-auto max-w-2xl text-xl text-slate-300">
+          Tous les articles dans la catégorie {category}
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
+        <!-- Sidebar avec catégories et tags -->
+        <div class="lg:col-span-1">
+          <NewsSidebar 
+            categories={categories} 
+            tags={tags} 
+            currentCategory={category.toLowerCase()}
+            lang="fr"
+          />
+        </div>
+
+        <!-- Liste des articles -->
+        <div class="lg:col-span-3">
+          {sortedArticles.length > 0 ? (
+            <NewsGrid articles={sortedArticles} lang="fr" />
+          ) : (
+            <div class="rounded-lg border border-slate-700 bg-slate-900 p-8 text-center">
+              <p class="text-lg text-slate-300">Aucun article trouvé dans cette catégorie.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+</PageLayout>

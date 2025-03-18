@@ -1,0 +1,96 @@
+---
+import { Image } from 'astro:assets';
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { getLangFromUrl } from '~/i18n/utils';
+import { defaultLang } from '~/i18n/ui';
+
+interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  imageAlt?: string;
+  publishDate: Date | string;
+  category: string;
+  tags?: string[];
+  slug: string;
+  lang: string;
+}
+
+const { title, description, image, imageAlt, publishDate, category, tags, slug, lang } = Astro.props;
+
+// S'assurer que publishDate est un objet Date
+const dateObject = publishDate instanceof Date ? publishDate : new Date(publishDate);
+
+// Formater la date selon la langue
+let formattedDate = "";
+try {
+  formattedDate = new Intl.DateTimeFormat(lang === 'fr' ? 'fr-FR' : 'en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }).format(dateObject);
+} catch (error) {
+  console.error("Error formatting date:", error);
+  formattedDate = "Date non disponible";
+}
+
+// Extraire le slug sans le préfixe de langue
+const cleanSlug = slug.includes('/') ? slug.split('/').pop() : slug;
+
+// URL de l'article - s'assurer qu'il est correctement formaté selon la langue
+// Pour le français (langue par défaut), on n'utilise pas de préfixe de langue
+const articleUrl = lang === defaultLang 
+  ? `/news/${cleanSlug}` 
+  : `/${lang}/news/${cleanSlug}`;
+
+// URLs des tags - également sans préfixe pour le français
+function getTagUrl(tag) {
+  return lang === defaultLang 
+    ? `/news/tag/${tag.toLowerCase()}` 
+    : `/${lang}/news/tag/${tag.toLowerCase()}`;
+}
+---
+
+<article class="group flex flex-col overflow-hidden rounded-lg border border-slate-700 bg-slate-900 transition-all duration-200 hover:border-blue-600 hover:shadow-lg">
+  {image && (
+    <div class="relative h-48 overflow-hidden">
+      <img 
+        src={image} 
+        alt={imageAlt || title} 
+        class="h-full w-full object-cover transition-all duration-300 group-hover:scale-105"
+      />
+      <div class="absolute bottom-0 left-0 bg-blue-600 px-3 py-1 text-xs font-semibold text-white">
+        {category}
+      </div>
+    </div>
+  )}
+  
+  <div class="flex flex-1 flex-col p-5">
+    <div class="mb-2 text-sm text-slate-400">
+      {formattedDate}
+    </div>
+    
+    <h3 class="mb-2 text-xl font-bold text-white">
+      <a href={articleUrl} class="transition-colors duration-200 hover:text-blue-400">
+        {title}
+      </a>
+    </h3>
+    
+    <p class="mb-4 flex-1 text-slate-300">
+      {description}
+    </p>
+    
+    {tags && tags.length > 0 && (
+      <div class="mt-auto flex flex-wrap gap-2">
+        {tags.map((tag) => (
+          <a 
+            href={getTagUrl(tag)} 
+            class="rounded-full bg-slate-800 px-3 py-1 text-xs font-medium text-slate-300 transition-colors duration-200 hover:bg-slate-700 hover:text-white"
+          >
+            #{tag}
+          </a>
+        ))}
+      </div>
+    )}
+  </div>
+</article>

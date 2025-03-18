@@ -1,27 +1,30 @@
 ---
 import { getCollection } from 'astro:content';
-import PageLayout from '~/layouts/PageLayout.astro';  // Utiliser PageLayout
+import PageLayout from '~/layouts/PageLayout.astro';
 import Hero2 from '~/components/widgets/Hero2.astro';
 import Features from '~/components/widgets/Features.astro';
 import Pricing from '~/components/widgets/Pricing.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import Testimonials from '~/components/widgets/Testimonials.astro';
+import RelatedArticles from '~/components/widgets/RelatedArticles.astro';
+import GameFeaturePanel from '~/components/widgets/GameFeaturePanel.astro';
+import { getHeaderData } from '~/navigation';
 
 export async function getStaticPaths() {
   const allGames = await getCollection('game');
-  
+
   // Créer un mapping des slugs de base aux contenus en français
   const slugToGameMap = new Map();
-  
+
   allGames.forEach(game => {
-    // Si le contenu est en français ou si nous n'avons pas encore trouvé de contenu pour ce slug
+    // Si le contenu est en français
     if (game.data.language === 'fr') {
       // Extraire le slug de base (sans le suffixe de langue si présent)
       const baseSlug = game.slug.replace(/-fr$/, '');
       slugToGameMap.set(baseSlug, game);
     }
   });
-  
+
   // Créer les chemins statiques
   return Array.from(slugToGameMap.entries()).map(([baseSlug, game]) => ({
     params: { slug: baseSlug },
@@ -31,10 +34,34 @@ export async function getStaticPaths() {
 
 const { game } = Astro.props;
 
-// Récupération de l'image du héros pour JSON-LD
+// Récupérer les articles liés à ce jeu (par catégorie)
+const relatedArticles = await getCollection('news', ({ data, slug: articleSlug }) => {
+  return (data.language === 'fr' || articleSlug.startsWith('fr/')) && 
+         !data.draft && 
+         data.category?.toLowerCase() === game.data.translationKey?.toLowerCase();
+});
+
+// Trier les articles par date de publication (du plus récent au plus ancien)
+function getPublishTimestamp(article) {
+  const publishDate = article.data.publishDate;
+
+  if (publishDate instanceof Date) {
+    return publishDate.getTime();
+  } else if (typeof publishDate === 'string') {
+    return new Date(publishDate).getTime();
+  } else {
+    return 0;
+  }
+}
+
+const sortedArticles = relatedArticles.sort(
+  (a, b) => getPublishTimestamp(b) - getPublishTimestamp(a)
+);
+
+// Obtenir l'image du héros pour JSON-LD
 const heroImage = game.data.hero?.image?.src || "https://hebergtonserv.com/default-image.png";
 
-// Création du JSON-LD
+// Créer JSON-LD
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -57,7 +84,7 @@ const jsonLd = {
           "@type": "Product",
           "name": plan.title || "Nom du produit par défaut",
           "description": plan.subtitle || "Description par défaut",
-          "image": heroImage, // Utilisation de l'image du héros pour tous les produits
+          "image": heroImage,
           "offers": {
             "@type": "Offer",
             "price": plan.price || "0.00",
@@ -67,8 +94,8 @@ const jsonLd = {
           },
           "aggregateRating": {
             "@type": "AggregateRating",
-            "ratingValue": "4.7", // Note moyenne
-            "reviewCount": "150", // Nombre d'avis
+            "ratingValue": "4.7",
+            "reviewCount": "150",
             "bestRating": "5",
             "worstRating": "1"
           }
@@ -90,17 +117,20 @@ const jsonLd = {
   ]
 };
 
-// Transformer les faqs du jeu en format FAQItem
+// Transformer les FAQs du jeu en format FAQItem
 const faqItems = game.data.faqs?.map(faq => ({
   title: faq.title,
   description: faq.description,
   icon: faq.icon
 })) || [];
+
+// Obtenir les données d'en-tête pour la page
+const headerData = getHeaderData('fr');
 ---
 
 <PageLayout metadata={game.data.metadata}>
-  <!-- Intégration du JSON-LD -->
-  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\\u003c')}></script>
+  <!-- Intégration JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\u003c')}></script>
 
   <!-- Contenu principal avec héros compact -->
   <Hero2 {...game.data.hero} compact={true} />
@@ -109,6 +139,22 @@ const faqItems = game.data.faqs?.map(faq => ({
     title="Nos offres" 
     prices={game.data.pricing || []} 
   />
+
+  <!-- Section du panneau de fonctionnalités du jeu -->
+  {game.data.panelFeatures && (
+    <GameFeaturePanel
+      title={game.data.panelFeatures.title}
+      features={game.data.panelFeatures.features}
+    />
+  )}
+
   <FAQs title="Questions fréquentes" items={faqItems} />
   <Testimonials title="Avis clients" testimonials={game.data.testimonials || []} />
+
+  <!-- Section des articles liés -->
+  <RelatedArticles 
+    articles={sortedArticles} 
+    sectionTitle={`Actualités sur ${game.data.title}`} 
+    lang="fr" 
+  />
 </PageLayout>

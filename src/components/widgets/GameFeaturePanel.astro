@@ -1,0 +1,98 @@
+---
+import Headline from '~/components/ui/Headline.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Image from '~/components/common/Image.astro';
+
+interface Feature {
+  title: string;
+  description: string;
+  image: {
+    src: string;
+    alt: string;
+  };
+}
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  tagline?: string;
+  features: Feature[];
+  isDark?: boolean;
+  bg?: any;
+  id?: string;
+  classes?: {
+    container?: string;
+  };
+}
+
+const {
+  title,
+  subtitle,
+  tagline,
+  features,
+  isDark = false,
+  bg = await Astro.slots.render('bg'),
+  id,
+  classes = {},
+} = Astro.props;
+---
+
+<WidgetWrapper id={id} isDark={isDark} containerClass={`max-w-6xl mx-auto ${classes?.container ?? ''}`} bg={bg}>
+  <Headline title={title} subtitle={subtitle} tagline={tagline} />
+
+  <div class="space-y-16">
+    {features.map((feature, index) => (
+      <div
+        class={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-8`}
+        data-aos={index % 2 === 0 ? 'fade-right' : 'fade-left'}
+      >
+        <!-- Screenshot/Image -->
+        <div class="flex-shrink-0 w-full lg:w-1/2">
+          <div class="rounded-lg overflow-hidden shadow-xl relative group">
+            <a href={feature.image.src} target="_blank" rel="noopener noreferrer" class="block">
+              <Image
+                src={feature.image.src}
+                alt={feature.image.alt}
+                class="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-105"
+                width={500}
+                height={500}
+              />
+            </a>
+          </div>
+        </div>
+
+        <!-- Feature Description -->
+        <div class="flex-grow w-full lg:w-1/2 text-center lg:text-left">
+          <h3 class="text-2xl font-semibold text-white mb-4">{feature.title}</h3>
+          <p class="text-slate-300 text-lg">{feature.description}</p>
+        </div>
+      </div>
+    ))}
+  </div>
+</WidgetWrapper>
+
+<script>
+  import AOS from 'aos';
+  import 'aos/dist/aos.css';
+
+  // Initialize AOS
+  AOS.init({
+    duration: 800,
+    easing: 'ease-in-out',
+    once: true,
+  });
+</script>
+
+<style>
+  /* Animation styles */
+  [data-aos] {
+    opacity: 0;
+    transform: translateY(20px);
+    transition-property: opacity, transform;
+  }
+
+  [data-aos].aos-animate {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>

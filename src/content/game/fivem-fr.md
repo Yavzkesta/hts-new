@@ -11,7 +11,7 @@ hero:
   title: "Découvrez l'hébergement FiveM n°1 : HebergTonServ"
   subtitle: "Profitez d'une infrastructure haut de gamme pour vos serveurs RP. Bénéficiez de processeurs AMD Ryzen, stockage SSD NVMe, et d'une protection Anti-DDoS avancée. Testez gratuitement pendant 24 heures !"
   image:
-    src: "~/assets/images/gta5.png"
+    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
     alt: "Hébergeur FiveM - Serveur FiveM RP"
   actions:
     - variant: "primary"
@@ -220,22 +220,27 @@ contact:
   - title: "Discord"
     description: "Rejoignez notre communauté Discord"
     icon: "tabler:brand-discord"
+panelFeatures:
+  title: "Découvrez notre panel Fivem exceptionnel"
+  features:
+    - title: "Connexion sécurisée SFTP"
+      description: "Accédez à vos fichiers en toute sécurité grâce à une connexion SFTP pour gérer votre hébergement FiveM."
+      image:
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        alt: "Connexion sécurisée SFTP"
+    - title: "Gestionnaire de fichiers pour votre hébergement FiveM"
+      description: "Gérez facilement les fichiers de votre serveur avec un gestionnaire de fichiers intuitif et performant."
+      image:
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        alt: "Gestionnaire de fichiers"
+    - title: "Ajouter vos amis à utiliser votre serveur FiveM"
+      description: "Invitez vos amis ou collaborateurs à gérer et administrer votre serveur FiveM avec des permissions personnalisées."
+      image:
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        alt: "Ajouter vos amis"
+    - title: "Gestion simplifiée de vos bases de données sur votre hébergement FiveM"
+      description: "Administrez vos bases de données avec une interface simple et efficace pour garantir une gestion optimale de votre serveur FiveM."
+      image:
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        alt: "Gestion simplifiée des bases de données"
 ---
-
-## Hébergement FiveM Premium pour Vos Serveurs RP
-
-HebergTonServ vous offre un **hébergement FiveM** de qualité supérieure, spécialement conçu pour les serveurs RP (Roleplay). Notre infrastructure haute performance garantit une expérience de jeu fluide et sans lag pour vous et vos joueurs.
-
-### Pourquoi Choisir HebergTonServ pour Votre Serveur FiveM ?
-
-- **Performance Inégalée** : Nos serveurs sont équipés de processeurs AMD Ryzen 9 5950X et de SSD NVMe ultra-rapides pour des temps de chargement minimaux.
-- **Protection Anti-DDoS Avancée** : Grâce à notre partenariat avec CosmicGuard, votre serveur est protégé contre les attaques DDoS 24/7.
-- **Support Technique Expert** : Notre équipe de support est disponible à tout moment pour vous aider avec toutes vos questions techniques.
-- **Interface Intuitive** : Gérez facilement votre serveur FiveM avec notre panneau d'administration convivial.
-- **Clé Patreon FiveM Incluse** : Profitez des avantages Patreon sans frais supplémentaires.
-
-### Des Offres Adaptées à Tous les Besoins
-
-Que vous lanciez un petit serveur RP entre amis ou que vous gériez une grande communauté, nous avons l'offre qu'il vous faut. Nos forfaits évolutifs vous permettent de commencer petit et de grandir selon vos besoins.
-
-Commencez dès aujourd'hui avec notre essai gratuit de 24 heures et découvrez pourquoi HebergTonServ est le choix numéro 1 des communautés FiveM RP en France !

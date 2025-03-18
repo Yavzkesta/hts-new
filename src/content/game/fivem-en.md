@@ -2,42 +2,42 @@
 language: "en"
 translationKey: "fivem"
 title: "HebergTonServ - Premium FiveM Hosting"
-description: "Discover HebergTonServ, the #1 FiveM host for your RP servers. Enjoy high-performance hosting with AMD Ryzen, NVMe SSD, and advanced Anti-DDoS protection."
+description: "Discover HebergTonServ, the #1 FiveM hosting provider for your RP servers. Enjoy high-performance hosting with AMD Ryzen, NVMe SSD, and advanced Anti-DDoS protection."
 metadata:
   title: "HebergTonServ - Premium FiveM Hosting"
-  description: "Discover HebergTonServ, the #1 FiveM host for your RP servers."
+  description: "Discover HebergTonServ, the #1 FiveM hosting provider for your RP servers."
 hero:
   tagline: "Premium FiveM Hosting"
-  title: "Discover the #1 FiveM hosting: HebergTonServ"
-  subtitle: "Enjoy a high-end infrastructure for your RP servers. Benefit from AMD Ryzen processors, NVMe SSD storage, and advanced Anti-DDoS protection. Test for free for 24 hours!"
+  title: "Discover the #1 FiveM Hosting: HebergTonServ"
+  subtitle: "Take advantage of our high-end infrastructure for your RP servers. Benefit from AMD Ryzen processors, NVMe SSD storage, and advanced Anti-DDoS protection. Try it free for 24 hours!"
   image:
-    src: "~/assets/images/gta5.png"
+    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
     alt: "FiveM Host - FiveM RP Server"
   actions:
     - variant: "primary"
-      text: "Order now"
+      text: "Order Now"
       href: "#pricing"
     - variant: "secondary"
-      text: "Learn more"
+      text: "Learn More"
       href: "#features"
 features:
   - title: "Secure SFTP Connection"
-    description: "Access your files securely with an SFTP connection to manage your FiveM hosting."
+    description: "Access your files securely through SFTP connection to manage your FiveM hosting."
     icon: "tabler:lock"
   - title: "File Manager for your FiveM hosting"
-    description: "Easily manage your server files with an intuitive and efficient file manager."
+    description: "Easily manage your server files with an intuitive and powerful file manager."
     icon: "tabler:file"
-  - title: "Add your friends to use your FiveM server"
-    description: "Invite your friends or collaborators to manage and administer your FiveM server with custom permissions."
+  - title: "Add your friends to manage your FiveM server"
+    description: "Invite your friends or collaborators to manage and administer your FiveM server with customized permissions."
     icon: "tabler:users"
-  - title: "Simplified database management on your FiveM hosting"
-    description: "Administer your databases with a simple and efficient interface for optimal management."
+  - title: "Simplified Database Management"
+    description: "Manage your databases with a simple and efficient interface to ensure optimal management of your FiveM server."
     icon: "tabler:database"
-  - title: "Quick actions on your FiveM server"
-    description: "Perform quick actions like restarting, stopping, or modifying your server with one click."
+  - title: "Quick Actions on your FiveM server"
+    description: "Perform quick actions like restart, stop, or modify your server with one click from your admin panel."
     icon: "tabler:bolt"
-  - title: "Design and intuitive communication interface for your FiveM hosting"
-    description: "Enjoy a modern and ergonomic interface for an optimal user experience."
+  - title: "Intuitive and Modern Interface"
+    description: "Enjoy a modern and ergonomic interface for an optimal user experience when managing your FiveM server."
     icon: "tabler:layout-dashboard"
 pricing:
   - title: "Free Trial"
@@ -61,7 +61,7 @@ pricing:
       text: "Try for free"
       href: "https://hebergtonserv.com/fivem"
   - title: "Starter"
-    subtitle: "Ideal for starting your FiveM RP server."
+    subtitle: "Ideal to start your FiveM RP server."
     price: "3.90"
     period: "/ month"
     items:
@@ -141,7 +141,7 @@ pricing:
       text: "Order Community Pro"
       href: "https://hebergtonserv.com/fivem"
   - title: "Infinity"
-    subtitle: "FiveM hosting without limits."
+    subtitle: "Unlimited FiveM hosting."
     price: "29.90"
     period: "/ month"
     items:
@@ -162,44 +162,23 @@ pricing:
       href: "https://hebergtonserv.com/fivem"
 faqs:
   - title: "Can I upgrade or downgrade my FiveM server?"
-    description: "Absolutely! You can upgrade or downgrade your FiveM server at any time and only pay the difference, calculated pro-rata. Upgrades can be performed automatically from your client area. This allows you to always have the resources adapted to your needs, without loss of data or configuration."
+    description: "Absolutely! You can upgrade or downgrade your FiveM server at any time and only pay the difference, calculated pro-rata. Upgrades can be performed automatically from your client area. This allows you to always have resources adapted to your needs, without loss of data or configuration."
     icon: "tabler:chevrons-right"
   - title: "What payment methods are accepted?"
-    description: "We accept several payment methods, including credit cards, bank transfers, Paysafecard, and cryptocurrencies. For more information, check our payment section in the client area. We ensure that every transaction is secure to guarantee the protection of your personal and financial information."
+    description: "We accept several payment methods, including credit cards, bank transfers, Paysafecard, and cryptocurrencies. For more information, please check our payment section in the client area. We ensure that each transaction is secure to guarantee the protection of your personal and financial information."
     icon: "tabler:chevrons-right"
   - title: "What security measures are in place to protect my FiveM server from DDoS attacks?"
-    description: "We take the security of your FiveM server very seriously and we are proud of our partnership with CosmicGuard to provide state-of-the-art Anti-DDoS protection. This protection is capable of filtering and mitigating DDoS attacks, ensuring that your server remains online and accessible, even during an attack. Our infrastructure is designed to detect and neutralize threats quickly and efficiently."
+    description: "We take the security of your FiveM server very seriously and are proud of our partnership with CosmicGuard to provide state-of-the-art Anti-DDoS protection. This protection is capable of filtering and mitigating DDoS attacks, ensuring that your server remains online and accessible, even during an attack. Our infrastructure is designed to detect and neutralize threats quickly and efficiently."
     icon: "tabler:chevrons-right"
   - title: "How can I administer my FiveM server?"
-    description: "We provide easy access to administer your FiveM server. You can use the intuitive management interface, called TxAdmin, which allows you to perform administrative tasks such as restarting the server, managing players, accessing the console, and much more. TxAdmin is designed to be user-friendly, even for beginner administrators, while offering advanced features for experienced users."
+    description: "We provide easy access to your FiveM server administration. You can use the intuitive management interface, called TxAdmin, which allows you to perform administrative tasks such as server restart, player management, console access, and much more. TxAdmin is designed to be user-friendly, even for beginner administrators, while offering advanced features for experienced users."
     icon: "tabler:chevrons-right"
   - title: "What happens if I accidentally delete all the files on my FiveM server?"
     description: "We understand that mistakes can happen. That's why we offer a free upgradable 5 GB backup for your FiveM server. If you accidentally delete your files, you can restore a previous backup from your management dashboard. Our backups are performed regularly to ensure that you can always recover your important data."
     icon: "tabler:chevrons-right"
-  - title: "How can I easily migrate from another host to HebergTonServ for my FiveM server?"
-    description: "Migration to HebergTonServ is simple and hassle-free. We offer full support to help you transfer your FiveM server from your current host. Contact our support team and we will guide you through the migration process. We ensure that your server is transferred quickly and efficiently, without service interruption."
-    icon: "tabler:chevrons-right"
-  - title: "What type of technical support is available and at what hours?"
-    description: "We offer 24/7 technical support via live chat, email, and ticket. Our team of experts is always there to help you with all your FiveM hosting needs. Whether you have a technical question or need assistance with your server, we are there to provide you with quick and efficient answers."
-    icon: "tabler:chevrons-right"
-  - title: "How long does it take for my FiveM server to be ready to use after purchase?"
-    description: "After payment, setting up your FiveM server typically takes less than 30 minutes. You will receive all the details to access and administer your server in your client area. We strive to provide a fast and reliable service so you can start using your server without delay."
-    icon: "tabler:chevrons-right"
-  - title: "Can I add mods to my FiveM server?"
-    description: "Yes, you have the freedom to add your own mods. You can do this by accessing the server files via an FTP client or directly through the TxAdmin management interface. We also offer comprehensive documentation to help you install and configure your mods easily."
-    icon: "tabler:chevrons-right"
-  - title: "Are there any resource limits on my server, such as bandwidth or CPU usage?"
-    description: "We offer plans with different resource limits to suit your needs. Check our packages for more information on specific limits. Our FiveM hosting offers are designed to provide optimal performance, whether you have a small server or a large community of players."
-    icon: "tabler:chevrons-right"
-  - title: "What is the best FiveM host for RP server?"
-    description: "HebergTonServ is the best host for FiveM RP server due to its performance, advanced anti-DDoS protection, 24/7 support, and customized offers adapted to RP servers of all sizes."
-    icon: "tabler:chevrons-right"
-  - title: "Why choose HebergTonServ as FiveM host?"
-    description: "HebergTonServ stands out as the best FiveM host thanks to its high-performance servers, advanced Anti-DDoS protection, expert 24/7 technical support, and offers adapted to all FiveM RP server needs."
-    icon: "tabler:chevrons-right"
 testimonials:
   - testimonial: "Since we migrated to HebergTonServ, the stability and performance of our FiveM server have reached an exceptional level."
-    name: "Peter Johnson"
+    name: "Peter Smith"
     job: "RP Server Administrator"
   - testimonial: "HebergTonServ offers incredible Anti-DDoS protection. Since we've been using their services, our attack problems are a thing of the past."
     name: "Sophie Williams"
@@ -220,22 +199,27 @@ contact:
   - title: "Discord"
     description: "Join our Discord community"
     icon: "tabler:brand-discord"
+panelFeatures:
+  title: "Discover our exceptional FiveM panel"
+  features:
+    - title: "Secure SFTP Connection"
+      description: "Access your files securely through SFTP connection to manage your FiveM hosting."
+      image:
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        alt: "Secure SFTP Connection"
+    - title: "File Manager for your FiveM hosting"
+      description: "Easily manage your server files with an intuitive and powerful file manager."
+      image:
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        alt: "File Manager"
+    - title: "Add your friends to use your FiveM server"
+      description: "Invite your friends or collaborators to manage and administer your FiveM server with customized permissions."
+      image:
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        alt: "Add your friends"
+    - title: "Simplified Database Management on your FiveM hosting"
+      description: "Manage your databases with a simple and efficient interface to ensure optimal management of your FiveM server."
+      image:
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        alt: "Simplified Database Management"
 ---
-
-## Premium FiveM Hosting for Your RP Servers
-
-HebergTonServ offers you premium **FiveM hosting**, specially designed for RP (Roleplay) servers. Our high-performance infrastructure guarantees a smooth and lag-free gaming experience for you and your players.
-
-### Why Choose HebergTonServ for Your FiveM Server?
-
-- **Unmatched Performance**: Our servers are equipped with AMD Ryzen 9 5950X processors and ultra-fast NVMe SSDs for minimal loading times.
-- **Advanced Anti-DDoS Protection**: Thanks to our partnership with CosmicGuard, your server is protected against DDoS attacks 24/7.
-- **Expert Technical Support**: Our support team is available at any time to help you with all your technical questions.
-- **Intuitive Interface**: Easily manage your FiveM server with our user-friendly administration panel.
-- **FiveM Patreon Key Included**: Enjoy Patreon benefits at no additional cost.
-
-### Offers Adapted to All Needs
-
-Whether you're launching a small RP server among friends or managing a large community, we have the offer you need. Our scalable packages allow you to start small and grow according to your needs.
-
-Start today with our free 24-hour trial and discover why HebergTonServ is the number 1 choice for FiveM RP communities worldwide!

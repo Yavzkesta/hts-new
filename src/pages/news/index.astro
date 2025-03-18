@@ -1,0 +1,84 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import NewsGrid from '~/components/news/NewsGrid.astro';
+import NewsSidebar from '~/components/news/NewsSidebar.astro';
+import { defaultLang } from '~/i18n/ui';
+
+// Récupérer tous les articles en français (langue par défaut)
+const allArticles = await getCollection('news', ({ data, slug }) => {
+  // Accepter les articles avec data.language === 'fr' OU ceux qui sont dans le dossier fr/
+  return (data.language === defaultLang || slug.startsWith(`${defaultLang}/`)) && !data.draft;
+});
+
+// Fonction pour obtenir la date de publication sous forme de timestamp
+function getPublishTimestamp(article) {
+  const publishDate = article.data.publishDate;
+  
+  if (publishDate instanceof Date) {
+    return publishDate.getTime();
+  } else if (typeof publishDate === 'string') {
+    return new Date(publishDate).getTime();
+  } else {
+    // Fallback si la date n'est pas valide
+    return 0; // Ou Date.now() pour utiliser la date actuelle comme fallback
+  }
+}
+
+// Trier les articles par date de publication (du plus récent au plus ancien)
+const sortedArticles = allArticles.sort(
+  (a, b) => getPublishTimestamp(b) - getPublishTimestamp(a)
+);
+
+// Extraire toutes les catégories uniques avec leur nombre d'articles
+const categories = [...new Set(allArticles.map(article => article.data.category))]
+  .map(category => ({
+    name: category,
+    count: allArticles.filter(article => article.data.category === category).length
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+// Extraire tous les tags uniques avec leur nombre d'articles
+const allTags = allArticles.flatMap(article => article.data.tags || []);
+const tags = [...new Set(allTags)]
+  .map(tag => ({
+    name: tag,
+    count: allTags.filter(t => t === tag).length
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+// Métadonnées de la page
+const metadata = {
+  title: 'Actualités | Notre Blog',
+  description: 'Découvrez les dernières actualités et articles de notre blog.',
+};
+---
+
+<PageLayout metadata={metadata}>
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <div class="mb-8 text-center">
+        <h1 class="mb-4 text-4xl font-bold text-white">Actualités</h1>
+        <p class="mx-auto max-w-2xl text-xl text-slate-300">
+          Découvrez nos dernières actualités, articles et annonces
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
+        <!-- Sidebar avec catégories et tags -->
+        <div class="lg:col-span-1">
+          <NewsSidebar 
+            categories={categories} 
+            tags={tags} 
+            lang={defaultLang}
+          />
+        </div>
+
+        <!-- Liste des articles -->
+        <div class="lg:col-span-3">
+          <NewsGrid articles={sortedArticles} lang={defaultLang} />
+        </div>
+      </div>
+    </div>
+  </section>
+</PageLayout>

@@ -8,6 +8,8 @@ import Pricing from '~/components/widgets/Pricing.astro';
 import FAQs from '~/components/widgets/FAQs.astro';
 import Testimonials from '~/components/widgets/Testimonials.astro';
 import Header from '~/components/widgets/Header.astro';
+import RelatedArticles from '~/components/widgets/RelatedArticles.astro';
+import GameFeaturePanel from '~/components/widgets/GameFeaturePanel.astro';
 import { getHeaderData } from '~/navigation';
 
 export async function getStaticPaths() {
@@ -19,6 +21,7 @@ export async function getStaticPaths() {
     const baseSlug = game.slug.replace(/-(fr|en)$/, '');
     uniqueSlugs.add(baseSlug);
   });
+
   return Array.from(uniqueSlugs).map(slug => ({
     params: { slug },
   }));
@@ -42,6 +45,30 @@ const faqItems = gameContent?.data.faqs?.map(faq => ({
   description: faq.description,
   icon: faq.icon || 'tabler:chevrons-right'
 })) || [];
+
+// Récupérer les articles liés à ce jeu (par translationKey)
+const relatedArticles = gameContent ? await getCollection('news', ({ data, slug: articleSlug }) => {
+  return (data.language === defaultLang || articleSlug.startsWith(`${defaultLang}/`)) && 
+         !data.draft && 
+         data.category?.toLowerCase() === gameContent.data.translationKey?.toLowerCase();
+}) : [];
+
+// Trier les articles par date de publication (du plus récent au plus ancien)
+function getPublishTimestamp(article) {
+  const publishDate = article.data.publishDate;
+  
+  if (publishDate instanceof Date) {
+    return publishDate.getTime();
+  } else if (typeof publishDate === 'string') {
+    return new Date(publishDate).getTime();
+  } else {
+    return 0;
+  }
+}
+
+const sortedArticles = relatedArticles.sort(
+  (a, b) => getPublishTimestamp(b) - getPublishTimestamp(a)
+);
 ---
 
 {gameContent ? (
@@ -72,6 +99,14 @@ const faqItems = gameContent?.data.faqs?.map(faq => ({
         prices={gameContent.data.pricing} 
       />
     )}
+
+    <!-- Section du panneau de fonctionnalités du jeu -->
+    {gameContent.data.panelFeatures && (
+      <GameFeaturePanel
+        title={gameContent.data.panelFeatures.title}
+        features={gameContent.data.panelFeatures.features}
+      />
+    )}
     
     {faqItems.length > 0 && (
       <FAQs 
@@ -91,12 +126,18 @@ const faqItems = gameContent?.data.faqs?.map(faq => ({
     <div class="container mx-auto px-4 py-8 prose dark:prose-invert max-w-none">
       <Fragment set:html={gameContent.body} />
     </div>
+
+    <!-- Section des articles liés -->
+    <RelatedArticles 
+      articles={sortedArticles} 
+      sectionTitle={`News about ${gameContent.data.title}`} 
+      lang={defaultLang} 
+    />
   </Layout>
 ) : (
   <>
     <meta http-equiv="refresh" content={`0;url=/${defaultLang}/games/${slug}`} />
     <script define:vars={{ defaultLang, slug }}>
-      // Client-side redirection
       window.location.pathname = `/${defaultLang}/games/${slug}`;
     </script>
   </>

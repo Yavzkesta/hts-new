@@ -1,0 +1,35 @@
+---
+import NewsCard from './NewsCard.astro';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  articles: CollectionEntry<'news'>[];
+  lang: string;
+}
+
+const { articles, lang } = Astro.props;
+---
+
+<div class="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+  {
+    articles.map((article) => (
+      <NewsCard
+        title={article.data.title}
+        description={article.data.description}
+        image={article.data.image}
+        imageAlt={article.data.imageAlt}
+        publishDate={article.data.publishDate}
+        category={article.data.category}
+        tags={article.data.tags}
+        slug={article.slug}
+        lang={lang}
+      />
+    ))
+  }
+</div>
+
+{articles.length === 0 && (
+  <div class="rounded-lg border border-slate-700 bg-slate-900 p-8 text-center">
+    <p class="text-lg text-slate-300">No articles found.</p>
+  </div>
+)}

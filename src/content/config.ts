@@ -72,6 +72,20 @@ const gameCollection = defineCollection({
         icon: z.string(),
       })
     ),
+    // Ajout du schéma pour panelFeatures
+    panelFeatures: z.object({
+      title: z.string(),
+      features: z.array(
+        z.object({
+          title: z.string(),
+          description: z.string(),
+          image: z.object({
+            src: z.string(),
+            alt: z.string(),
+          }),
+        })
+      ),
+    }).optional(),
   }),
 });
 

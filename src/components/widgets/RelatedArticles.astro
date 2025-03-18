@@ -1,0 +1,104 @@
+---
+import NewsCard from '~/components/news/NewsCard.astro';
+import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
+import Headline from '~/components/ui/Headline.astro';
+
+interface Props {
+  articles: any[];
+  sectionTitle: string;
+  lang: string;
+}
+
+const { articles, sectionTitle, lang } = Astro.props;
+---
+
+<WidgetWrapper id="related-articles" isDark={true} containerClass="max-w-6xl mx-auto">
+  <Headline title={sectionTitle} />
+
+  <div class="relative">
+    <!-- Slider container -->
+    <div class="overflow-hidden">
+      <div id="articles-slider" class="flex transition-transform duration-500 ease-in-out">
+        {
+          articles.map((article) => {
+            // Extraire le slug sans le préfixe de langue
+            const cleanSlug = article.slug.includes('/') ? article.slug.split('/').pop() : article.slug;
+
+            return (
+              <div class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 px-4">
+                <NewsCard
+                  title={article.data.title}
+                  description={article.data.description}
+                  image={article.data.image}
+                  imageAlt={article.data.imageAlt}
+                  publishDate={article.data.publishDate}
+                  category={article.data.category}
+                  tags={article.data.tags}
+                  slug={article.slug}
+                  lang={lang}
+                />
+              </div>
+            );
+          })
+        }
+      </div>
+    </div>
+
+    <!-- Navigation buttons -->
+    <button id="prev-btn" class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white rounded-full p-2 shadow-lg hover:bg-slate-700">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+    </button>
+    <button id="next-btn" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-slate-800 text-white rounded-full p-2 shadow-lg hover:bg-slate-700">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+    </button>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const slider = document.getElementById('articles-slider');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+
+      let currentIndex = 0;
+      const itemsPerView = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
+      const totalItems = slider.children.length;
+      const maxIndex = Math.max(0, totalItems - itemsPerView);
+
+      const updateSlider = () => {
+        const translateX = -(currentIndex * (100 / itemsPerView));
+        slider.style.transform = `translateX(${translateX}%)`;
+
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === maxIndex;
+      };
+
+      prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateSlider();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (currentIndex < maxIndex) {
+          currentIndex++;
+          updateSlider();
+        }
+      });
+
+      updateSlider();
+
+      window.addEventListener('resize', () => {
+        const newItemsPerView = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
+        if (newItemsPerView !== itemsPerView) {
+          currentIndex = 0;
+          updateSlider();
+        }
+      });
+    });
+  </script>
+</WidgetWrapper>
