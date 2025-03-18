@@ -4,14 +4,19 @@ import { Image } from 'astro:assets';
 import PageLayout from '~/layouts/PageLayout.astro';
 
 export async function getStaticPaths() {
-  const newsEntries = await getCollection('news', ({ data }) => {
-    return data.language === 'en' && !data.draft;
+  const newsEntries = await getCollection('news', ({ data, id }) => {
+    return data.language === 'en' && !data.draft && id.startsWith('en/');
   });
 
-  return newsEntries.map(entry => ({
-    params: { slug: entry.slug },
-    props: { entry },
-  }));
+  return newsEntries.map(entry => {
+    // Extract just the filename part without the language prefix
+    const slug = entry.id.split('/')[1].replace(/\.md$/, '');
+    
+    return {
+      params: { slug },
+      props: { entry },
+    };
+  });
 }
 
 const { entry } = Astro.props;
@@ -32,22 +37,37 @@ try {
 }
 
 // Get similar articles (same category)
-const similarArticles = await getCollection('news', ({ data, slug }) => {
+const similarArticles = await getCollection('news', ({ data, id }) => {
   return data.language === 'en' && 
          !data.draft && 
          data.category === entry.data.category && 
-         slug !== entry.slug;
+         id !== entry.id;
 });
+
+// Helper function to ensure date is a Date object
+function ensureDate(dateInput) {
+  if (dateInput instanceof Date) return dateInput;
+  return new Date(dateInput);
+}
 
 // Sort similar articles by date and limit to 3
 const relatedArticles = similarArticles
-  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .sort((a, b) => {
+try {
+      const dateA = ensureDate(a.data.publishDate);
+      const dateB = ensureDate(b.data.publishDate);
+      return dateB.getTime() - dateA.getTime();
+} catch (error) {
+      console.error('Error sorting dates:', error);
+      return 0;
+}
+  })
   .slice(0, 3);
 
 // Format publication date
 let publishDate = "";
 try {
-  const dateObject = entry.data.publishDate instanceof Date ? entry.data.publishDate : new Date(entry.data.publishDate);
+  const dateObject = ensureDate(entry.data.publishDate);
   publishDate = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'long',
@@ -80,7 +100,7 @@ const metadata = {
           {entry.data.category}
         </a>
       )}
-      
+    
       <h1 class="mb-4 text-4xl font-bold text-white">{entry.data.title}</h1>
       
       <div class="mb-6 flex flex-wrap items-center justify-center gap-4 text-slate-400">
@@ -89,30 +109,30 @@ const metadata = {
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
           <span>{publishDate}</span>
-        </div>
-        
+    </div>
+    
         {entry.data.author && (
           <div class="flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" class="mr-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
             <span>{entry.data.author}</span>
-          </div>
-        )}
-        
+        </div>
+    )}
+    
         {translatedArticle && (
           <a 
-            href={`/fr/news/${translatedArticle.slug}`} 
+            href={`/fr/news/${translatedArticle.id.split('/')[1].replace(/\.md$/, '')}`} 
             class="flex items-center text-blue-400 hover:underline"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
             </svg>
             <span>Version française</span>
-          </a>
+            </a>
         )}
+        </div>
       </div>
-    </div>
     
     {entry.data.image && (
       <div class="mb-8 overflow-hidden rounded-lg border border-slate-700">
@@ -149,7 +169,7 @@ const metadata = {
         <h2 class="mb-6 text-2xl font-bold text-white">Similar Articles</h2>
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {relatedArticles.map((article) => (
-            <a href={`/en/news/${article.slug}`} class="group block overflow-hidden rounded-lg border border-slate-700 bg-slate-900 transition-all hover:border-blue-600 hover:shadow-lg">
+            <a href={`/en/news/${article.id.split('/')[1].replace(/\.md$/, '')}`} class="group block overflow-hidden rounded-lg border border-slate-700 bg-slate-900 transition-all hover:border-blue-600 hover:shadow-lg">
               {article.data.image && (
                 <div class="aspect-video overflow-hidden">
                   <img 

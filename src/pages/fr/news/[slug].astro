@@ -4,14 +4,19 @@ import { Image } from 'astro:assets';
 import PageLayout from '~/layouts/PageLayout.astro';
 
 export async function getStaticPaths() {
-  const newsEntries = await getCollection('news', ({ data }) => {
-    return data.language === 'fr' && !data.draft;
+  const newsEntries = await getCollection('news', ({ data, id }) => {
+    return data.language === 'fr' && !data.draft && id.startsWith('fr/');
   });
 
-  return newsEntries.map(entry => ({
-    params: { slug: entry.slug },
-    props: { entry },
-  }));
+  return newsEntries.map(entry => {
+    // Extraire juste la partie du nom de fichier sans le préfixe de langue
+    const slug = entry.id.split('/')[1].replace(/\.md$/, '');
+    
+    return {
+      params: { slug },
+      props: { entry },
+    };
+  });
 }
 
 const { entry } = Astro.props;
@@ -31,23 +36,38 @@ try {
   console.error('Erreur lors de la récupération de la traduction:', error);
 }
 
+// Fonction pour assurer qu'une date est un objet Date
+function ensureDate(dateInput) {
+  if (dateInput instanceof Date) return dateInput;
+  return new Date(dateInput);
+}
+
 // Récupérer des articles similaires (même catégorie)
-const similarArticles = await getCollection('news', ({ data, slug }) => {
+const similarArticles = await getCollection('news', ({ data, id }) => {
   return data.language === 'fr' && 
          !data.draft && 
          data.category === entry.data.category && 
-         slug !== entry.slug;
+         id !== entry.id;
 });
 
 // Trier les articles similaires par date et limiter à 3
 const relatedArticles = similarArticles
-  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .sort((a, b) => {
+    try {
+      const dateA = ensureDate(a.data.publishDate);
+      const dateB = ensureDate(b.data.publishDate);
+      return dateB.getTime() - dateA.getTime();
+    } catch (error) {
+      console.error('Erreur lors du tri des dates:', error);
+      return 0;
+    }
+  })
   .slice(0, 3);
 
 // Formater la date de publication
 let publishDate = "";
 try {
-  const dateObject = entry.data.publishDate instanceof Date ? entry.data.publishDate : new Date(entry.data.publishDate);
+  const dateObject = ensureDate(entry.data.publishDate);
   publishDate = new Intl.DateTimeFormat('fr-FR', {
     year: 'numeric',
     month: 'long',
@@ -102,7 +122,7 @@ const metadata = {
         
         {translatedArticle && (
           <a 
-            href={`/en/news/${translatedArticle.slug}`} 
+            href={`/en/news/${translatedArticle.id.split('/')[1].replace(/\.md$/, '')}`} 
             class="flex items-center text-blue-400 hover:underline"
           >
             <svg xmlns="http://www.w3.org/2000/svg" class="mr-1 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -149,7 +169,7 @@ const metadata = {
         <h2 class="mb-6 text-2xl font-bold text-white">Articles similaires</h2>
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {relatedArticles.map((article) => (
-            <a href={`/fr/news/${article.slug}`} class="group block overflow-hidden rounded-lg border border-slate-700 bg-slate-900 transition-all hover:border-blue-600 hover:shadow-lg">
+            <a href={`/fr/news/${article.id.split('/')[1].replace(/\.md$/, '')}`} class="group block overflow-hidden rounded-lg border border-slate-700 bg-slate-900 transition-all hover:border-blue-600 hover:shadow-lg">
               {article.data.image && (
                 <div class="aspect-video overflow-hidden">
                   <img 

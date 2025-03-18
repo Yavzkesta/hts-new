@@ -40,6 +40,12 @@ try {
   console.error('Error retrieving translation:', error);
 }
 
+// Helper function to ensure date is a Date object
+function ensureDate(dateInput) {
+  if (dateInput instanceof Date) return dateInput;
+  return new Date(dateInput);
+}
+
 // Get similar articles (same category)
 const similarArticles = await getCollection('news', ({ data, slug }) => {
   return data.language === 'en' && 
@@ -50,7 +56,16 @@ const similarArticles = await getCollection('news', ({ data, slug }) => {
 
 // Sort similar articles by date and limit to 3
 const relatedArticles = similarArticles
-  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .sort((a, b) => {
+    try {
+      const dateA = ensureDate(a.data.publishDate);
+      const dateB = ensureDate(b.data.publishDate);
+      return dateB.getTime() - dateA.getTime();
+    } catch (error) {
+      console.error('Error sorting dates:', error);
+      return 0; // Keep original order if there's an error
+    }
+  })
   .slice(0, 3)
   .map(article => {
     // Extraire le slug sans le préfixe de langue pour chaque article similaire
@@ -61,7 +76,7 @@ const relatedArticles = similarArticles
 // Format publication date
 let publishDate = "";
 try {
-  const dateObject = entry.data.publishDate instanceof Date ? entry.data.publishDate : new Date(entry.data.publishDate);
+  const dateObject = ensureDate(entry.data.publishDate);
   publishDate = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'long',
