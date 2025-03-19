@@ -9,6 +9,7 @@ import Testimonials from '~/components/widgets/Testimonials.astro';
 import RelatedArticles from '~/components/widgets/RelatedArticles.astro';
 import GameFeaturePanel from '~/components/widgets/GameFeaturePanel.astro';
 import { getHeaderData } from '~/navigation';
+import { getCloudinaryUrl } from '~/utils/cloudinary';
 
 export async function getStaticPaths() {
   const allGames = await getCollection('game');
@@ -58,8 +59,11 @@ const sortedArticles = relatedArticles.sort(
   (a, b) => getPublishTimestamp(b) - getPublishTimestamp(a)
 );
 
-// Get hero image for JSON-LD
-const heroImage = game.data.hero?.image?.src || "https://hebergtonserv.com/default-image.png";
+// Optimize hero image with Cloudinary
+const heroImageName = game.data.hero?.image?.src ? game.data.hero.image.src.split('/').pop() : null;
+const heroImage = heroImageName 
+  ? getCloudinaryUrl(heroImageName, 'game-images', { width: 1200, height: 630, quality: 90 })
+  : "https://hebergtonserv.com/default-image.png";
 
 // Create JSON-LD
 const jsonLd = {
@@ -126,6 +130,61 @@ const faqItems = game.data.faqs?.map(faq => ({
 
 // Get header data for the page
 const headerData = getHeaderData('en');
+
+// Function to optimize images with Cloudinary
+function optimizeImage(imagePath, options = {}) {
+  if (!imagePath) return '';
+  const imageName = imagePath.split('/').pop();
+  return getCloudinaryUrl(imageName, 'game-images', options);
+}
+
+// Optimize images for components
+let optimizedHero = { ...game.data.hero };
+if (optimizedHero.image?.src) {
+  optimizedHero.image = {
+    ...optimizedHero.image,
+    src: optimizeImage(optimizedHero.image.src, { width: 1920, height: 1080, quality: 85 })
+  };
+}
+
+// Optimize feature images
+const optimizedFeatures = game.data.features?.map(feature => {
+  if (feature.image) {
+    return {
+      ...feature,
+      image: optimizeImage(feature.image, { width: 600, height: 400 })
+    };
+  }
+  return feature;
+}) || [];
+
+// Optimize testimonial images
+const optimizedTestimonials = game.data.testimonials?.map(testimonial => {
+  if (testimonial.image) {
+    return {
+      ...testimonial,
+      image: optimizeImage(testimonial.image, { width: 100, height: 100, crop: 'fill' })
+    };
+  }
+  return testimonial;
+}) || [];
+
+// Optimize panel features images if they exist
+let optimizedPanelFeatures = null;
+if (game.data.panelFeatures) {
+  optimizedPanelFeatures = {
+    ...game.data.panelFeatures,
+    features: game.data.panelFeatures.features.map(feature => {
+      if (feature.image) {
+        return {
+          ...feature,
+          image: optimizeImage(feature.image, { width: 500, height: 300 })
+        };
+      }
+      return feature;
+    })
+  };
+}
 ---
 
 <PageLayout metadata={game.data.metadata}>
@@ -133,8 +192,8 @@ const headerData = getHeaderData('en');
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\u003c')}></script>
 
   <!-- Main Content with compact hero -->
-  <Hero2 {...game.data.hero} compact={true} />
-  <Features title="Main Features" items={game.data.features || []} />
+  <Hero2 {...optimizedHero} compact={true} />
+  <Features title="Main Features" items={optimizedFeatures} />
   <Pricing 
     title="Our Plans" 
     prices={game.data.pricing || []} 
@@ -143,13 +202,13 @@ const headerData = getHeaderData('en');
   <!-- Game Feature Panel Section -->
   {game.data.panelFeatures && (
     <GameFeaturePanel
-      title={game.data.panelFeatures.title}
-      features={game.data.panelFeatures.features}
+      title={optimizedPanelFeatures.title}
+      features={optimizedPanelFeatures.features}
     />
   )}
 
   <FAQs title="Frequently Asked Questions" items={faqItems} />
-  <Testimonials title="Customer Reviews" testimonials={game.data.testimonials || []} />
+  <Testimonials title="Customer Reviews" testimonials={optimizedTestimonials} />
 
   <!-- Related Articles Section -->
   <RelatedArticles 

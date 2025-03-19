@@ -37,6 +37,7 @@ export function getCloudinaryUrl(
     `f_${opts.format}`,
   ].join(',');
 
-  // Construire l'URL complète
-  return `https://res.cloudinary.com/da68srujg/image/upload/${transformations}/v1/${folder}/${imageName}`;
+  // Construire l'URL complète - CORRIGER L'ORDRE DES SEGMENTS
+  // Structure correcte de Cloudinary: cloudname/upload/transformations/version/folder/filename
+  return `https://res.cloudinary.com/da68srujg/image/upload/${transformations}/${folder}/${imageName}`;
 }

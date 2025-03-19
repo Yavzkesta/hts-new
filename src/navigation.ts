@@ -14,6 +14,11 @@ export const getHeaderData = (lang = 'fr') => {
       botDiscord: 'Bot Discord',
       database: 'Database',
       lavalink: 'Lavalink',
+      news: 'Actualités',
+      allNews: 'Toutes les actualités',
+      gameNews: 'Actualités jeux',
+      serviceNews: 'Actualités services',
+      companyNews: 'Actualités société',
     },
     en: {
       home: 'Home',
@@ -27,6 +32,11 @@ export const getHeaderData = (lang = 'fr') => {
       botDiscord: 'Bot Discord',
       database: 'Database',
       lavalink: 'Lavalink',
+      news: 'News',
+      allNews: 'All News',
+      gameNews: 'Game News',
+      serviceNews: 'Service News',
+      companyNews: 'Company News',
     },
   };
 
@@ -58,6 +68,12 @@ export const getHeaderData = (lang = 'fr') => {
           { text: t.botDiscord, href: getPermalink(`/${lang}/services/botdiscord`) },
           { text: t.database, href: getPermalink(`/${lang}/services/database`) },
           { text: t.lavalink, href: getPermalink(`/${lang}/services/lavalink`) },
+        ],
+      },
+      {
+        text: t.news,
+        links: [
+          { text: t.allNews, href: getPermalink(`/${lang}/news`) },
         ],
       },
     ],

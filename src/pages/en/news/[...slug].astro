@@ -2,6 +2,7 @@
 import { getCollection, getEntry } from 'astro:content';
 import { Image } from 'astro:assets';
 import PageLayout from '~/layouts/PageLayout.astro';
+import { getCloudinaryUrl } from '~/utils/cloudinary';
 
 export async function getStaticPaths() {
   const newsEntries = await getCollection('news', ({ data }) => {
@@ -9,7 +10,7 @@ export async function getStaticPaths() {
   });
 
   return newsEntries.map(entry => {
-    // Extraire le slug sans le préfixe de langue
+    // Extract slug without language prefix
     const cleanSlug = entry.slug.includes('/') ? entry.slug.split('/').pop() : entry.slug;
     
     return {
@@ -22,7 +23,7 @@ export async function getStaticPaths() {
 const { entry } = Astro.props;
 const { Content } = await entry.render();
 
-// Get the article in the other language (if available)
+// Get article in other language (if available)
 let translatedArticle = null;
 try {
   const allNewsEntries = await getCollection('news', ({ data }) => {
@@ -31,19 +32,13 @@ try {
   
   if (allNewsEntries.length > 0) {
     translatedArticle = allNewsEntries[0];
-    // Extraire le slug sans le préfixe de langue pour l'article traduit
+    // Extract clean slug for translated article
     translatedArticle.cleanSlug = translatedArticle.slug.includes('/') 
       ? translatedArticle.slug.split('/').pop() 
       : translatedArticle.slug;
   }
 } catch (error) {
   console.error('Error retrieving translation:', error);
-}
-
-// Helper function to ensure date is a Date object
-function ensureDate(dateInput) {
-  if (dateInput instanceof Date) return dateInput;
-  return new Date(dateInput);
 }
 
 // Get similar articles (same category)
@@ -56,27 +51,18 @@ const similarArticles = await getCollection('news', ({ data, slug }) => {
 
 // Sort similar articles by date and limit to 3
 const relatedArticles = similarArticles
-  .sort((a, b) => {
-    try {
-      const dateA = ensureDate(a.data.publishDate);
-      const dateB = ensureDate(b.data.publishDate);
-      return dateB.getTime() - dateA.getTime();
-    } catch (error) {
-      console.error('Error sorting dates:', error);
-      return 0; // Keep original order if there's an error
-    }
-  })
+  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
   .slice(0, 3)
   .map(article => {
-    // Extraire le slug sans le préfixe de langue pour chaque article similaire
+    // Extract clean slug for each similar article
     const cleanSlug = article.slug.includes('/') ? article.slug.split('/').pop() : article.slug;
     return { ...article, cleanSlug };
   });
 
-// Format publication date
+// Format publish date
 let publishDate = "";
 try {
-  const dateObject = ensureDate(entry.data.publishDate);
+  const dateObject = entry.data.publishDate instanceof Date ? entry.data.publishDate : new Date(entry.data.publishDate);
   publishDate = new Intl.DateTimeFormat('en-US', {
     year: 'numeric',
     month: 'long',
@@ -87,13 +73,41 @@ try {
   publishDate = "Date unavailable";
 }
 
+// Function to optimize images with Cloudinary
+function optimizeImage(imagePath, options = {}) {
+  if (!imagePath) return '';
+  // Check if image is already a Cloudinary URL
+  if (imagePath.includes('res.cloudinary.com')) return imagePath;
+  
+  const imageName = imagePath.split('/').pop();
+  return getCloudinaryUrl(imageName, 'news-images', options);
+}
+
+// Optimize main article image
+const mainImage = entry.data.image 
+  ? optimizeImage(entry.data.image, { width: 1200, height: 630, quality: 90, crop: 'fill' })
+  : null;
+
+// Optimize related article images
+const optimizedRelatedArticles = relatedArticles.map(article => {
+  return {
+    ...article,
+    data: {
+      ...article.data,
+      image: article.data.image 
+        ? optimizeImage(article.data.image, { width: 400, height: 225, quality: 80, crop: 'fill' })
+        : null
+    }
+  };
+});
+
 // Page metadata
 const metadata = {
   title: entry.data.title,
   description: entry.data.description,
   openGraph: {
     type: 'article',
-    images: entry.data.image ? [{ url: entry.data.image }] : undefined,
+    images: mainImage ? [{ url: mainImage }] : undefined,
   },
 };
 ---
@@ -143,10 +157,10 @@ const metadata = {
       </div>
     </div>
     
-    {entry.data.image && (
+    {mainImage && (
       <div class="mb-8 overflow-hidden rounded-lg border border-slate-700">
         <img 
-          src={entry.data.image} 
+          src={mainImage} 
           alt={entry.data.imageAlt || entry.data.title} 
           class="h-auto w-full object-cover"
         />
@@ -308,11 +322,11 @@ const metadata = {
       </div>
     )}
     
-    {relatedArticles.length > 0 && (
+    {optimizedRelatedArticles.length > 0 && (
       <div class="mt-12 border-t border-slate-700 pt-8">
         <h2 class="mb-6 text-2xl font-bold text-white">Similar Articles</h2>
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {relatedArticles.map((article) => (
+          {optimizedRelatedArticles.map((article) => (
             <a href={`/en/news/${article.cleanSlug}`} class="group block overflow-hidden rounded-lg border border-slate-700 bg-slate-900 transition-all hover:border-blue-600 hover:shadow-lg">
               {article.data.image && (
                 <div class="aspect-video overflow-hidden">
