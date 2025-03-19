@@ -1,6 +1,7 @@
 ---
 import Layout from '~/layouts/PageLayout.astro';
 import { getLangFromUrl, useTranslations } from '~/i18n/utils';
+import { getCloudinaryUrl } from '~/utils/cloudinary';
 
 import Hero from '~/components/widgets/Hero.astro';
 import Features from '~/components/widgets/Features.astro';
@@ -16,6 +17,37 @@ const metadata = {
   title: 'HebergTonServ — Premium Game Hosting',
   ignoreTitleTemplate: true,
 };
+
+// Fonction pour optimiser les images avec Cloudinary
+function optimizeImage(imagePath, options = {}) {
+  if (!imagePath) return '';
+  
+  // Si l'image est déjà une URL Cloudinary, la retourner telle quelle
+  if (typeof imagePath === 'string' && imagePath.includes('res.cloudinary.com')) {
+    return imagePath;
+  }
+  
+  // Pour les images locales, extraire le nom de fichier
+  let imageName;
+  if (typeof imagePath === 'string') {
+    imageName = imagePath.split('/').pop();
+  } else if (imagePath.src) {
+    // Pour les objets d'image Astro
+    const src = typeof imagePath.src === 'string' 
+      ? imagePath.src 
+      : imagePath.src.src || '';
+    imageName = src.split('/').pop();
+  }
+  
+  if (!imageName) return '';
+  
+  return getCloudinaryUrl(imageName, 'site-images', options);
+}
+
+// Optimiser les images pour les sections
+const heroImage = optimizeImage('~/assets/images/1.png', { width: 1920, height: 1080, quality: 85 });
+const gameServersImage = optimizeImage('~/assets/images/2.png', { width: 1200, height: 800, quality: 85 });
+const webSolutionsImage = optimizeImage('~/assets/images/3.png', { width: 1200, height: 800, quality: 85 });
 ---
 
 <Layout metadata={metadata}>
@@ -31,7 +63,7 @@ const metadata = {
       },
       { text: t('hero.action.learnMore'), href: '#features' },
     ]}
-    image={{ src: '~/assets/images/1.png', alt: 'HebergTonServ Hero Image' }}
+    image={{ src: heroImage, alt: 'HebergTonServ Hero Image' }}
   >
     <Fragment slot="title">
       {t('hero.title')} <span class="text-accent dark:text-white highlight">{t('hero.highlight')}</span>
@@ -104,7 +136,7 @@ const metadata = {
       },
     ]}
     image={{
-      src: '~/assets/images/2.png',
+      src: gameServersImage,
       alt: 'Game servers',
     }}
   >
@@ -138,7 +170,7 @@ const metadata = {
       },
     ]}
     image={{
-      src: '~/assets/images/3.png',
+      src: webSolutionsImage,
       alt: 'Web solutions',
     }}
   >

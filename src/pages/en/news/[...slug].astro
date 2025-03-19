@@ -49,9 +49,37 @@ const similarArticles = await getCollection('news', ({ data, slug }) => {
          slug !== entry.slug;
 });
 
+// Fonction pour obtenir un timestamp à partir d'une date (peu importe le format)
+function getPublishTimestamp(article) {
+  if (!article.data.publishDate) {
+    return 0; // Valeur par défaut si pas de date
+  }
+  
+  try {
+    if (article.data.publishDate instanceof Date) {
+      return article.data.publishDate.getTime();
+    }
+    
+    if (typeof article.data.publishDate === 'string') {
+      return new Date(article.data.publishDate).getTime();
+    }
+    
+    // Si c'est un autre format, essayer de le convertir en string puis en Date
+    const dateStr = String(article.data.publishDate);
+    return new Date(dateStr).getTime();
+  } catch (error) {
+    console.error(`Error parsing date for article ${article.slug}:`, error);
+    return 0; // Valeur par défaut en cas d'erreur
+  }
+}
+
 // Sort similar articles by date and limit to 3
 const relatedArticles = similarArticles
-  .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime())
+  .sort((a, b) => {
+    const dateA = getPublishTimestamp(a);
+    const dateB = getPublishTimestamp(b);
+    return dateB - dateA; // Tri décroissant (plus récent d'abord)
+  })
   .slice(0, 3)
   .map(article => {
     // Extract clean slug for each similar article
@@ -62,12 +90,19 @@ const relatedArticles = similarArticles
 // Format publish date
 let publishDate = "";
 try {
-  const dateObject = entry.data.publishDate instanceof Date ? entry.data.publishDate : new Date(entry.data.publishDate);
-  publishDate = new Intl.DateTimeFormat('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(dateObject);
+  const dateObject = entry.data.publishDate instanceof Date 
+    ? entry.data.publishDate 
+    : new Date(entry.data.publishDate);
+    
+  if (!isNaN(dateObject.getTime())) {
+    publishDate = new Intl.DateTimeFormat('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    }).format(dateObject);
+  } else {
+    publishDate = "Date unavailable";
+  }
 } catch (error) {
   console.error("Error formatting date:", error);
   publishDate = "Date unavailable";
@@ -77,10 +112,17 @@ try {
 function optimizeImage(imagePath, options = {}) {
   if (!imagePath) return '';
   // Check if image is already a Cloudinary URL
-  if (imagePath.includes('res.cloudinary.com')) return imagePath;
+  if (typeof imagePath === 'string' && imagePath.includes('res.cloudinary.com')) return imagePath;
   
-  const imageName = imagePath.split('/').pop();
-  return getCloudinaryUrl(imageName, 'news-images', options);
+  try {
+    const imageName = typeof imagePath === 'string' ? imagePath.split('/').pop() : null;
+    if (!imageName) return '';
+    
+    return getCloudinaryUrl(imageName, 'news-images', options);
+  } catch (error) {
+    console.error('Error optimizing image:', error);
+    return '';
+  }
 }
 
 // Optimize main article image

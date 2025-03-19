@@ -9,7 +9,7 @@ import Testimonials from '~/components/widgets/Testimonials.astro';
 import RelatedArticles from '~/components/widgets/RelatedArticles.astro';
 import GameFeaturePanel from '~/components/widgets/GameFeaturePanel.astro';
 import { getHeaderData } from '~/navigation';
-import { getCloudinaryUrl } from '~/utils/cloudinary';
+import { getCloudinaryUrl, getImageFilename } from '~/utils/cloudinary';
 
 export async function getStaticPaths() {
   const allGames = await getCollection('game');
@@ -59,12 +59,6 @@ const sortedArticles = relatedArticles.sort(
   (a, b) => getPublishTimestamp(b) - getPublishTimestamp(a)
 );
 
-// Optimize hero image with Cloudinary
-const heroImageName = game.data.hero?.image?.src ? game.data.hero.image.src.split('/').pop() : null;
-const heroImage = heroImageName 
-  ? getCloudinaryUrl(heroImageName, 'game-images', { width: 1200, height: 630, quality: 90 })
-  : "https://hebergtonserv.com/default-image.png";
-
 // Create JSON-LD
 const jsonLd = {
   "@context": "https://schema.org",
@@ -88,7 +82,7 @@ const jsonLd = {
           "@type": "Product",
           "name": plan.title || "Default Product Name",
           "description": plan.subtitle || "Default Description",
-          "image": heroImage,
+          "image": game.data.hero?.image?.src || "https://hebergtonserv.com/default-image.png",
           "offers": {
             "@type": "Offer",
             "price": plan.price || "0.00",
@@ -131,59 +125,50 @@ const faqItems = game.data.faqs?.map(faq => ({
 // Get header data for the page
 const headerData = getHeaderData('en');
 
-// Function to optimize images with Cloudinary
-function optimizeImage(imagePath, options = {}) {
-  if (!imagePath) return '';
-  const imageName = imagePath.split('/').pop();
-  return getCloudinaryUrl(imageName, 'game-images', options);
+// IMPORTANT: NE PAS MODIFIER LA STRUCTURE DES OBJETS D'IMAGE
+// Le composant Hero2 s'attend à des objets d'image spécifiques
+// Nous conservons la structure originale
+const optimizedHero = game.data.hero;
+
+// Pour les fonctionnalités, conserver la structure originale
+const optimizedFeatures = game.data.features;
+
+// Pour les témoignages, conserver la structure originale
+const optimizedTestimonials = game.data.testimonials;
+
+// Pour les fonctionnalités du panneau, conserver la structure originale
+const optimizedPanelFeatures = game.data.panelFeatures;
+
+// Fonction pour transformer les URL d'image en HTML pour les images externes
+function createExternalImageHTML(url, alt = '') {
+  if (!url) return '';
+  
+  // Si l'URL est déjà une URL externe, l'utiliser directement
+  if (url.startsWith('http')) {
+    return `<img src="${url}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
+  }
+  
+  // Sinon, extraire le nom du fichier et créer une URL Cloudinary
+  const filename = typeof url === 'string' ? url.split('/').pop() : null;
+  if (filename) {
+    const cloudinaryUrl = getCloudinaryUrl(filename, 'game-images', { 
+      width: 1200, 
+      height: 630, 
+      quality: 90 
+    });
+    return `<img src="${cloudinaryUrl}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
+  }
+  
+  return '';
 }
 
-// Optimize images for components
-let optimizedHero = { ...game.data.hero };
-if (optimizedHero.image?.src) {
-  optimizedHero.image = {
-    ...optimizedHero.image,
-    src: optimizeImage(optimizedHero.image.src, { width: 1920, height: 1080, quality: 85 })
-  };
-}
-
-// Optimize feature images
-const optimizedFeatures = game.data.features?.map(feature => {
-  if (feature.image) {
-    return {
-      ...feature,
-      image: optimizeImage(feature.image, { width: 600, height: 400 })
-    };
-  }
-  return feature;
-}) || [];
-
-// Optimize testimonial images
-const optimizedTestimonials = game.data.testimonials?.map(testimonial => {
-  if (testimonial.image) {
-    return {
-      ...testimonial,
-      image: optimizeImage(testimonial.image, { width: 100, height: 100, crop: 'fill' })
-    };
-  }
-  return testimonial;
-}) || [];
-
-// Optimize panel features images if they exist
-let optimizedPanelFeatures = null;
-if (game.data.panelFeatures) {
-  optimizedPanelFeatures = {
-    ...game.data.panelFeatures,
-    features: game.data.panelFeatures.features.map(feature => {
-      if (feature.image) {
-        return {
-          ...feature,
-          image: optimizeImage(feature.image, { width: 500, height: 300 })
-        };
-      }
-      return feature;
-    })
-  };
+// Préparer les images externes pour le héros si nécessaire
+let heroImageHTML = '';
+if (game.data.hero?.image?.src && typeof game.data.hero.image.src === 'string') {
+  heroImageHTML = createExternalImageHTML(
+    game.data.hero.image.src, 
+    game.data.hero.image.alt || game.data.title || ''
+  );
 }
 ---
 
@@ -192,7 +177,20 @@ if (game.data.panelFeatures) {
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\u003c')}></script>
 
   <!-- Main Content with compact hero -->
-  <Hero2 {...optimizedHero} compact={true} />
+  {heroImageHTML ? (
+    <Hero2 
+      title={optimizedHero.title}
+      subtitle={optimizedHero.subtitle}
+      tagline={optimizedHero.tagline}
+      actions={optimizedHero.actions}
+      compact={true}
+    >
+      <Fragment slot="image" set:html={heroImageHTML} />
+    </Hero2>
+  ) : (
+    <Hero2 {...optimizedHero} compact={true} />
+  )}
+  
   <Features title="Main Features" items={optimizedFeatures} />
   <Pricing 
     title="Our Plans" 
