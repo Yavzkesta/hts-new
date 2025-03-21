@@ -59,13 +59,48 @@ const sortedArticles = relatedArticles.sort(
   (a, b) => getPublishTimestamp(b) - getPublishTimestamp(a)
 );
 
-// Optimiser l'image du héros avec Cloudinary
-const heroImageName = game.data.hero?.image?.src ? game.data.hero.image.src.split('/').pop() : null;
-const heroImage = heroImageName 
-  ? getCloudinaryUrl(heroImageName, 'game-images', { width: 1200, height: 630, quality: 90 })
-  : "https://hebergtonserv.com/default-image.png";
+// Fonction pour générer une URL Cloudinary directement à partir d'un ID d'image
+function getCloudinaryImageUrl(imageId, options = {}) {
+  if (!imageId) return '';
+  
+  // Si l'image est déjà une URL Cloudinary complète, la retourner telle quelle
+  if (typeof imageId === 'string' && imageId.includes('res.cloudinary.com')) {
+    return imageId;
+  }
+  
+  // Construire les transformations
+  const defaults = {
+    width: 800,
+    height: 600,
+    quality: 80,
+    format: 'auto',
+    crop: 'fill',
+  };
+  
+  // Fusionner les options avec les valeurs par défaut
+  const opts = { ...defaults, ...options };
+  
+  // Construire la chaîne de transformations
+  const transformations = [
+    `w_${opts.width}`,
+    `h_${opts.height}`,
+    `c_${opts.crop}`,
+    `q_${opts.quality}`,
+    `f_${opts.format}`,
+  ];
+  
+  // Ajouter gravity si spécifié
+  if (opts.gravity) {
+    transformations.push(`g_${opts.gravity}`);
+  }
+  
+  const transformString = transformations.join(',');
+  
+  // Construire l'URL Cloudinary directement avec l'ID de l'image (sans dossier)
+  return `https://res.cloudinary.com/da68srujg/image/upload/${transformString}/${imageId}`;
+}
 
-// Créer JSON-LD
+// Create JSON-LD
 const jsonLd = {
   "@context": "https://schema.org",
   "@graph": [
@@ -88,7 +123,7 @@ const jsonLd = {
           "@type": "Product",
           "name": plan.title || "Nom du produit par défaut",
           "description": plan.subtitle || "Description par défaut",
-          "image": heroImage,
+          "image": game.data.hero?.image?.src || "https://hebergtonserv.com/default-image.png",
           "offers": {
             "@type": "Offer",
             "price": plan.price || "0.00",
@@ -131,28 +166,32 @@ const faqItems = game.data.faqs?.map(faq => ({
 // Obtenir les données d'en-tête pour la page
 const headerData = getHeaderData('fr');
 
-// Fonction pour optimiser les images avec Cloudinary
-function optimizeImage(imagePath, options = {}) {
-  if (!imagePath) return '';
-  const imageName = imagePath.split('/').pop();
-  return getCloudinaryUrl(imageName, 'game-images', options);
-}
-
-// Optimiser les images pour les composants
+// Préparer les données du héros
 let optimizedHero = { ...game.data.hero };
-if (optimizedHero.image?.src) {
-  optimizedHero.image = {
-    ...optimizedHero.image,
-    src: optimizeImage(optimizedHero.image.src, { width: 1920, height: 1080, quality: 85 })
-  };
+if (optimizedHero.image) {
+  // Si l'image est un ID Cloudinary, générer l'URL optimisée
+  if (typeof optimizedHero.image.src === 'string') {
+    optimizedHero.image = {
+      ...optimizedHero.image,
+      src: getCloudinaryImageUrl(optimizedHero.image.src, { 
+        width: 500, 
+        height: 500, 
+        quality: 85 
+      })
+    };
+  }
 }
 
 // Optimiser les images des fonctionnalités
 const optimizedFeatures = game.data.features?.map(feature => {
-  if (feature.image) {
+  if (feature.image && typeof feature.image === 'string') {
     return {
       ...feature,
-      image: optimizeImage(feature.image, { width: 600, height: 400 })
+      image: getCloudinaryImageUrl(feature.image, { 
+        width: 600, 
+        height: 400,
+        quality: 80
+      })
     };
   }
   return feature;
@@ -160,14 +199,70 @@ const optimizedFeatures = game.data.features?.map(feature => {
 
 // Optimiser les images des témoignages
 const optimizedTestimonials = game.data.testimonials?.map(testimonial => {
-  if (testimonial.image) {
+  if (testimonial.image && typeof testimonial.image === 'string') {
     return {
       ...testimonial,
-      image: optimizeImage(testimonial.image, { width: 100, height: 100, crop: 'fill' })
+      image: getCloudinaryImageUrl(testimonial.image, { 
+        width: 100, 
+        height: 100, 
+        crop: 'fill',
+        gravity: 'face',
+        quality: 80
+      })
     };
   }
   return testimonial;
 }) || [];
+
+// Optimiser les images des fonctionnalités du panneau
+let optimizedPanelFeatures = null;
+if (game.data.panelFeatures) {
+  optimizedPanelFeatures = {
+    ...game.data.panelFeatures,
+    features: game.data.panelFeatures.features.map(feature => {
+      if (feature.image && typeof feature.image === 'string') {
+        return {
+          ...feature,
+          image: getCloudinaryImageUrl(feature.image, { 
+            width: 500, 
+            height: 300,
+            quality: 80
+          })
+        };
+      }
+      return feature;
+    })
+  };
+}
+
+// Fonction pour transformer les URL d'image en HTML pour les images externes
+function createExternalImageHTML(imageId, alt = '') {
+  if (!imageId) return '';
+  
+  // Si l'URL est déjà une URL externe complète, l'utiliser directement
+  if (imageId.startsWith('http')) {
+    return `<img src="${imageId}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
+  }
+  
+  // Sinon, créer une URL Cloudinary
+  const cloudinaryUrl = getCloudinaryImageUrl(imageId, { 
+    width: 750, 
+    height: 750, 
+    quality: 90,
+    crop: 'auto'
+  });
+  
+  return `<img src="${cloudinaryUrl}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
+}
+
+// Préparer l'image du héros en HTML si nécessaire
+let heroImageHTML = '';
+if (game.data.hero?.image?.src && typeof game.data.hero.image.src === 'string') {
+  heroImageHTML = createExternalImageHTML(
+    game.data.hero.image.src, 
+    game.data.hero.image.alt || game.data.title || ''
+  );
+}
 ---
 
 <PageLayout metadata={game.data.metadata}>
@@ -175,18 +270,30 @@ const optimizedTestimonials = game.data.testimonials?.map(testimonial => {
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd).replace(/</g, '\u003c')}></script>
 
   <!-- Contenu principal avec héros compact -->
-  <Hero2 {...optimizedHero} compact={true} />
+  {heroImageHTML ? (
+    <Hero2 
+      title={optimizedHero.title}
+      subtitle={optimizedHero.subtitle}
+      tagline={optimizedHero.tagline}
+      actions={optimizedHero.actions}
+      compact={true}
+    >
+      <Fragment slot="image" set:html={heroImageHTML} />
+    </Hero2>
+  ) : (
+    <Hero2 {...optimizedHero} compact={true} />
+  )}
   <Features title="Caractéristiques principales" items={optimizedFeatures} />
   <Pricing 
     title="Nos offres" 
     prices={game.data.pricing || []} 
   />
 
-  <!-- Section du panneau de fonctionnalités du jeu -->
+  <!-- Game Feature Panel Section -->
   {game.data.panelFeatures && (
     <GameFeaturePanel
-      title={game.data.panelFeatures.title}
-      features={game.data.panelFeatures.features}
+      title={optimizedPanelFeatures.title}
+      features={optimizedPanelFeatures.features}
     />
   )}
 

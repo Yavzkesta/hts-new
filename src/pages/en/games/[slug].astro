@@ -9,7 +9,7 @@ import Testimonials from '~/components/widgets/Testimonials.astro';
 import RelatedArticles from '~/components/widgets/RelatedArticles.astro';
 import GameFeaturePanel from '~/components/widgets/GameFeaturePanel.astro';
 import { getHeaderData } from '~/navigation';
-import { getCloudinaryUrl, getImageFilename } from '~/utils/cloudinary';
+import { getCloudinaryUrl } from '~/utils/cloudinary';
 
 export async function getStaticPaths() {
   const allGames = await getCollection('game');
@@ -58,6 +58,47 @@ function getPublishTimestamp(article) {
 const sortedArticles = relatedArticles.sort(
   (a, b) => getPublishTimestamp(b) - getPublishTimestamp(a)
 );
+
+// Fonction pour générer une URL Cloudinary directement à partir d'un ID d'image
+function getCloudinaryImageUrl(imageId, options = {}) {
+  if (!imageId) return '';
+  
+  // Si l'image est déjà une URL Cloudinary complète, la retourner telle quelle
+  if (typeof imageId === 'string' && imageId.includes('res.cloudinary.com')) {
+    return imageId;
+  }
+  
+  // Construire les transformations
+  const defaults = {
+    width: 800,
+    height: 600,
+    quality: 80,
+    format: 'auto',
+    crop: 'fill',
+  };
+  
+  // Fusionner les options avec les valeurs par défaut
+  const opts = { ...defaults, ...options };
+  
+  // Construire la chaîne de transformations
+  const transformations = [
+    `w_${opts.width}`,
+    `h_${opts.height}`,
+    `c_${opts.crop}`,
+    `q_${opts.quality}`,
+    `f_${opts.format}`,
+  ];
+  
+  // Ajouter gravity si spécifié
+  if (opts.gravity) {
+    transformations.push(`g_${opts.gravity}`);
+  }
+  
+  const transformString = transformations.join(',');
+  
+  // Construire l'URL Cloudinary directement avec l'ID de l'image (sans dossier)
+  return `https://res.cloudinary.com/da68srujg/image/upload/${transformString}/${imageId}`;
+}
 
 // Create JSON-LD
 const jsonLd = {
@@ -125,44 +166,96 @@ const faqItems = game.data.faqs?.map(faq => ({
 // Get header data for the page
 const headerData = getHeaderData('en');
 
-// IMPORTANT: NE PAS MODIFIER LA STRUCTURE DES OBJETS D'IMAGE
-// Le composant Hero2 s'attend à des objets d'image spécifiques
-// Nous conservons la structure originale
-const optimizedHero = game.data.hero;
-
-// Pour les fonctionnalités, conserver la structure originale
-const optimizedFeatures = game.data.features;
-
-// Pour les témoignages, conserver la structure originale
-const optimizedTestimonials = game.data.testimonials;
-
-// Pour les fonctionnalités du panneau, conserver la structure originale
-const optimizedPanelFeatures = game.data.panelFeatures;
-
-// Fonction pour transformer les URL d'image en HTML pour les images externes
-function createExternalImageHTML(url, alt = '') {
-  if (!url) return '';
-  
-  // Si l'URL est déjà une URL externe, l'utiliser directement
-  if (url.startsWith('http')) {
-    return `<img src="${url}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
+// Préparer les données du héros
+let optimizedHero = { ...game.data.hero };
+if (optimizedHero.image) {
+  // Si l'image est un ID Cloudinary, générer l'URL optimisée
+  if (typeof optimizedHero.image.src === 'string') {
+    optimizedHero.image = {
+      ...optimizedHero.image,
+      src: getCloudinaryImageUrl(optimizedHero.image.src, { 
+        width: 500, 
+        height: 500, 
+        quality: 85 
+      })
+    };
   }
-  
-  // Sinon, extraire le nom du fichier et créer une URL Cloudinary
-  const filename = typeof url === 'string' ? url.split('/').pop() : null;
-  if (filename) {
-    const cloudinaryUrl = getCloudinaryUrl(filename, 'game-images', { 
-      width: 1200, 
-      height: 630, 
-      quality: 90 
-    });
-    return `<img src="${cloudinaryUrl}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
-  }
-  
-  return '';
 }
 
-// Préparer les images externes pour le héros si nécessaire
+// Optimiser les images des fonctionnalités
+const optimizedFeatures = game.data.features?.map(feature => {
+  if (feature.image && typeof feature.image === 'string') {
+    return {
+      ...feature,
+      image: getCloudinaryImageUrl(feature.image, { 
+        width: 600, 
+        height: 400,
+        quality: 80
+      })
+    };
+  }
+  return feature;
+}) || [];
+
+// Optimiser les images des témoignages
+const optimizedTestimonials = game.data.testimonials?.map(testimonial => {
+  if (testimonial.image && typeof testimonial.image === 'string') {
+    return {
+      ...testimonial,
+      image: getCloudinaryImageUrl(testimonial.image, { 
+        width: 100, 
+        height: 100, 
+        crop: 'fill',
+        gravity: 'face',
+        quality: 80
+      })
+    };
+  }
+  return testimonial;
+}) || [];
+
+// Optimiser les images des fonctionnalités du panneau
+let optimizedPanelFeatures = null;
+if (game.data.panelFeatures) {
+  optimizedPanelFeatures = {
+    ...game.data.panelFeatures,
+    features: game.data.panelFeatures.features.map(feature => {
+      if (feature.image && typeof feature.image === 'string') {
+        return {
+          ...feature,
+          image: getCloudinaryImageUrl(feature.image, { 
+            width: 500, 
+            height: 300,
+            quality: 80
+          })
+        };
+      }
+      return feature;
+    })
+  };
+}
+
+// Fonction pour transformer les URL d'image en HTML pour les images externes
+function createExternalImageHTML(imageId, alt = '') {
+  if (!imageId) return '';
+  
+  // Si l'URL est déjà une URL externe complète, l'utiliser directement
+  if (imageId.startsWith('http')) {
+    return `<img src="${imageId}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
+  }
+  
+  // Sinon, créer une URL Cloudinary
+  const cloudinaryUrl = getCloudinaryImageUrl(imageId, { 
+    width: 750, 
+    height: 750, 
+    quality: 90,
+    crop: 'auto'
+  });
+  
+  return `<img src="${cloudinaryUrl}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
+}
+
+// Préparer l'image du héros en HTML si nécessaire
 let heroImageHTML = '';
 if (game.data.hero?.image?.src && typeof game.data.hero.image.src === 'string') {
   heroImageHTML = createExternalImageHTML(

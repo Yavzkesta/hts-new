@@ -83,7 +83,7 @@ const t = useTranslations(lang);
       </div>
     </div>
     <nav
-      class="items-center w-full md:w-auto hidden md:flex text-default overflow-y-auto overflow-x-hidden md:overflow-y-visible md:overflow-x-auto md:mx-5"
+      class="items-center w-full md:w-auto hidden md:flex text-default overflow-y-auto overflow-x-hidden md:overflow-y-visible md:overflow-x-auto md:mx-5 mobile-nav-bg"
       aria-label="Main navigation"
     >
       <ul
@@ -94,8 +94,8 @@ const t = useTranslations(lang);
             <li class={links?.length ? 'dropdown' : ''}>
               {links?.length ? (
                 <>
-                  <button class="hover:text-link dark:hover:text-white px-4 py-3 flex items-center">
-                    {text} <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 hidden md:inline" />
+                  <button class="hover:text-link dark:hover:text-white px-4 py-3 flex items-center justify-between w-full">
+                    {text} <Icon name="tabler:chevron-down" class="w-3.5 h-3.5 ml-0.5 rtl:ml-0 rtl:mr-0.5 md:inline" />
                   </button>
                   <ul class="dropdown-menu md:backdrop-blur-md dark:md:bg-dark rounded md:absolute pl-4 md:pl-0 md:hidden font-medium md:bg-white/90 md:min-w-[200px] drop-shadow-xl">
                     {links.map(({ text: text2, href: href2 }) => (
@@ -176,10 +176,43 @@ const t = useTranslations(lang);
 </header>
 
 <style>
-  .dropdown:hover .dropdown-menu {
-    display: block;
+  /* Style pour les écrans de taille normale */
+  @media (min-width: 768px) {
+    .dropdown:hover .dropdown-menu {
+      display: block;
+    }
+  }
+  
+  /* Style pour les écrans mobiles */
+  @media (max-width: 767px) {
+    header.h-screen {
+      background-color: var(--aw-color-bg-page);
+    }
+    
+    header.h-screen nav {
+      display: flex !important;
+      height: calc(100vh - 80px);
+      padding-bottom: 2rem;
+      background-color: var(--aw-color-bg-page);
+    }
+    
+    header.h-screen .mobile-nav-bg {
+      background-color: var(--aw-color-bg-page);
+    }
+    
+    /* Afficher les sous-menus lorsqu'on clique sur le bouton */
+    .dropdown.expanded .dropdown-menu {
+      display: block !important;
+      background-color: var(--aw-color-bg-page);
+    }
+    
+    /* Assurer que les sous-menus ont un fond opaque */
+    .dropdown-menu {
+      background-color: var(--aw-color-bg-page);
+    }
   }
 
+  /* Style pour le bouton de menu */
   [data-aw-toggle-menu].expanded .line1 {
     transform: rotate(-45deg) translate(-4px, 4px);
   }
@@ -190,5 +223,19 @@ const t = useTranslations(lang);
 
   [data-aw-toggle-menu].expanded .line3 {
     transform: rotate(45deg) translate(-4px, -4px);
+  }
+  
+  /* Assurer que le menu a un fond opaque en mode sombre */
+  :root.dark header.h-screen,
+  :root.dark header.h-screen nav,
+  :root.dark .dropdown.expanded .dropdown-menu {
+    background-color: var(--aw-color-bg-page-dark, #050A1B);
+  }
+  
+  /* Assurer que le menu a un fond opaque en mode clair */
+  :root:not(.dark) header.h-screen,
+  :root:not(.dark) header.h-screen nav,
+  :root:not(.dark) .dropdown.expanded .dropdown-menu {
+    background-color: var(--aw-color-bg-page, white);
   }
 </style>
