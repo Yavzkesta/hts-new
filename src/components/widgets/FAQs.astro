@@ -15,7 +15,7 @@ const {
   subtitle = '',
   tagline = '',
   items = [],
-  columns = 2, // Par défaut à 2 colonnes maintenant
+  columns = 2,
   classes = {},
 } = Astro.props;
 ---
@@ -40,68 +40,157 @@ const {
         <p class="max-w-3xl mx-auto sm:text-center text-xl text-muted dark:text-slate-400" set:html={subtitle} />
       )}
     </div>
-    <div class="mx-auto max-w-6xl"> <!-- Augmenté la largeur maximale pour accommoder 2 colonnes -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {
-          items.map((item, index) => (
-            <div>
-              <div class="bg-white dark:bg-slate-900 rounded-lg shadow-md hover:shadow-lg transition duration-300 p-5 h-full">
-                <details class="group h-full">
-                  <summary class="flex justify-between items-center cursor-pointer">
-                    <div class="flex items-center">
-                      {item.icon && <Icon name={item.icon} class="w-6 h-6 mr-2 text-primary dark:text-blue-300" />}
-                      <h3 class="text-lg font-medium">{item.title}</h3>
+    <div class="mx-auto max-w-6xl">
+      <div class="faq-grid">
+        <div class="faq-column left-column">
+          {items
+            .filter((_, index) => index % 2 === 0)
+            .map((item, index) => (
+              <div class="faq-wrapper mb-6">
+                <div class="faq-item" id={`faq-left-${index}`}>
+                  <div class="bg-white dark:bg-slate-900 rounded-lg shadow-md hover:shadow-lg transition duration-300 p-5">
+                    <button class="faq-button w-full flex justify-between items-center cursor-pointer">
+                      <h3 class="text-lg font-medium text-left">{item.title}</h3>
+                      <span class="faq-icon">
+                        <Icon name="tabler:chevron-down" class="w-5 h-5 text-primary dark:text-blue-300" />
+                      </span>
+                    </button>
+                    <div class="faq-content">
+                      <div class="mt-4 text-muted dark:text-slate-400">
+                        <p set:html={item.description} />
+                      </div>
                     </div>
-                    <span class="transition group-open:rotate-180">
-                      <Icon name="tabler:chevron-down" class="w-5 h-5 text-primary dark:text-blue-300" />
-                    </span>
-                  </summary>
-                  <div class="mt-4 text-muted dark:text-slate-400">
-                    <p set:html={item.description} />
                   </div>
-                </details>
+                </div>
               </div>
-            </div>
-          ))
-        }
+            ))}
+        </div>
+        <div class="faq-column right-column">
+          {items
+            .filter((_, index) => index % 2 === 1)
+            .map((item, index) => (
+              <div class="faq-wrapper mb-6">
+                <div class="faq-item" id={`faq-right-${index}`}>
+                  <div class="bg-white dark:bg-slate-900 rounded-lg shadow-md hover:shadow-lg transition duration-300 p-5">
+                    <button class="faq-button w-full flex justify-between items-center cursor-pointer">
+                      <h3 class="text-lg font-medium text-left">{item.title}</h3>
+                      <span class="faq-icon">
+                        <Icon name="tabler:chevron-down" class="w-5 h-5 text-primary dark:text-blue-300" />
+                      </span>
+                    </button>
+                    <div class="faq-content">
+                      <div class="mt-4 text-muted dark:text-slate-400">
+                        <p set:html={item.description} />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  details > summary {
-    list-style: none;
+  .faq-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
-  details > summary::-webkit-details-marker {
+  
+  @media (min-width: 768px) {
+    .faq-grid {
+      flex-direction: row;
+    }
+    
+    .faq-column {
+      flex: 1;
+    }
+    
+    .left-column {
+      margin-right: 0.75rem;
+    }
+    
+    .right-column {
+      margin-left: 0.75rem;
+    }
+  }
+  
+  .faq-wrapper {
+    width: 100%;
+  }
+  
+  .faq-item {
+    width: 100%;
+  }
+  
+  .faq-button {
+    padding: 0.5rem 0;
+    background: none;
+    border: none;
+    outline: none;
+    text-align: left;
+    width: 100%;
+  }
+  
+  .faq-content {
     display: none;
+    width: 100%;
+    color: #64748b; /* slate-500 */
   }
-  details[open] summary {
-    margin-bottom: 1rem;
+  
+  .dark .faq-content {
+    color: #94a3b8; /* slate-400 en mode sombre */
+  }
+  
+  .faq-icon {
+    transition: transform 0.3s ease;
+  }
+  
+  .faq-item.active .faq-icon {
+    transform: rotate(180deg);
+  }
+  
+  .faq-item.active .faq-content {
+    display: block;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
   }
 </style>
 
 <script>
-  // Script pour gérer l'ouverture/fermeture des accordéons
   document.addEventListener('DOMContentLoaded', () => {
-    const details = document.querySelectorAll('details');
+    // Supprimer les SVG indésirables
+    document.querySelectorAll('svg').forEach(svg => {
+      if (!svg.closest('.faq-button')) {
+        svg.style.display = 'none';
+      }
+    });
     
-    details.forEach((detail) => {
-      detail.addEventListener('toggle', () => {
-        if (detail.open) {
-          // Fermer tous les autres accordéons dans la même colonne
-          const parent = detail.closest('.md\\:grid-cols-2 > div');
-          const column = Array.from(parent.parentNode.children).indexOf(parent) % 2;
-          const sameColumnDetails = Array.from(parent.parentNode.children)
-            .filter((el, i) => i % 2 === column)
-            .map(el => el.querySelector('details'))
-            .filter(el => el !== detail);
-          sameColumnDetails.forEach(otherDetail => {
-            if (otherDetail && otherDetail.open) {
-              otherDetail.open = false;
-            }
-          });
-        }
+    // Gérer les clics sur les boutons FAQ
+    document.querySelectorAll('.faq-button').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Récupérer l'élément FAQ parent
+        const faqItem = this.closest('.faq-item');
+        
+        // Basculer la classe active sur cet élément uniquement
+        faqItem.classList.toggle('active');
+      });
+    });
+    
+    // Fermer tous les accordéons lors du redimensionnement
+    window.addEventListener('resize', () => {
+      document.querySelectorAll('.faq-item').forEach(item => {
+        item.classList.remove('active');
       });
     });
   });
