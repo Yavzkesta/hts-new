@@ -1,0 +1,101 @@
+---
+import { getCollection } from 'astro:content';
+import PageLayout from '~/layouts/PageLayout.astro';
+import NewsGrid from '~/components/news/NewsGrid.astro';
+import NewsSidebar from '~/components/news/NewsSidebar.astro';
+import { defaultLang } from '~/i18n/ui';
+
+export async function getStaticPaths() {
+  const allArticles = await getCollection('news', ({ data }) => {
+    return data.language === defaultLang && !data.draft;
+  });
+
+  // Extraire tous les tags uniques
+  const allTags = allArticles.flatMap(article => article.data.tags || []);
+  const uniqueTags = [...new Set(allTags)];
+
+  return uniqueTags.map(tag => ({
+    params: { tag: tag.toLowerCase() },
+    props: { tag }
+  }));
+}
+
+const { tag } = Astro.props;
+
+// Récupérer tous les articles avec ce tag
+const allArticles = await getCollection('news', ({ data }) => {
+  return data.language === defaultLang && !data.draft && (data.tags || []).includes(tag);
+});
+
+// Trier les articles par date de publication (du plus récent au plus ancien)
+const sortedArticles = allArticles.sort((a, b) => {
+  // Safely handle missing or invalid dates
+  const dateA = a.data.publishDate instanceof Date ? a.data.publishDate.getTime() : 0;
+  const dateB = b.data.publishDate instanceof Date ? b.data.publishDate.getTime() : 0;
+  return dateB - dateA;
+});
+
+// Récupérer toutes les catégories pour la sidebar
+const allDefaultLangArticles = await getCollection('news', ({ data }) => {
+  return data.language === defaultLang && !data.draft;
+});
+
+// Extraire toutes les catégories uniques avec leur nombre d'articles
+const categories = [...new Set(allDefaultLangArticles.map(article => article.data.category))]
+  .map(cat => ({
+    name: cat,
+    count: allDefaultLangArticles.filter(article => article.data.category === cat).length
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+// Extraire tous les tags uniques avec leur nombre d'articles
+const allTags = allDefaultLangArticles.flatMap(article => article.data.tags || []);
+const tags = [...new Set(allTags)]
+  .map(t => ({
+    name: t,
+    count: allTags.filter(tagName => tagName === t).length
+  }))
+  .sort((a, b) => a.name.localeCompare(b.name));
+
+// Métadonnées de la page
+const metadata = {
+  title: `#${tag} | News`,
+  description: `Discover all our articles with the #${tag} tag.`,
+};
+---
+
+<PageLayout metadata={metadata}>
+  <section class="py-12">
+    <div class="container mx-auto px-4">
+      <div class="mb-8 text-center">
+        <h1 class="mb-4 text-4xl font-bold text-white">Tag: <span class="text-primary-400">#{tag}</span></h1>
+        <p class="mx-auto max-w-2xl text-xl text-slate-300">
+          All articles with the #{tag} tag
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 gap-8 lg:grid-cols-4">
+        <!-- Sidebar avec catégories et tags -->
+        <div class="lg:col-span-1">
+          <NewsSidebar 
+            categories={categories} 
+            tags={tags} 
+            currentTag={tag.toLowerCase()}
+            lang={defaultLang}
+          />
+        </div>
+
+        <!-- Liste des articles -->
+        <div class="lg:col-span-3">
+          {sortedArticles.length > 0 ? (
+            <NewsGrid articles={sortedArticles} lang={defaultLang} />
+          ) : (
+            <div class="rounded-lg border border-slate-700 bg-slate-900 p-8 text-center">
+              <p class="text-lg text-slate-300">No articles found with this tag.</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </section>
+</PageLayout>

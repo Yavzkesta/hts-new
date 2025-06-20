@@ -3,18 +3,13 @@ import { Icon } from 'astro-icon/components';
 import { Image } from 'astro:assets';
 import type { CallToAction } from '~/types';
 
-// Import des images statiques
-import gta5Image from '~/assets/images/gta5.png';
-import vpsImage from '~/assets/images/vps.png';
-import minecraftImage from '~/assets/images/minecraft.png';
-
 export interface Props {
   tagline?: string;
   title?: string;
   subtitle?: string;
   actions?: Array<CallToAction>;
   image?: {
-    src: string | any; // Modifié pour accepter des objets d'image importés
+    src: string | any;
     alt?: string;
   };
   compact?: boolean;
@@ -32,38 +27,23 @@ const {
 // Vérifier si l'image est un objet importé (comme avec import vpsImage from '...')
 const isImportedImage = image?.src && typeof image.src === 'object';
 
-// Fonction pour obtenir l'image en fonction du chemin
-function getImageByPath(path: string) {
-  if (path.includes('gta5.png')) return gta5Image;
-  if (path.includes('vps.png')) return vpsImage;
-  if (path.includes('minecraft.png')) return minecraftImage;
-  return vpsImage; // Image par défaut si aucune correspondance
-}
-
 // Déterminer si l'image est une URL externe
 const isExternalImage = !isImportedImage && image?.src && typeof image.src === 'string' && (
   image.src.startsWith('http://') || 
   image.src.startsWith('https://')
 );
 
-// Déterminer si l'image fait référence à une image locale
-const isLocalImage = !isImportedImage && image?.src && typeof image.src === 'string' && (
-  image.src.includes('assets/images') || 
-  image.src.startsWith('~/') ||
-  image.src.startsWith('/')
-);
-
-// Obtenir l'image importée si c'est une image locale
-const localImage = isLocalImage ? getImageByPath(image.src) : null;
+// Pour les images locales, pas besoin de les importer manuellement
+const isLocalImage = !isImportedImage && !isExternalImage && image?.src && typeof image.src === 'string';
 ---
 
 <section class={`relative ${compact ? 'py-4 md:py-6' : 'py-6 md:py-8'}`}>
   <div class="absolute inset-0 pointer-events-none" aria-hidden="true"></div>
-  <div class="relative max-w-7xl mx-auto px-4 sm:px-6">
+  <div class="relative max-w-6xl mx-auto px-4 sm:px-6">
     <div class="pt-0 pointer-events-none"></div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center justify-items-center">
       <!-- Texte à gauche -->
-      <div class="text-left">
+      <div id="text-content" class="text-left w-full max-w-lg">
         {tagline && (
           <p
             class="text-base text-secondary dark:text-blue-200 font-bold tracking-wide uppercase mb-1"
@@ -112,37 +92,44 @@ const localImage = isLocalImage ? getImageByPath(image.src) : null;
       <!-- Image à droite -->
       {
         image && (
-          <div class="relative order-first md:order-last">
+          <div class="relative order-first md:order-last flex items-center justify-center w-full">
+            <div class="flex items-center justify-center w-full max-w-md">
             {typeof image === 'string' ? (
               <Fragment set:html={image} />
             ) : isImportedImage ? (
               <Image
                 src={image.src}
                 alt={image.alt || ''}
-                class="mx-auto rounded-md w-full h-auto object-cover"
-                loading="eager"
-              />
-            ) : isExternalImage ? (
-              <img
-                src={image.src}
-                alt={image.alt || ''}
-                class="mx-auto rounded-md w-full h-auto object-cover"
-                loading="eager"
-              />
-            ) : localImage ? (
-              <Image
-                src={localImage}
-                alt={image.alt || ''}
-                class="mx-auto rounded-md w-full h-auto object-cover"
-                loading="eager"
-              />
-            ) : (
-              <div class="bg-gray-200 rounded-md w-full h-[300px] flex items-center justify-center">
-                <p class="text-gray-500">Image non disponible</p>
-              </div>
-            )}
-          </div>
+                  class="mx-auto rounded-md"
+                  style="max-width: 100%; height: auto; object-fit: contain; aspect-ratio: auto;"
+                  loading="eager"
+                  width={500}
+                />
+              ) : isExternalImage ? (
+                <img
+                  src={image.src}
+                  alt={image.alt || ''}
+                  class="mx-auto rounded-md"
+                  style="max-width: 100%; height: auto; object-fit: contain; aspect-ratio: auto;"
+                  loading="eager"
+                />
+              ) : isLocalImage ? (
+                <img
+                  src={image.src}
+                  alt={image.alt || ''}
+                  class="mx-auto rounded-md"
+                  style="max-width: 100%; height: auto; object-fit: contain; aspect-ratio: auto;"
+                  loading="eager"
+                />
+              ) : (
+                <div class="bg-gray-200 rounded-md w-full flex items-center justify-center" style="height: 300px;">
+                  <p class="text-gray-500">Image non disponible</p>
+    </div>
+              )}
+    </div>
+  </div>
         )
       }
     </div>
   </div>
+</section>
