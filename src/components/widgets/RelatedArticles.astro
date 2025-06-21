@@ -45,12 +45,20 @@ const { articles, sectionTitle, lang } = Astro.props;
     </div>
 
     <!-- Navigation buttons -->
-    <button id="prev-btn" class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white rounded-full p-2 shadow-lg hover:bg-slate-700">
+    <button 
+      id="prev-btn" 
+      aria-label="Article précédent" 
+      class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white rounded-full p-2 shadow-lg hover:bg-slate-700"
+    >
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
     </button>
-    <button id="next-btn" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-slate-800 text-white rounded-full p-2 shadow-lg hover:bg-slate-700">
+    <button 
+      id="next-btn" 
+      aria-label="Article suivant" 
+      class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-slate-800 text-white rounded-full p-2 shadow-lg hover:bg-slate-700"
+    >
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
