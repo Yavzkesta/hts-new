@@ -9,7 +9,7 @@ import Testimonials from '~/components/widgets/Testimonials.astro';
 import RelatedArticles from '~/components/widgets/RelatedArticles.astro';
 import GameFeaturePanel from '~/components/widgets/GameFeaturePanel.astro';
 import { getHeaderData } from '~/navigation';
-import { getCloudinaryImageUrl } from '~/utils/cloudinary';
+import { getCloudinaryUrl } from '~/utils/cloudinary';
 
 export async function getStaticPaths() {
   const allGames = await getCollection('game');
@@ -63,14 +63,15 @@ const sortedArticles = relatedArticles.sort(
 function getCloudinaryImageUrl(imageId, options = {}) {
   if (!imageId) return '';
   
-  // Si l'image est déjà une URL Cloudinary complète, la retourner telle quelle
+  let finalImageId = imageId;
+  
+  // Si l'image est déjà une URL Cloudinary complète, extraire l'ID
   if (typeof imageId === 'string' && imageId.includes('res.cloudinary.com')) {
     // Extraire l'ID de l'image à partir de l'URL complète
     const urlParts = imageId.split('/');
     const idPart = urlParts[urlParts.length - 1];
     // Extraire l'ID sans l'extension
-    const id = idPart.split('.')[0];
-    imageId = id;
+    finalImageId = idPart.split('.')[0];
   }
   
   // Construire les transformations
@@ -101,9 +102,8 @@ function getCloudinaryImageUrl(imageId, options = {}) {
   
   const transformString = transformations.join(',');
   
-  // Construire l'URL Cloudinary directement avec l'ID de l'image (sans dossier)
-  // Ajouter explicitement l'extension .webp à la fin de l'URL
-  return `https://res.cloudinary.com/da68srujg/image/upload/${transformString}/${imageId}.${opts.format}`;
+  // Construire l'URL Cloudinary avec extension explicite
+  return `https://res.cloudinary.com/da68srujg/image/upload/${transformString}/${finalImageId}.${opts.format}`;
 }
 
 // Create JSON-LD
@@ -176,7 +176,7 @@ const headerData = getHeaderData('fr');
 const heroImageDimensions = { width: 500, height: 500 };
 const featureImageDimensions = { width: 600, height: 400 };
 const testimonialImageDimensions = { width: 100, height: 100 };
-const panelFeatureImageDimensions = { width: 250, height: 150 };
+const panelFeatureImageDimensions = { width: 400, height: 400 };
 
 // Préparer les données du héros
 let optimizedHero = { ...game.data.hero };
@@ -235,16 +235,37 @@ if (game.data.panelFeatures) {
   optimizedPanelFeatures = {
     ...game.data.panelFeatures,
     features: game.data.panelFeatures.features.map(feature => {
-      if (feature.image && typeof feature.image === 'string') {
-        return {
-          ...feature,
-          image: getCloudinaryImageUrl(feature.image, { 
-            width: panelFeatureImageDimensions.width, 
-            height: panelFeatureImageDimensions.height,
-            quality: 80,
-            format: 'webp'
-          })
-        };
+      if (feature.image) {
+        // Si l'image est un objet avec src
+        if (typeof feature.image === 'object' && feature.image.src) {
+          return {
+            ...feature,
+            image: {
+              src: getCloudinaryImageUrl(feature.image.src, { 
+                width: panelFeatureImageDimensions.width, 
+                height: panelFeatureImageDimensions.height,
+                quality: 85,
+                format: 'webp'
+              }),
+              alt: feature.image.alt || feature.title || ''
+            }
+          };
+        }
+        // Si l'image est une chaîne de caractères
+        else if (typeof feature.image === 'string') {
+          return {
+            ...feature,
+            image: {
+              src: getCloudinaryImageUrl(feature.image, { 
+                width: panelFeatureImageDimensions.width, 
+                height: panelFeatureImageDimensions.height,
+                quality: 85,
+                format: 'webp'
+              }),
+              alt: feature.title || ''
+            }
+          };
+        }
       }
       return feature;
     })

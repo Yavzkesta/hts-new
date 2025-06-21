@@ -1,7 +1,6 @@
 ---
 import Headline from '~/components/ui/Headline.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
-import Image from '~/components/common/Image.astro';
 
 interface Feature {
   title: string;
@@ -50,12 +49,14 @@ const {
         <div class="flex-shrink-0 w-full lg:w-1/2 flex justify-center items-center">
           <div class="rounded-lg overflow-hidden shadow-xl relative group max-w-md mx-auto">
             <a href={feature.image.src} target="_blank" rel="noopener noreferrer" class="block">
-              <Image
+              <!-- Utiliser une balise img standard avec dimensions explicites -->
+              <img
                 src={feature.image.src}
                 alt={feature.image.alt}
+                width="400"
+                height="400"
                 class="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                width={400}
-                height={400}
+                loading="eager"
               />
             </a>
           </div>
