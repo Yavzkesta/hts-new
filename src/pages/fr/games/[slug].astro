@@ -9,7 +9,7 @@ import Testimonials from '~/components/widgets/Testimonials.astro';
 import RelatedArticles from '~/components/widgets/RelatedArticles.astro';
 import GameFeaturePanel from '~/components/widgets/GameFeaturePanel.astro';
 import { getHeaderData } from '~/navigation';
-import { getCloudinaryUrl } from '~/utils/cloudinary';
+import { getCloudinaryImageUrl } from '~/utils/cloudinary';
 
 export async function getStaticPaths() {
   const allGames = await getCollection('game');
@@ -65,7 +65,12 @@ function getCloudinaryImageUrl(imageId, options = {}) {
   
   // Si l'image est déjà une URL Cloudinary complète, la retourner telle quelle
   if (typeof imageId === 'string' && imageId.includes('res.cloudinary.com')) {
-    return imageId;
+    // Extraire l'ID de l'image à partir de l'URL complète
+    const urlParts = imageId.split('/');
+    const idPart = urlParts[urlParts.length - 1];
+    // Extraire l'ID sans l'extension
+    const id = idPart.split('.')[0];
+    imageId = id;
   }
   
   // Construire les transformations
@@ -73,7 +78,7 @@ function getCloudinaryImageUrl(imageId, options = {}) {
     width: 800,
     height: 600,
     quality: 80,
-    format: 'auto',
+    format: 'webp', // Utiliser WebP par défaut
     crop: 'fill',
   };
   
@@ -97,7 +102,8 @@ function getCloudinaryImageUrl(imageId, options = {}) {
   const transformString = transformations.join(',');
   
   // Construire l'URL Cloudinary directement avec l'ID de l'image (sans dossier)
-  return `https://res.cloudinary.com/da68srujg/image/upload/${transformString}/${imageId}`;
+  // Ajouter explicitement l'extension .webp à la fin de l'URL
+  return `https://res.cloudinary.com/da68srujg/image/upload/${transformString}/${imageId}.${opts.format}`;
 }
 
 // Create JSON-LD
@@ -166,6 +172,12 @@ const faqItems = game.data.faqs?.map(faq => ({
 // Obtenir les données d'en-tête pour la page
 const headerData = getHeaderData('fr');
 
+// Dimensions des images pour éviter les décalages de mise en page (CLS)
+const heroImageDimensions = { width: 500, height: 500 };
+const featureImageDimensions = { width: 600, height: 400 };
+const testimonialImageDimensions = { width: 100, height: 100 };
+const panelFeatureImageDimensions = { width: 250, height: 150 };
+
 // Préparer les données du héros
 let optimizedHero = { ...game.data.hero };
 if (optimizedHero.image) {
@@ -174,9 +186,10 @@ if (optimizedHero.image) {
     optimizedHero.image = {
       ...optimizedHero.image,
       src: getCloudinaryImageUrl(optimizedHero.image.src, { 
-        width: 500, 
-        height: 500, 
-        quality: 85 
+        width: heroImageDimensions.width, 
+        height: heroImageDimensions.height, 
+        quality: 85,
+        format: 'webp'
       })
     };
   }
@@ -188,9 +201,10 @@ const optimizedFeatures = game.data.features?.map(feature => {
     return {
       ...feature,
       image: getCloudinaryImageUrl(feature.image, { 
-        width: 600, 
-        height: 400,
-        quality: 80
+        width: featureImageDimensions.width, 
+        height: featureImageDimensions.height,
+        quality: 80,
+        format: 'webp'
       })
     };
   }
@@ -203,11 +217,12 @@ const optimizedTestimonials = game.data.testimonials?.map(testimonial => {
     return {
       ...testimonial,
       image: getCloudinaryImageUrl(testimonial.image, { 
-        width: 100, 
-        height: 100, 
+        width: testimonialImageDimensions.width, 
+        height: testimonialImageDimensions.height, 
         crop: 'fill',
         gravity: 'face',
-        quality: 80
+        quality: 80,
+        format: 'webp'
       })
     };
   }
@@ -224,9 +239,10 @@ if (game.data.panelFeatures) {
         return {
           ...feature,
           image: getCloudinaryImageUrl(feature.image, { 
-            width: 250, 
-            height: 150,
-            quality: 80
+            width: panelFeatureImageDimensions.width, 
+            height: panelFeatureImageDimensions.height,
+            quality: 80,
+            format: 'webp'
           })
         };
       }
@@ -235,24 +251,25 @@ if (game.data.panelFeatures) {
   };
 }
 
-// Fonction pour transformer les URL d'image en HTML pour les images externes
-function createExternalImageHTML(imageId, alt = '') {
+// Fonction pour transformer les URL d'image en HTML pour les images externes avec dimensions explicites
+function createExternalImageHTML(imageId, alt = '', dimensions = { width: 750, height: 750 }) {
   if (!imageId) return '';
   
-  // Si l'URL est déjà une URL externe complète, l'utiliser directement
-  if (imageId.startsWith('http')) {
-    return `<img src="${imageId}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
+  // Si l'URL est déjà une URL externe complète et n'est pas une URL Cloudinary
+  if (imageId.startsWith('http') && !imageId.includes('res.cloudinary.com')) {
+    return `<img src="${imageId}" alt="${alt}" width="${dimensions.width}" height="${dimensions.height}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
   }
   
-  // Sinon, créer une URL Cloudinary
+  // Pour les URLs Cloudinary ou les IDs d'image, créer une URL Cloudinary optimisée
   const cloudinaryUrl = getCloudinaryImageUrl(imageId, { 
-    width: 750, 
-    height: 750, 
+    width: dimensions.width, 
+    height: dimensions.height, 
     quality: 90,
-    crop: 'auto'
+    crop: 'auto',
+    format: 'webp'
   });
   
-  return `<img src="${cloudinaryUrl}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
+  return `<img src="${cloudinaryUrl}" alt="${alt}" width="${dimensions.width}" height="${dimensions.height}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
 }
 
 // Préparer l'image du héros en HTML si nécessaire
@@ -260,7 +277,8 @@ let heroImageHTML = '';
 if (game.data.hero?.image?.src && typeof game.data.hero.image.src === 'string') {
   heroImageHTML = createExternalImageHTML(
     game.data.hero.image.src, 
-    game.data.hero.image.alt || game.data.title || ''
+    game.data.hero.image.alt || game.data.title || '',
+    heroImageDimensions
   );
 }
 ---
