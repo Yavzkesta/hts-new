@@ -2,12 +2,12 @@
 title: "Configuration de la Chaîne de Connexion MySQL pour un Serveur FiveM"
 description: "Instructions complètes pour configurer la chaîne de connexion MySQL compatible avec oxmysql et mysql-async pour votre serveur FiveM"
 excerpt: "Guide détaillé pour mettre à jour votre configuration MySQL et assurer la compatibilité avec les dernières versions d'oxmysql sur FiveM."
-image: "https://upload.wikimedia.org/wikipedia/fr/thumb/6/62/MySQL.svg/400px-MySQL.svg.png"
+image: "https://res.cloudinary.com/da68srujg/image/upload/v1750596427/t%C3%A9l%C3%A9chargement_1_i6moaf.png"
 imageAlt: "Configuration MySQL pour serveur FiveM"
 publishDate: "2025-03-17"
 category: "fivem"
 tags: ["mysql", "fivem", "oxmysql", "configuration", "base-de-données"]
-author: "Jean Dupont"
+author: "Yavuz KESKIN"
 language: "fr"
 translationKey: "mysql-connection-fivem-guide"
 ---
