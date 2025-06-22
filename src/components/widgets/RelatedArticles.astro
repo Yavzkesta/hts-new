@@ -44,28 +44,24 @@ const { articles, sectionTitle, lang } = Astro.props;
       </div>
     </div>
 
-    <!-- Navigation buttons avec accessibilité améliorée -->
+    <!-- Navigation buttons -->
     <button 
       id="prev-btn" 
-      aria-label="Article précédent"
-      title="Article précédent"
+      aria-label="Article précédent" 
       class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white rounded-full p-2 shadow-lg hover:bg-slate-700"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
-      <span class="sr-only">Article précédent</span>
     </button>
     <button 
       id="next-btn" 
-      aria-label="Article suivant"
-      title="Article suivant"
+      aria-label="Article suivant" 
       class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-slate-800 text-white rounded-full p-2 shadow-lg hover:bg-slate-700"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
-      <span class="sr-only">Article suivant</span>
     </button>
   </div>
 
@@ -84,13 +80,8 @@ const { articles, sectionTitle, lang } = Astro.props;
         const translateX = -(currentIndex * (100 / itemsPerView));
         slider.style.transform = `translateX(${translateX}%)`;
 
-        // Mettre à jour les attributs d'accessibilité en fonction de l'état
         prevBtn.disabled = currentIndex === 0;
         nextBtn.disabled = currentIndex === maxIndex;
-        
-        // Mettre à jour les attributs aria pour refléter l'état des boutons
-        prevBtn.setAttribute('aria-disabled', currentIndex === 0 ? 'true' : 'false');
-        nextBtn.setAttribute('aria-disabled', currentIndex === maxIndex ? 'true' : 'false');
       };
 
       prevBtn.addEventListener('click', () => {
