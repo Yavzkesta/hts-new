@@ -10,10 +10,6 @@ interface Props {
 }
 
 const { articles, sectionTitle, lang } = Astro.props;
-
-// Textes pour l'accessibilité selon la langue
-const prevText = lang === 'fr' ? 'Article précédent' : 'Previous article';
-const nextText = lang === 'fr' ? 'Article suivant' : 'Next article';
 ---
 
 <WidgetWrapper id="related-articles" isDark={true} containerClass="max-w-6xl mx-auto">
@@ -49,112 +45,77 @@ const nextText = lang === 'fr' ? 'Article suivant' : 'Next article';
     </div>
 
     <!-- Navigation buttons avec accessibilité améliorée -->
-    <div class="relative">
-      <!-- Bouton précédent avec texte accessible -->
-      <button 
-        id="prev-btn" 
-        aria-label={prevText}
-        class="absolute left-0 top-1/2 -translate-y-1/2 text-white p-2 rounded-full shadow-lg hover:bg-slate-700"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-        <span class="sr-only">{prevText}</span>
-      </button>
-      
-      <!-- Bouton suivant avec texte accessible -->
-      <button 
-        id="next-btn" 
-        aria-label={nextText}
-        class="absolute right-0 top-1/2 -translate-y-1/2 text-white p-2 rounded-full shadow-lg hover:bg-slate-700"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-        <span class="sr-only">{nextText}</span>
-      </button>
-    </div>
+    <button 
+      id="prev-btn" 
+      aria-label="Article précédent"
+      title="Article précédent"
+      class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white rounded-full p-2 shadow-lg hover:bg-slate-700"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      <span class="sr-only">Article précédent</span>
+    </button>
+    <button 
+      id="next-btn" 
+      aria-label="Article suivant"
+      title="Article suivant"
+      class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-slate-800 text-white rounded-full p-2 shadow-lg hover:bg-slate-700"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+      </svg>
+      <span class="sr-only">Article suivant</span>
+    </button>
   </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const slider = document.getElementById('articles-slider');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+
+      let currentIndex = 0;
+      const itemsPerView = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
+      const totalItems = slider.children.length;
+      const maxIndex = Math.max(0, totalItems - itemsPerView);
+
+      const updateSlider = () => {
+        const translateX = -(currentIndex * (100 / itemsPerView));
+        slider.style.transform = `translateX(${translateX}%)`;
+
+        // Mettre à jour les attributs d'accessibilité en fonction de l'état
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === maxIndex;
+        
+        // Mettre à jour les attributs aria pour refléter l'état des boutons
+        prevBtn.setAttribute('aria-disabled', currentIndex === 0 ? 'true' : 'false');
+        nextBtn.setAttribute('aria-disabled', currentIndex === maxIndex ? 'true' : 'false');
+      };
+
+      prevBtn.addEventListener('click', () => {
+        if (currentIndex > 0) {
+          currentIndex--;
+          updateSlider();
+        }
+      });
+
+      nextBtn.addEventListener('click', () => {
+        if (currentIndex < maxIndex) {
+          currentIndex++;
+          updateSlider();
+        }
+      });
+
+      updateSlider();
+
+      window.addEventListener('resize', () => {
+        const newItemsPerView = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
+        if (newItemsPerView !== itemsPerView) {
+          currentIndex = 0;
+          updateSlider();
+        }
+      });
+    });
+  </script>
 </WidgetWrapper>
-
-<script define:vars={{ prevText, nextText }}>
-  document.addEventListener('DOMContentLoaded', () => {
-    const slider = document.getElementById('articles-slider');
-    const prevBtn = document.getElementById('prev-btn');
-    const nextBtn = document.getElementById('next-btn');
-
-    // S'assurer que les boutons ont des noms accessibles
-    if (prevBtn && !prevBtn.hasAttribute('aria-label')) {
-      prevBtn.setAttribute('aria-label', prevText);
-      const srSpan = document.createElement('span');
-      srSpan.className = 'sr-only';
-      srSpan.textContent = prevText;
-      prevBtn.appendChild(srSpan);
-    }
-    
-    if (nextBtn && !nextBtn.hasAttribute('aria-label')) {
-      nextBtn.setAttribute('aria-label', nextText);
-      const srSpan = document.createElement('span');
-      srSpan.className = 'sr-only';
-      srSpan.textContent = nextText;
-      nextBtn.appendChild(srSpan);
-    }
-
-    let currentIndex = 0;
-    const itemsPerView = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
-    const totalItems = slider.children.length;
-    const maxIndex = Math.max(0, totalItems - itemsPerView);
-
-    const updateSlider = () => {
-      const translateX = -(currentIndex * (100 / itemsPerView));
-      slider.style.transform = `translateX(${translateX}%)`;
-
-      // Mettre à jour les attributs d'accessibilité en fonction de l'état
-      prevBtn.disabled = currentIndex === 0;
-      nextBtn.disabled = currentIndex === maxIndex;
-      
-      // Mettre à jour les attributs aria pour refléter l'état des boutons
-      prevBtn.setAttribute('aria-disabled', currentIndex === 0 ? 'true' : 'false');
-      nextBtn.setAttribute('aria-disabled', currentIndex === maxIndex ? 'true' : 'false');
-    };
-
-    prevBtn.addEventListener('click', () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        updateSlider();
-      }
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if (currentIndex < maxIndex) {
-        currentIndex++;
-        updateSlider();
-      }
-    });
-
-    updateSlider();
-
-    window.addEventListener('resize', () => {
-      const newItemsPerView = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
-      if (newItemsPerView !== itemsPerView) {
-        currentIndex = 0;
-        updateSlider();
-      }
-    });
-  });
-</script>
-
-<style>
-  /* Style pour les éléments visibles uniquement aux lecteurs d'écran */
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border-width: 0;
-  }
-</style>
