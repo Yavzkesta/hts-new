@@ -1,5 +1,5 @@
 ---
-// Composant pour gérer les styles critiques et optimiser le chargement des ressources CSS
+// Composant pour gérer les styles critiques
 ---
 
 <style is:inline>
@@ -10,21 +10,13 @@
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
   }
 
-  /* Styles critiques pour AOS (Animation On Scroll) */
+  /* Styles critiques pour GameFeaturePanel */
   [data-aos] {
-    opacity: 0;
-    transform: translateY(20px);
-    transition-property: opacity, transform;
-    transition-duration: 800ms;
-    transition-timing-function: ease-in-out;
-  }
-
-  [data-aos].aos-animate {
     opacity: 1;
     transform: translateY(0);
   }
 
-  /* Styles critiques pour les layouts */
+  /* Autres styles critiques nécessaires pour le premier affichage */
   .max-w-6xl {
     max-width: 72rem;
   }
@@ -47,85 +39,39 @@
   .text-center {
     text-align: center;
   }
-  .space-y-16 > * + * {
-    margin-top: 4rem;
-  }
-  
-  /* Styles spécifiques pour les panneaux de fonctionnalités */
-  .feature-panel {
-    opacity: 1;
-    transform: translateY(0);
-  }
 </style>
 
 <script is:inline>
-  // Script pour optimiser le chargement des ressources CSS
-  (function() {
-    // Fonction pour détecter les feuilles de style qui bloquent le rendu
-    function optimizeCSSLoading() {
-      // Sélectionne tous les liens CSS
+  // Script pour charger les CSS de manière asynchrone
+  document.addEventListener('DOMContentLoaded', () => {
+    // Fonction pour charger les CSS de manière asynchrone
+    const loadStylesheets = () => {
+      // Sélectionne tous les liens CSS standards
       const stylesheets = document.querySelectorAll('link[rel="stylesheet"]');
       
+      // Pour chaque feuille de style
       stylesheets.forEach(stylesheet => {
-        const href = stylesheet.getAttribute('href');
-        
-        // Si le lien contient GameFeaturePanel, on l'optimise
-        if (href && href.includes('GameFeaturePanel')) {
-          // On crée un nouvel élément link avec les attributs optimisés
-          const optimizedLink = document.createElement('link');
-          optimizedLink.rel = 'preload';
-          optimizedLink.as = 'style';
-          optimizedLink.href = href;
-          optimizedLink.onload = function() {
-            // Une fois préchargé, on change l'attribut rel pour appliquer les styles
+        // Si le lien contient GameFeaturePanel ou terms, on le modifie
+        if (stylesheet.href.includes('GameFeaturePanel') || stylesheet.href.includes('terms')) {
+          const href = stylesheet.href;
+          
+          // Créer un nouveau lien avec preload
+          const preloadLink = document.createElement('link');
+          preloadLink.rel = 'preload';
+          preloadLink.as = 'style';
+          preloadLink.href = href;
+          preloadLink.onload = function() {
             this.onload = null;
             this.rel = 'stylesheet';
           };
           
-          // On insère le nouveau lien et on supprime l'ancien
-          stylesheet.parentNode.insertBefore(optimizedLink, stylesheet);
-          stylesheet.parentNode.removeChild(stylesheet);
+          // Remplacer l'ancien lien par le nouveau
+          stylesheet.parentNode.replaceChild(preloadLink, stylesheet);
         }
       });
-    }
+    };
     
-    // Exécuter immédiatement pour les ressources déjà présentes dans le DOM
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', optimizeCSSLoading);
-    } else {
-      optimizeCSSLoading();
-    }
-    
-    // Observer les changements dans le DOM pour détecter les nouvelles feuilles de style
-    const observer = new MutationObserver(mutations => {
-      mutations.forEach(mutation => {
-        if (mutation.addedNodes && mutation.addedNodes.length) {
-          for (let i = 0; i < mutation.addedNodes.length; i++) {
-            const node = mutation.addedNodes[i];
-            if (node.tagName === 'LINK' && node.rel === 'stylesheet' && node.href.includes('GameFeaturePanel')) {
-              // Optimiser les nouvelles feuilles de style
-              const href = node.href;
-              const optimizedLink = document.createElement('link');
-              optimizedLink.rel = 'preload';
-              optimizedLink.as = 'style';
-              optimizedLink.href = href;
-              optimizedLink.onload = function() {
-                this.onload = null;
-                this.rel = 'stylesheet';
-              };
-              
-              node.parentNode.insertBefore(optimizedLink, node);
-              node.parentNode.removeChild(node);
-            }
-          }
-        }
-      });
-    });
-    
-    // Observer le document entier pour les changements
-    observer.observe(document.documentElement, {
-      childList: true,
-      subtree: true
-    });
-  })();
+    // Exécuter la fonction
+    loadStylesheets();
+  });
 </script>

@@ -72,64 +72,48 @@ const {
   </div>
 </WidgetWrapper>
 
-<!-- Inliner directement les styles critiques de AOS au lieu de les charger depuis un fichier externe -->
-<style is:global>
-  /* Styles critiques de AOS inlinés directement */
-  [data-aos] {
-    opacity: 0;
-    transform: translateY(20px);
-    transition-property: opacity, transform;
-    transition-duration: 800ms;
-    transition-timing-function: ease-in-out;
-  }
-
-  [data-aos].aos-animate {
-    opacity: 1;
-    transform: translateY(0);
-  }
-
-  /* Styles spécifiques pour les panneaux de fonctionnalités */
+<style>
+  /* Animation styles - styles critiques déjà inclus dans CriticalStyles.astro */
   .feature-panel {
     opacity: 1;
     transform: translateY(0);
-    transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
   }
 
-  /* Styles de base pour les images dans les panneaux */
-  .feature-panel img {
-    transition: transform 0.3s ease;
-  }
-
-  .feature-panel .group:hover img {
-    transform: scale(1.05);
+  /* Les animations seront activées par JavaScript après le chargement de la page */
+  @media (prefers-reduced-motion: no-preference) {
+    .feature-panel {
+      transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+    }
   }
 </style>
 
 <script>
-  // Charger AOS de manière différée sans bloquer le rendu
+  // Chargement différé de AOS
   document.addEventListener('DOMContentLoaded', () => {
-    // Fonction pour initialiser AOS
-    const initAOS = async () => {
-      try {
-        const AOS = (await import('aos')).default;
-        // Pas besoin d'importer le CSS car nous avons inliné les styles critiques
-        AOS.init({
-          duration: 800,
-          easing: 'ease-in-out',
-          once: true,
-          startEvent: 'DOMContentLoaded',
+    // Utilisation de requestIdleCallback pour charger AOS quand le navigateur est inactif
+    if (window.requestIdleCallback) {
+      window.requestIdleCallback(() => {
+        import('aos').then(AOS => {
+          import('aos/dist/aos.css');
+          AOS.default.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+          });
         });
-      } catch (error) {
-        console.error('Erreur lors du chargement de AOS:', error);
-      }
-    };
-
-    // Utiliser requestIdleCallback pour charger AOS quand le navigateur est inactif
-    if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(() => initAOS(), { timeout: 2000 });
+      });
     } else {
       // Fallback pour les navigateurs qui ne supportent pas requestIdleCallback
-      setTimeout(initAOS, 1000);
+      setTimeout(() => {
+        import('aos').then(AOS => {
+          import('aos/dist/aos.css');
+          AOS.default.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+          });
+        });
+      }, 1000); // Délai d'une seconde après le chargement du DOM
     }
   });
 </script>
