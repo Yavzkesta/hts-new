@@ -42,7 +42,7 @@ const {
   <div class="space-y-16">
     {features.map((feature, index) => (
       <div
-        class={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-8`}
+        class={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} items-center gap-8 feature-panel`}
         data-aos={index % 2 === 0 ? 'fade-right' : 'fade-left'}
       >
         <!-- Screenshot/Image -->
@@ -56,7 +56,7 @@ const {
                 width="400"
                 height="400"
                 class="w-full h-auto object-contain transition-transform duration-300 group-hover:scale-105"
-                loading="eager"
+                loading={index === 0 ? "eager" : "lazy"}
               />
             </a>
           </div>
@@ -72,28 +72,48 @@ const {
   </div>
 </WidgetWrapper>
 
-<script>
-  import AOS from 'aos';
-  import 'aos/dist/aos.css';
-
-  // Initialize AOS
-  AOS.init({
-    duration: 800,
-    easing: 'ease-in-out',
-    once: true,
-  });
-</script>
-
 <style>
-  /* Animation styles */
-  [data-aos] {
-    opacity: 0;
-    transform: translateY(20px);
-    transition-property: opacity, transform;
-  }
-
-  [data-aos].aos-animate {
+  /* Animation styles - styles critiques déjà inclus dans CriticalStyles.astro */
+  .feature-panel {
     opacity: 1;
     transform: translateY(0);
   }
+
+  /* Les animations seront activées par JavaScript après le chargement de la page */
+  @media (prefers-reduced-motion: no-preference) {
+    .feature-panel {
+      transition: opacity 0.8s ease-in-out, transform 0.8s ease-in-out;
+    }
+  }
 </style>
+
+<script>
+  // Chargement différé de AOS
+  document.addEventListener('DOMContentLoaded', () => {
+    // Utilisation de requestIdleCallback pour charger AOS quand le navigateur est inactif
+    if (window.requestIdleCallback) {
+      window.requestIdleCallback(() => {
+        import('aos').then(AOS => {
+          import('aos/dist/aos.css');
+          AOS.default.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+          });
+        });
+      });
+    } else {
+      // Fallback pour les navigateurs qui ne supportent pas requestIdleCallback
+      setTimeout(() => {
+        import('aos').then(AOS => {
+          import('aos/dist/aos.css');
+          AOS.default.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+          });
+        });
+      }, 1000); // Délai d'une seconde après le chargement du DOM
+    }
+  });
+</script>
