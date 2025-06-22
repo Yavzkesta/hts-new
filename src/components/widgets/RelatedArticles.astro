@@ -2,6 +2,7 @@
 import NewsCard from '~/components/news/NewsCard.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import Headline from '~/components/ui/Headline.astro';
+import NavigationButton from '~/components/ui/NavigationButton.astro';
 
 interface Props {
   articles: any[];
@@ -10,16 +11,12 @@ interface Props {
 }
 
 const { articles, sectionTitle, lang } = Astro.props;
-
-// Textes pour l'accessibilité selon la langue
-const prevText = lang === 'fr' ? 'Article précédent' : 'Previous article';
-const nextText = lang === 'fr' ? 'Article suivant' : 'Next article';
 ---
 
 <WidgetWrapper id="related-articles" isDark={true} containerClass="max-w-6xl mx-auto">
   <Headline title={sectionTitle} />
 
-  <div class="relative">
+  <div class="relative intersect-once">
     <!-- Slider container -->
     <div class="overflow-hidden">
       <div id="articles-slider" class="flex transition-transform duration-500 ease-in-out">
@@ -48,57 +45,51 @@ const nextText = lang === 'fr' ? 'Article suivant' : 'Next article';
       </div>
     </div>
 
-    <!-- Navigation buttons avec accessibilité améliorée -->
+    <!-- Navigation buttons avec composants dédiés -->
     <div class="relative">
-      <!-- Bouton précédent avec texte accessible -->
-      <button 
-        id="prev-btn" 
-        aria-label={prevText}
-        class="absolute left-0 top-1/2 -translate-y-1/2 text-white p-2 rounded-full shadow-lg hover:bg-slate-700"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-        </svg>
-        <span class="sr-only">{prevText}</span>
-      </button>
-      
-      <!-- Bouton suivant avec texte accessible -->
-      <button 
-        id="next-btn" 
-        aria-label={nextText}
-        class="absolute right-0 top-1/2 -translate-y-1/2 text-white p-2 rounded-full shadow-lg hover:bg-slate-700"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
-        <span class="sr-only">{nextText}</span>
-      </button>
+      <NavigationButton direction="prev" id="prev-btn" lang={lang} />
+      <NavigationButton direction="next" id="next-btn" lang={lang} />
     </div>
   </div>
 </WidgetWrapper>
 
-<script define:vars={{ prevText, nextText }}>
+<script define:vars={{ lang }}>
   document.addEventListener('DOMContentLoaded', () => {
     const slider = document.getElementById('articles-slider');
     const prevBtn = document.getElementById('prev-btn');
     const nextBtn = document.getElementById('next-btn');
 
-    // S'assurer que les boutons ont des noms accessibles
-    if (prevBtn && !prevBtn.hasAttribute('aria-label')) {
-      prevBtn.setAttribute('aria-label', prevText);
-      const srSpan = document.createElement('span');
-      srSpan.className = 'sr-only';
-      srSpan.textContent = prevText;
-      prevBtn.appendChild(srSpan);
-    }
+    // Vérifier que les éléments existent
+    if (!slider || !prevBtn || !nextBtn) return;
+
+    // Assurer que les boutons ont des noms accessibles
+    const prevText = lang === 'fr' ? 'Article précédent' : 'Previous article';
+    const nextText = lang === 'fr' ? 'Article suivant' : 'Next article';
     
-    if (nextBtn && !nextBtn.hasAttribute('aria-label')) {
-      nextBtn.setAttribute('aria-label', nextText);
-      const srSpan = document.createElement('span');
-      srSpan.className = 'sr-only';
-      srSpan.textContent = nextText;
-      nextBtn.appendChild(srSpan);
-    }
+    // Fonction pour s'assurer que les boutons ont des attributs d'accessibilité
+    const ensureAccessibility = (button, text) => {
+      // Ajouter aria-label s'il n'existe pas
+      if (!button.getAttribute('aria-label')) {
+        button.setAttribute('aria-label', text);
+      }
+      
+      // Vérifier si un span.sr-only existe déjà
+      let srSpan = Array.from(button.children).find(child => 
+        child.tagName === 'SPAN' && child.classList.contains('sr-only')
+      );
+      
+      // Si non, créer et ajouter le span
+      if (!srSpan) {
+        srSpan = document.createElement('span');
+        srSpan.className = 'sr-only';
+        srSpan.textContent = text;
+        button.appendChild(srSpan);
+      }
+    };
+    
+    // Appliquer l'accessibilité aux boutons
+    ensureAccessibility(prevBtn, prevText);
+    ensureAccessibility(nextBtn, nextText);
 
     let currentIndex = 0;
     const itemsPerView = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
