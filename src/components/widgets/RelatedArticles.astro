@@ -10,22 +10,33 @@ interface Props {
 }
 
 const { articles, sectionTitle, lang } = Astro.props;
+
+// Déterminer les textes d'accessibilité en fonction de la langue
+const ariaLabels = {
+  prev: lang === 'fr' ? 'Article précédent' : 'Previous article',
+  next: lang === 'fr' ? 'Article suivant' : 'Next article',
+  slider: lang === 'fr' ? 'Carrousel d\'articles connexes' : 'Related articles carousel'
+};
 ---
 
 <WidgetWrapper id="related-articles" isDark={true} containerClass="max-w-6xl mx-auto">
   <Headline title={sectionTitle} />
 
   <div class="relative">
-    <!-- Slider container -->
-    <div class="overflow-hidden">
-      <div id="articles-slider" class="flex transition-transform duration-500 ease-in-out">
+    <!-- Slider container with ARIA role -->
+    <div class="overflow-hidden" role="region" aria-label={ariaLabels.slider}>
+      <div 
+        id="articles-slider" 
+        class="flex transition-transform duration-500 ease-in-out" 
+        role="list"
+      >
         {
           articles.map((article) => {
             // Extraire le slug sans le préfixe de langue
             const cleanSlug = article.slug.includes('/') ? article.slug.split('/').pop() : article.slug;
 
             return (
-              <div class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 px-4">
+              <div class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 px-4" role="listitem">
                 <NewsCard
                   title={article.data.title}
                   description={article.data.description}
@@ -44,22 +55,23 @@ const { articles, sectionTitle, lang } = Astro.props;
       </div>
     </div>
 
-    <!-- Navigation buttons -->
+    <!-- Navigation buttons with improved accessibility -->
     <button 
       id="prev-btn" 
-      aria-label="Article précédent" 
-      class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white rounded-full p-2 shadow-lg hover:bg-slate-700"
+      aria-label={ariaLabels.prev}
+      disabled={true}
+      class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white rounded-full p-2 shadow-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
     </button>
     <button 
       id="next-btn" 
-      aria-label="Article suivant" 
-      class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-slate-800 text-white rounded-full p-2 shadow-lg hover:bg-slate-700"
+      aria-label={ariaLabels.next}
+      class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-slate-800 text-white rounded-full p-2 shadow-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
     </button>
@@ -71,17 +83,37 @@ const { articles, sectionTitle, lang } = Astro.props;
       const prevBtn = document.getElementById('prev-btn');
       const nextBtn = document.getElementById('next-btn');
 
+      if (!slider || !prevBtn || !nextBtn) return;
       let currentIndex = 0;
-      const itemsPerView = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
+      let itemsPerView = getItemsPerView();
       const totalItems = slider.children.length;
-      const maxIndex = Math.max(0, totalItems - itemsPerView);
+      let maxIndex = Math.max(0, totalItems - itemsPerView);
+
+      function getItemsPerView() {
+        const width = window.innerWidth;
+        if (width < 640) return 1;
+        if (width < 1024) return 2;
+        if (width < 1280) return 3;
+        return 4;
+      }
 
       const updateSlider = () => {
+        // Recalculate maxIndex in case window size changed
+        itemsPerView = getItemsPerView();
+        maxIndex = Math.max(0, totalItems - itemsPerView);
+        
+        // Ensure currentIndex is not out of bounds after resize
+        currentIndex = Math.min(currentIndex, maxIndex);
+        
         const translateX = -(currentIndex * (100 / itemsPerView));
         slider.style.transform = `translateX(${translateX}%)`;
 
+        // Update button states
         prevBtn.disabled = currentIndex === 0;
         nextBtn.disabled = currentIndex === maxIndex;
+        
+        // Update ARIA attributes for better accessibility
+        slider.setAttribute('aria-activedescendant', `slide-${currentIndex}`);
       };
 
       prevBtn.addEventListener('click', () => {
@@ -98,14 +130,25 @@ const { articles, sectionTitle, lang } = Astro.props;
         }
       });
 
+      // Add keyboard navigation
+      slider.parentElement.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+          prevBtn.click();
+        } else if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+          nextBtn.click();
+        }
+      });
+
+      // Initialize
       updateSlider();
 
+      // Handle window resize
+      let resizeTimer;
       window.addEventListener('resize', () => {
-        const newItemsPerView = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
-        if (newItemsPerView !== itemsPerView) {
-          currentIndex = 0;
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => {
           updateSlider();
-        }
+        }, 100);
       });
     });
   </script>
