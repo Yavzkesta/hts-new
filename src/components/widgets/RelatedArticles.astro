@@ -23,14 +23,14 @@ const ariaLabels = {
   <Headline title={sectionTitle} />
 
   <div class="relative">
-    <!-- Slider container with ARIA role -->
-    <div class="overflow-hidden" role="region" aria-label={ariaLabels.slider}>
+    <!-- Slider container with data attributes that will be transformed to ARIA -->
+    <div class="overflow-hidden" data-role="region" data-aria-label={ariaLabels.slider}>
       <div 
         id="articles-slider" 
         class="flex transition-transform duration-500 ease-in-out" 
-        role="region"
-        aria-roledescription="carousel"
-        aria-label={ariaLabels.slider}
+        data-role="region"
+        data-aria-roledescription="carousel"
+        data-aria-label={ariaLabels.slider}
       >
         {
           articles.map((article, index) => {
@@ -38,7 +38,13 @@ const ariaLabels = {
             const cleanSlug = article.slug.includes('/') ? article.slug.split('/').pop() : article.slug;
 
             return (
-              <div class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 px-4" role="group" aria-label={article.data.title} id={`slide-${index}`} aria-current={index === 0 ? "true" : "false"}>
+              <div 
+                class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 px-4" 
+                data-role="group" 
+                data-aria-label={article.data.title} 
+                id={`slide-${index}`} 
+                data-aria-current={index === 0 ? "true" : "false"}
+              >
                 <NewsCard
                   title={article.data.title}
                   description={article.data.description}
@@ -57,17 +63,17 @@ const ariaLabels = {
       </div>
     </div>
 
-    <!-- Navigation buttons with explicit accessible names -->
+    <!-- Navigation buttons with data attributes -->
     <button 
       type="button"
       id="prev-btn" 
       class="text-white p-2 rounded-full -translate-y-1/2 absolute hover:bg-slate-700 shadow-lg top-1/2 transform left-0"
       disabled
-      aria-label={ariaLabels.prev}
-      aria-controls="articles-slider"
+      data-aria-label={ariaLabels.prev}
+      data-aria-controls="articles-slider"
     >
       <span class="sr-only">{ariaLabels.prev}</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
     </button>
@@ -76,11 +82,11 @@ const ariaLabels = {
       id="next-btn" 
       class="text-white p-2 rounded-full -translate-y-1/2 absolute hover:bg-slate-700 shadow-lg top-1/2 transform bg-slate-800 right-0"
       disabled
-      aria-label={ariaLabels.next}
-      aria-controls="articles-slider"
+      data-aria-label={ariaLabels.next}
+      data-aria-controls="articles-slider"
     >
       <span class="sr-only">{ariaLabels.next}</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
     </button>
@@ -88,6 +94,36 @@ const ariaLabels = {
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
+      // Convertir les attributs data- en attributs ARIA
+      function convertDataAttributesToAria() {
+        document.querySelectorAll('[data-role]').forEach(el => {
+          el.setAttribute('role', el.getAttribute('data-role'));
+        });
+        
+        document.querySelectorAll('[data-aria-label]').forEach(el => {
+          el.setAttribute('aria-label', el.getAttribute('data-aria-label'));
+        });
+        
+        document.querySelectorAll('[data-aria-roledescription]').forEach(el => {
+          el.setAttribute('aria-roledescription', el.getAttribute('data-aria-roledescription'));
+        });
+        
+        document.querySelectorAll('[data-aria-controls]').forEach(el => {
+          el.setAttribute('aria-controls', el.getAttribute('data-aria-controls'));
+        });
+        
+        document.querySelectorAll('[data-aria-current]').forEach(el => {
+          el.setAttribute('aria-current', el.getAttribute('data-aria-current'));
+        });
+        
+        document.querySelectorAll('[data-aria-hidden]').forEach(el => {
+          el.setAttribute('aria-hidden', el.getAttribute('data-aria-hidden'));
+        });
+      }
+      
+      // Appliquer les attributs ARIA
+      convertDataAttributesToAria();
+      
       const slider = document.getElementById('articles-slider');
       const prevBtn = document.getElementById('prev-btn');
       const nextBtn = document.getElementById('next-btn');
@@ -124,6 +160,7 @@ const ariaLabels = {
         
         // Mettre à jour l'attribut aria-current sur les slides
         document.querySelectorAll('[id^="slide-"]').forEach((slide, index) => {
+          slide.setAttribute('data-aria-current', index === currentIndex ? 'true' : 'false');
           slide.setAttribute('aria-current', index === currentIndex ? 'true' : 'false');
         });
       };
@@ -160,6 +197,7 @@ const ariaLabels = {
         clearTimeout(resizeTimer);
         resizeTimer = setTimeout(() => {
           updateSlider();
+          convertDataAttributesToAria(); // Réappliquer les attributs ARIA après le redimensionnement
         }, 100);
       });
     });
