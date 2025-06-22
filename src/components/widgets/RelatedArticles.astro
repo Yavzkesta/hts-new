@@ -56,27 +56,26 @@ const ariaLabels = {
     </div>
 
     <!-- Navigation buttons with explicit accessible names -->
+    <!-- Utilisation des classes exactes observées dans le HTML rendu -->
     <button 
       type="button"
       id="prev-btn" 
-      aria-label={ariaLabels.prev}
+      class="text-white p-2 rounded-full -translate-y-1/2 absolute hover:bg-slate-700 shadow-lg top-1/2 transform left-0"
       disabled
-      class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white rounded-full p-2 shadow-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <span class="sr-only">{ariaLabels.prev}</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
     </button>
     <button 
       type="button"
       id="next-btn" 
-      aria-label={ariaLabels.next}
+      class="text-white p-2 rounded-full -translate-y-1/2 absolute hover:bg-slate-700 shadow-lg top-1/2 transform bg-slate-800 right-0"
       disabled
-      class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-slate-800 text-white rounded-full p-2 shadow-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <span class="sr-only">{ariaLabels.next}</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
     </button>
@@ -90,21 +89,17 @@ const ariaLabels = {
 
       if (!slider || !prevBtn || !nextBtn) return;
       
+      // Ajouter explicitement les aria-labels aux boutons
+      const prevLabel = prevBtn.querySelector('.sr-only')?.textContent || 'Previous article';
+      const nextLabel = nextBtn.querySelector('.sr-only')?.textContent || 'Next article';
+      
+      prevBtn.setAttribute('aria-label', prevLabel);
+      nextBtn.setAttribute('aria-label', nextLabel);
+      
       let currentIndex = 0;
       let itemsPerView = getItemsPerView();
       const totalItems = slider.children.length;
       let maxIndex = Math.max(0, totalItems - itemsPerView);
-
-      // Assurez-vous que les boutons ont des attributs aria-label
-      if (!prevBtn.getAttribute('aria-label')) {
-        const prevText = prevBtn.querySelector('.sr-only')?.textContent || 'Previous';
-        prevBtn.setAttribute('aria-label', prevText);
-      }
-      
-      if (!nextBtn.getAttribute('aria-label')) {
-        const nextText = nextBtn.querySelector('.sr-only')?.textContent || 'Next';
-        nextBtn.setAttribute('aria-label', nextText);
-      }
 
       function getItemsPerView() {
         const width = window.innerWidth;
