@@ -27,8 +27,11 @@ const { metadata = {} } = Astro.props;
     <CommonMeta />
     <Metadata {...metadata} />
     <Favicons />
-    <!-- Injecter les styles critiques en premier -->
+    
+    <!-- Injecter les styles critiques en premier pour éviter le FOUC -->
     <CriticalStyles />
+    
+    <!-- Autres styles et scripts -->
     <CustomStyles />
     <SiteVerification />
     <Analytics />
@@ -42,46 +45,57 @@ const { metadata = {} } = Astro.props;
     
     <!-- Script pour optimiser le chargement des ressources -->
     <script is:inline>
-      // Fonction pour optimiser le chargement des ressources CSS
-      function optimizeResourceLoading() {
-        // Attendre que le contenu principal soit chargé
-        if (document.readyState === 'complete' || document.readyState === 'interactive') {
-          // Fonction pour différer le chargement des ressources non critiques
-          function deferNonCriticalResources() {
-            // Sélectionner tous les liens CSS
-            document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-              const href = link.getAttribute('href');
-              // Si c'est un des fichiers CSS qui bloque le rendu
-              if (href && (href.includes('GameFeaturePanel') || href.includes('terms'))) {
-                // Créer un nouveau lien avec chargement différé
-                const newLink = document.createElement('link');
-                newLink.rel = 'stylesheet';
-                newLink.href = href;
-                newLink.media = 'print';
-                newLink.onload = function() {
-                  this.media = 'all';
-                };
-                // Remplacer l'ancien lien par le nouveau
-                link.parentNode.insertBefore(newLink, link);
-                link.parentNode.removeChild(link);
-              }
-            });
-          }
-
-          // Utiliser requestIdleCallback si disponible, sinon setTimeout
-          if (window.requestIdleCallback) {
-            window.requestIdleCallback(deferNonCriticalResources);
-          } else {
-            setTimeout(deferNonCriticalResources, 0);
-          }
-        } else {
-          // Si le document n'est pas encore prêt, attendre qu'il le soit
-          document.addEventListener('DOMContentLoaded', optimizeResourceLoading);
+      // Fonction pour optimiser le chargement des ressources
+      (function() {
+        // Fonction pour charger les ressources de manière optimisée
+        function loadOptimizedResources() {
+          // Charger les ressources CSS de manière optimisée
+          document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+            const href = link.getAttribute('href');
+            
+            // Si le lien contient GameFeaturePanel ou d'autres CSS non critiques
+            if (href && (href.includes('GameFeaturePanel') || href.includes('terms'))) {
+              // Créer un attribut media print pour ne pas bloquer le rendu
+              link.setAttribute('media', 'print');
+              link.setAttribute('onload', "this.media='all'");
+              
+              // Ajouter un attribut pour indiquer que ce lien a été optimisé
+              link.setAttribute('data-optimized', 'true');
+            }
+          });
         }
-      }
-
-      // Lancer l'optimisation
-      optimizeResourceLoading();
+        
+        // Exécuter la fonction dès que possible
+        if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', loadOptimizedResources);
+        } else {
+          loadOptimizedResources();
+        }
+        
+        // Optimiser également les ressources ajoutées dynamiquement
+        const observer = new MutationObserver(mutations => {
+          mutations.forEach(mutation => {
+            if (mutation.addedNodes && mutation.addedNodes.length) {
+              for (let i = 0; i < mutation.addedNodes.length; i++) {
+                const node = mutation.addedNodes[i];
+                if (node.tagName === 'LINK' && node.rel === 'stylesheet' && 
+                    (node.href.includes('GameFeaturePanel') || node.href.includes('terms')) && 
+                    !node.hasAttribute('data-optimized')) {
+                  node.setAttribute('media', 'print');
+                  node.setAttribute('onload', "this.media='all'");
+                  node.setAttribute('data-optimized', 'true');
+                }
+              }
+            }
+          });
+        });
+        
+        // Observer le document pour les changements
+        observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true
+        });
+      })();
     </script>
   </body>
 </html>
