@@ -1,0 +1,33 @@
+---
+/**
+ * Composant de bouton accessible utilisant Tailwind CSS
+ */
+
+interface Props {
+  id: string;
+  label: string;
+  direction: 'prev' | 'next';
+  className?: string;
+}
+
+const { id, label, direction, className = '' } = Astro.props;
+
+// Déterminer les classes Tailwind en fonction de la direction
+const positionClass = direction === 'prev' ? 'left-0' : 'right-0';
+const iconPath = direction === 'prev' 
+  ? 'M15 19l-7-7 7-7' 
+  : 'M9 5l7 7-7 7';
+---
+
+<button 
+  id={id}
+  type="button"
+  aria-label={label}
+  class={`rounded-full p-2 text-white absolute top-1/2 -translate-y-1/2 hover:bg-slate-700 ${positionClass} ${className}`}
+>
+  <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d={iconPath} />
+  </svg>
+  <!-- Utilisation de la classe sr-only de Tailwind pour l'accessibilité -->
+  <span class="sr-only">{label}</span>
+</button>
