@@ -23,13 +23,13 @@ const ariaLabels = {
   <Headline title={sectionTitle} />
 
   <div class="relative">
-    <!-- Slider container with data attributes that will be transformed to ARIA -->
-    <div class="overflow-hidden" data-role="region" data-aria-label={ariaLabels.slider}>
+    <!-- Slider container with data attributes -->
+    <div class="overflow-hidden" data-region="true" data-aria-label={ariaLabels.slider}>
       <div 
         id="articles-slider" 
         class="flex transition-transform duration-500 ease-in-out" 
-        data-role="region"
-        data-aria-roledescription="carousel"
+        data-region="true"
+        data-roledescription="carousel"
         data-aria-label={ariaLabels.slider}
       >
         {
@@ -40,10 +40,10 @@ const ariaLabels = {
             return (
               <div 
                 class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 px-4" 
-                data-role="group" 
+                data-group="true" 
                 data-aria-label={article.data.title} 
                 id={`slide-${index}`} 
-                data-aria-current={index === 0 ? "true" : "false"}
+                data-current={index === 0 ? "true" : "false"}
               >
                 <NewsCard
                   title={article.data.title}
@@ -70,10 +70,10 @@ const ariaLabels = {
       class="text-white p-2 rounded-full -translate-y-1/2 absolute hover:bg-slate-700 shadow-lg top-1/2 transform left-0"
       disabled
       data-aria-label={ariaLabels.prev}
-      data-aria-controls="articles-slider"
+      data-controls="articles-slider"
     >
       <span class="sr-only">{ariaLabels.prev}</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
     </button>
@@ -83,123 +83,130 @@ const ariaLabels = {
       class="text-white p-2 rounded-full -translate-y-1/2 absolute hover:bg-slate-700 shadow-lg top-1/2 transform bg-slate-800 right-0"
       disabled
       data-aria-label={ariaLabels.next}
-      data-aria-controls="articles-slider"
+      data-controls="articles-slider"
     >
       <span class="sr-only">{ariaLabels.next}</span>
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-aria-hidden="true">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" data-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
     </button>
   </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // Convertir les attributs data- en attributs ARIA
-      function convertDataAttributesToAria() {
-        document.querySelectorAll('[data-role]').forEach(el => {
-          el.setAttribute('role', el.getAttribute('data-role'));
-        });
-        
-        document.querySelectorAll('[data-aria-label]').forEach(el => {
-          el.setAttribute('aria-label', el.getAttribute('data-aria-label'));
-        });
-        
-        document.querySelectorAll('[data-aria-roledescription]').forEach(el => {
-          el.setAttribute('aria-roledescription', el.getAttribute('data-aria-roledescription'));
-        });
-        
-        document.querySelectorAll('[data-aria-controls]').forEach(el => {
-          el.setAttribute('aria-controls', el.getAttribute('data-aria-controls'));
-        });
-        
-        document.querySelectorAll('[data-aria-current]').forEach(el => {
-          el.setAttribute('aria-current', el.getAttribute('data-aria-current'));
-        });
-        
-        document.querySelectorAll('[data-aria-hidden]').forEach(el => {
-          el.setAttribute('aria-hidden', el.getAttribute('data-aria-hidden'));
-        });
-      }
-      
-      // Appliquer les attributs ARIA
-      convertDataAttributesToAria();
-      
-      const slider = document.getElementById('articles-slider');
-      const prevBtn = document.getElementById('prev-btn');
-      const nextBtn = document.getElementById('next-btn');
-
-      if (!slider || !prevBtn || !nextBtn) return;
-      
-      let currentIndex = 0;
-      let itemsPerView = getItemsPerView();
-      const totalItems = slider.children.length;
-      let maxIndex = Math.max(0, totalItems - itemsPerView);
-
-      function getItemsPerView() {
-        const width = window.innerWidth;
-        if (width < 640) return 1;
-        if (width < 1024) return 2;
-        if (width < 1280) return 3;
-        return 4;
-      }
-
-      const updateSlider = () => {
-        // Recalculate maxIndex in case window size changed
-        itemsPerView = getItemsPerView();
-        maxIndex = Math.max(0, totalItems - itemsPerView);
-        
-        // Ensure currentIndex is not out of bounds after resize
-        currentIndex = Math.min(currentIndex, maxIndex);
-        
-        const translateX = -(currentIndex * (100 / itemsPerView));
-        slider.style.transform = `translateX(${translateX}%)`;
-
-        // Update button states
-        prevBtn.disabled = currentIndex === 0;
-        nextBtn.disabled = currentIndex === maxIndex;
-        
-        // Mettre à jour l'attribut aria-current sur les slides
-        document.querySelectorAll('[id^="slide-"]').forEach((slide, index) => {
-          slide.setAttribute('data-aria-current', index === currentIndex ? 'true' : 'false');
-          slide.setAttribute('aria-current', index === currentIndex ? 'true' : 'false');
-        });
-      };
-
-      prevBtn.addEventListener('click', () => {
-        if (currentIndex > 0) {
-          currentIndex--;
-          updateSlider();
-        }
-      });
-
-      nextBtn.addEventListener('click', () => {
-        if (currentIndex < maxIndex) {
-          currentIndex++;
-          updateSlider();
-        }
-      });
-
-      // Add keyboard navigation
-      slider.parentElement.addEventListener('keydown', (e) => {
-        if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
-          prevBtn.click();
-        } else if (e.key === 'ArrowRight' && !nextBtn.disabled) {
-          nextBtn.click();
-        }
-      });
-
-      // Initialize
-      updateSlider();
-
-      // Handle window resize
-      let resizeTimer;
-      window.addEventListener('resize', () => {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(() => {
-          updateSlider();
-          convertDataAttributesToAria(); // Réappliquer les attributs ARIA après le redimensionnement
-        }, 100);
-      });
-    });
-  </script>
 </WidgetWrapper>
+
+<script>
+  // Cette fonction s'exécutera côté client pour appliquer les attributs ARIA
+  function applyAriaAttributes() {
+    // Convertir les attributs data- en attributs ARIA
+    document.querySelectorAll('[data-region="true"]').forEach(el => {
+      el.setAttribute('role', 'region');
+    });
+    
+    document.querySelectorAll('[data-group="true"]').forEach(el => {
+      el.setAttribute('role', 'group');
+    });
+    
+    document.querySelectorAll('[data-aria-label]').forEach(el => {
+      el.setAttribute('aria-label', el.getAttribute('data-aria-label'));
+    });
+    
+    document.querySelectorAll('[data-roledescription]').forEach(el => {
+      el.setAttribute('aria-roledescription', el.getAttribute('data-roledescription'));
+    });
+    
+    document.querySelectorAll('[data-controls]').forEach(el => {
+      el.setAttribute('aria-controls', el.getAttribute('data-controls'));
+    });
+    
+    document.querySelectorAll('[data-current]').forEach(el => {
+      el.setAttribute('aria-current', el.getAttribute('data-current'));
+    });
+    
+    document.querySelectorAll('[data-hidden]').forEach(el => {
+      el.setAttribute('aria-hidden', el.getAttribute('data-hidden'));
+    });
+  }
+
+  // Appliquer les attributs ARIA dès que possible
+  document.addEventListener('DOMContentLoaded', applyAriaAttributes);
+  
+  // Logique du carrousel
+  document.addEventListener('DOMContentLoaded', () => {
+    const slider = document.getElementById('articles-slider');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    if (!slider || !prevBtn || !nextBtn) return;
+    
+    let currentIndex = 0;
+    let itemsPerView = getItemsPerView();
+    const totalItems = slider.children.length;
+    let maxIndex = Math.max(0, totalItems - itemsPerView);
+
+    function getItemsPerView() {
+      const width = window.innerWidth;
+      if (width < 640) return 1;
+      if (width < 1024) return 2;
+      if (width < 1280) return 3;
+      return 4;
+    }
+
+    const updateSlider = () => {
+      // Recalculate maxIndex in case window size changed
+      itemsPerView = getItemsPerView();
+      maxIndex = Math.max(0, totalItems - itemsPerView);
+      
+      // Ensure currentIndex is not out of bounds after resize
+      currentIndex = Math.min(currentIndex, maxIndex);
+      
+      const translateX = -(currentIndex * (100 / itemsPerView));
+      slider.style.transform = `translateX(${translateX}%)`;
+
+      // Update button states
+      prevBtn.disabled = currentIndex === 0;
+      nextBtn.disabled = currentIndex === maxIndex;
+      
+      // Mettre à jour l'attribut aria-current sur les slides
+      document.querySelectorAll('[id^="slide-"]').forEach((slide, index) => {
+        slide.setAttribute('data-current', index === currentIndex ? 'true' : 'false');
+        slide.setAttribute('aria-current', index === currentIndex ? 'true' : 'false');
+      });
+    };
+
+    prevBtn.addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateSlider();
+      }
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentIndex < maxIndex) {
+        currentIndex++;
+        updateSlider();
+      }
+    });
+
+    // Add keyboard navigation
+    slider.parentElement.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' && !prevBtn.disabled) {
+        prevBtn.click();
+      } else if (e.key === 'ArrowRight' && !nextBtn.disabled) {
+        nextBtn.click();
+      }
+    });
+
+    // Initialize
+    updateSlider();
+
+    // Handle window resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        updateSlider();
+        // Réappliquer les attributs ARIA après le redimensionnement
+        applyAriaAttributes();
+      }, 100);
+    });
+  });
+</script>
