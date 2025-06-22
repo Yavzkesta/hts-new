@@ -56,12 +56,12 @@ const ariaLabels = {
     </div>
 
     <!-- Navigation buttons with explicit accessible names -->
-    <!-- Utilisation des classes exactes observées dans le HTML rendu -->
     <button 
       type="button"
       id="prev-btn" 
       class="text-white p-2 rounded-full -translate-y-1/2 absolute hover:bg-slate-700 shadow-lg top-1/2 transform left-0"
       disabled
+      aria-label={ariaLabels.prev}
     >
       <span class="sr-only">{ariaLabels.prev}</span>
       <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -73,6 +73,7 @@ const ariaLabels = {
       id="next-btn" 
       class="text-white p-2 rounded-full -translate-y-1/2 absolute hover:bg-slate-700 shadow-lg top-1/2 transform bg-slate-800 right-0"
       disabled
+      aria-label={ariaLabels.next}
     >
       <span class="sr-only">{ariaLabels.next}</span>
       <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -89,12 +90,16 @@ const ariaLabels = {
 
       if (!slider || !prevBtn || !nextBtn) return;
       
-      // Ajouter explicitement les aria-labels aux boutons
-      const prevLabel = prevBtn.querySelector('.sr-only')?.textContent || 'Previous article';
-      const nextLabel = nextBtn.querySelector('.sr-only')?.textContent || 'Next article';
+      // S'assurer que les aria-labels sont présents
+      if (!prevBtn.hasAttribute('aria-label')) {
+        const prevText = prevBtn.querySelector('.sr-only')?.textContent || 'Previous article';
+        prevBtn.setAttribute('aria-label', prevText);
+      }
       
-      prevBtn.setAttribute('aria-label', prevLabel);
-      nextBtn.setAttribute('aria-label', nextLabel);
+      if (!nextBtn.hasAttribute('aria-label')) {
+        const nextText = nextBtn.querySelector('.sr-only')?.textContent || 'Next article';
+        nextBtn.setAttribute('aria-label', nextText);
+      }
       
       let currentIndex = 0;
       let itemsPerView = getItemsPerView();
