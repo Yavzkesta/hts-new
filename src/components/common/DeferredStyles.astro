@@ -1,0 +1,99 @@
+---
+// Composant pour le chargement différé des styles CSS non critiques
+interface Props {
+  pageName?: string;      // Nom de la page actuelle
+}
+
+const { pageName = '' } = Astro.props;
+
+// Déterminer si nous sommes sur la page des conditions d'utilisation
+const isTermsPage = pageName === 'terms' || Astro.url.pathname.includes('/terms');
+---
+
+<script is:inline define:vars={{ isTermsPage }}>
+  // Fonction pour charger les CSS de manière différée
+  (function() {
+    // Fonction pour charger un CSS de manière différée
+    function loadDeferredCSS(href, isImportant = false) {
+      return new Promise((resolve) => {
+        // Si le lien est déjà présent et optimisé, ne rien faire
+        if (document.querySelector(`link[href="${href}"][data-optimized="true"]`)) {
+          resolve();
+          return;
+        }
+        
+        // Créer un lien préchargé
+        const link = document.createElement('link');
+        link.rel = 'preload';
+        link.as = 'style';
+        link.href = href;
+        link.setAttribute('data-optimized', 'true');
+        
+        // Fonction pour appliquer le CSS
+        const applyCSS = () => {
+          link.onload = null;
+          link.rel = 'stylesheet';
+          resolve();
+        };
+        
+        // Si le CSS est important ou si nous sommes sur la page concernée, charger immédiatement
+        if (isImportant || (isTermsPage && href.includes('terms'))) {
+          link.onload = applyCSS;
+        } else {
+          // Sinon, charger lorsque l'utilisateur fait défiler ou après un délai
+          link.onload = () => {
+            const applyOnScroll = () => {
+              if (window.scrollY > 100) {
+                applyCSS();
+                window.removeEventListener('scroll', applyOnScroll);
+              }
+            };
+            
+            window.addEventListener('scroll', applyOnScroll);
+            
+            // Appliquer après 3 secondes même sans défilement
+            setTimeout(() => {
+              if (link.rel !== 'stylesheet') {
+                applyCSS();
+                window.removeEventListener('scroll', applyOnScroll);
+              }
+            }, 3000);
+          };
+        }
+        
+        // Ajouter le lien au document
+        document.head.appendChild(link);
+      });
+    }
+    
+    // Fonction principale pour optimiser les CSS
+    function optimizeCSS() {
+      // Sélectionner tous les liens CSS standards
+      const stylesheets = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+      
+      // Traiter chaque feuille de style
+      stylesheets.forEach(stylesheet => {
+        const href = stylesheet.getAttribute('href');
+        if (!href) return;
+        
+        // Déterminer si c'est une feuille de style qui peut être différée
+        const canBeDeferred = href.includes('terms') || href.includes('GameFeaturePanel');
+        
+        if (canBeDeferred) {
+          // Supprimer la feuille de style originale
+          stylesheet.parentNode.removeChild(stylesheet);
+          
+          // Charger de manière différée
+          loadDeferredCSS(href, false);
+        }
+      });
+    }
+    
+    // Exécuter l'optimisation
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', optimizeCSS);
+    } else {
+      optimizeCSS();
+    }
+  })();
+</script>
