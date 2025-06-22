@@ -164,8 +164,9 @@ const {
   }
 </style>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
+<script is:inline>
+  // Fonction d'initialisation des FAQs
+  function initFAQs() {
     // Supprimer les SVG indésirables
     document.querySelectorAll('svg').forEach(svg => {
       if (!svg.closest('.faq-button')) {
@@ -175,23 +176,34 @@ const {
     
     // Gérer les clics sur les boutons FAQ
     document.querySelectorAll('.faq-button').forEach(button => {
-      button.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Récupérer l'élément FAQ parent
-        const faqItem = this.closest('.faq-item');
-        
-        // Basculer la classe active sur cet élément uniquement
-        faqItem.classList.toggle('active');
-      });
+      // Supprimer les écouteurs d'événements existants pour éviter les doublons
+      button.removeEventListener('click', handleFAQClick);
+      // Ajouter le nouvel écouteur
+      button.addEventListener('click', handleFAQClick);
     });
-    
-    // Fermer tous les accordéons lors du redimensionnement
-    window.addEventListener('resize', () => {
-      document.querySelectorAll('.faq-item').forEach(item => {
-        item.classList.remove('active');
-      });
+  }
+
+  // Fonction de gestion des clics
+  function handleFAQClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+        
+    // Récupérer l'élément FAQ parent
+    const faqItem = this.closest('.faq-item');
+        
+    // Basculer la classe active sur cet élément uniquement
+    faqItem.classList.toggle('active');
+  }
+  
+  // Initialiser les FAQs au chargement de la page
+  document.addEventListener('DOMContentLoaded', initFAQs);
+  
+  // Réinitialiser les FAQs après la navigation (pour Astro View Transitions)
+  document.addEventListener('astro:page-load', initFAQs);
+  // Fermer tous les accordéons lors du redimensionnement
+  window.addEventListener('resize', () => {
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.classList.remove('active');
     });
   });
 </script>
