@@ -2,6 +2,7 @@
 import NewsCard from '~/components/news/NewsCard.astro';
 import WidgetWrapper from '~/components/ui/WidgetWrapper.astro';
 import Headline from '~/components/ui/Headline.astro';
+import NavigationButton from '~/components/ui/NavigationButton.astro';
 
 interface Props {
   articles: any[];
@@ -10,10 +11,6 @@ interface Props {
 }
 
 const { articles, sectionTitle, lang } = Astro.props;
-
-// Textes pour l'accessibilité selon la langue
-const prevText = lang === 'fr' ? 'Article précédent' : 'Previous article';
-const nextText = lang === 'fr' ? 'Article suivant' : 'Next article';
 ---
 
 <WidgetWrapper id="related-articles" isDark={true} containerClass="max-w-6xl mx-auto">
@@ -48,97 +45,86 @@ const nextText = lang === 'fr' ? 'Article suivant' : 'Next article';
       </div>
     </div>
 
-    <!-- Conteneur pour les boutons de navigation -->
+    <!-- Navigation buttons avec composants dédiés -->
     <div class="relative">
-      <!-- Les boutons seront injectés ici par JavaScript -->
-      <div id="navigation-buttons-container"></div>
+      <NavigationButton direction="prev" id="prev-btn" lang={lang} />
+      <NavigationButton direction="next" id="next-btn" lang={lang} />
     </div>
   </div>
 </WidgetWrapper>
 
-<script is:inline define:vars={{ prevText, nextText }}>
+<script define:vars={{ lang }}>
   document.addEventListener('DOMContentLoaded', () => {
-    // Fonction pour créer un bouton accessible
-    function createAccessibleButton(id, text, direction) {
-      const button = document.createElement('button');
-      button.id = id;
-      button.setAttribute('aria-label', text);
-      button.setAttribute('type', 'button');
-      button.className = `rounded-full p-2 text-white -translate-y-1/2 absolute hover:bg-slate-700 ${direction === 'prev' ? 'left-0' : 'right-0'} top-1/2`;
-      
-      // Créer l'icône SVG
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svg.setAttribute('class', 'h-6 w-6');
-      svg.setAttribute('fill', 'none');
-      svg.setAttribute('viewBox', '0 0 24 24');
-      svg.setAttribute('stroke', 'currentColor');
-      svg.setAttribute('aria-hidden', 'true');
-      
-      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-      path.setAttribute('stroke-linecap', 'round');
-      path.setAttribute('stroke-linejoin', 'round');
-      path.setAttribute('stroke-width', '2');
-      path.setAttribute('d', direction === 'prev' ? 'M15 19l-7-7 7-7' : 'M9 5l7 7-7 7');
-      
-      svg.appendChild(path);
-      button.appendChild(svg);
-      
-      // Ajouter le texte accessible
-      const span = document.createElement('span');
-      span.className = 'sr-only';
-      span.textContent = text;
-      button.appendChild(span);
-      
-      return button;
-    }
-    
-    // Récupérer le conteneur des boutons
-    const container = document.getElementById('navigation-buttons-container');
-    if (!container) return;
-    
-    // Créer et ajouter les boutons
-    const prevBtn = createAccessibleButton('prev-btn', prevText, 'prev');
-    const nextBtn = createAccessibleButton('next-btn', nextText, 'next');
-    
-    container.appendChild(prevBtn);
-    container.appendChild(nextBtn);
-    
-    // Configurer le slider
     const slider = document.getElementById('articles-slider');
-    if (!slider) return;
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+
+    // Vérifier que les éléments existent
+    if (!slider || !prevBtn || !nextBtn) return;
+
+    // Assurer que les boutons ont des noms accessibles
+    const prevText = lang === 'fr' ? 'Article précédent' : 'Previous article';
+    const nextText = lang === 'fr' ? 'Article suivant' : 'Next article';
     
+    // Fonction pour s'assurer que les boutons ont des attributs d'accessibilité
+    const ensureAccessibility = (button, text) => {
+      // Ajouter aria-label s'il n'existe pas
+      if (!button.getAttribute('aria-label')) {
+        button.setAttribute('aria-label', text);
+      }
+      
+      // Vérifier si un span.sr-only existe déjà
+      let srSpan = Array.from(button.children).find(child => 
+        child.tagName === 'SPAN' && child.classList.contains('sr-only')
+      );
+      
+      // Si non, créer et ajouter le span
+      if (!srSpan) {
+        srSpan = document.createElement('span');
+        srSpan.className = 'sr-only';
+        srSpan.textContent = text;
+        button.appendChild(srSpan);
+      }
+    };
+    
+    // Appliquer l'accessibilité aux boutons
+    ensureAccessibility(prevBtn, prevText);
+    ensureAccessibility(nextBtn, nextText);
+
     let currentIndex = 0;
     const itemsPerView = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
     const totalItems = slider.children.length;
     const maxIndex = Math.max(0, totalItems - itemsPerView);
-    
+
     const updateSlider = () => {
       const translateX = -(currentIndex * (100 / itemsPerView));
       slider.style.transform = `translateX(${translateX}%)`;
-      
+
+      // Mettre à jour les attributs d'accessibilité en fonction de l'état
       prevBtn.disabled = currentIndex === 0;
       nextBtn.disabled = currentIndex === maxIndex;
       
+      // Mettre à jour les attributs aria pour refléter l'état des boutons
       prevBtn.setAttribute('aria-disabled', currentIndex === 0 ? 'true' : 'false');
       nextBtn.setAttribute('aria-disabled', currentIndex === maxIndex ? 'true' : 'false');
     };
-    
+
     prevBtn.addEventListener('click', () => {
       if (currentIndex > 0) {
         currentIndex--;
         updateSlider();
       }
     });
-    
+
     nextBtn.addEventListener('click', () => {
       if (currentIndex < maxIndex) {
         currentIndex++;
         updateSlider();
       }
     });
-    
+
     updateSlider();
-    
+
     window.addEventListener('resize', () => {
       const newItemsPerView = window.innerWidth < 640 ? 1 : window.innerWidth < 1024 ? 2 : window.innerWidth < 1280 ? 3 : 4;
       if (newItemsPerView !== itemsPerView) {
@@ -149,7 +135,7 @@ const nextText = lang === 'fr' ? 'Article suivant' : 'Next article';
   });
 </script>
 
-<style is:inline>
+<style>
   /* Style pour les éléments visibles uniquement aux lecteurs d'écran */
   .sr-only {
     position: absolute;
