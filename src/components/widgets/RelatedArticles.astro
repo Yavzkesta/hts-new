@@ -38,7 +38,7 @@ const ariaLabels = {
             const cleanSlug = article.slug.includes('/') ? article.slug.split('/').pop() : article.slug;
 
             return (
-              <div class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 px-4" role="group" aria-label={article.data.title} id={`slide-${index}`}>
+              <div class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 px-4" role="group" aria-label={article.data.title} id={`slide-${index}`} aria-current={index === 0 ? "true" : "false"}>
                 <NewsCard
                   title={article.data.title}
                   description={article.data.description}
@@ -94,17 +94,6 @@ const ariaLabels = {
 
       if (!slider || !prevBtn || !nextBtn) return;
       
-      // S'assurer que les aria-labels sont présents
-      if (!prevBtn.hasAttribute('aria-label')) {
-        const prevText = prevBtn.querySelector('.sr-only')?.textContent || 'Previous article';
-        prevBtn.setAttribute('aria-label', prevText);
-      }
-      
-      if (!nextBtn.hasAttribute('aria-label')) {
-        const nextText = nextBtn.querySelector('.sr-only')?.textContent || 'Next article';
-        nextBtn.setAttribute('aria-label', nextText);
-      }
-      
       let currentIndex = 0;
       let itemsPerView = getItemsPerView();
       const totalItems = slider.children.length;
@@ -133,19 +122,10 @@ const ariaLabels = {
         prevBtn.disabled = currentIndex === 0;
         nextBtn.disabled = currentIndex === maxIndex;
         
-        // Update ARIA attributes for better accessibility
-        // Annoncer le slide actuel pour les lecteurs d'écran
-        const currentSlideId = `slide-${currentIndex}`;
-        const currentSlide = document.getElementById(currentSlideId);
-        
         // Mettre à jour l'attribut aria-current sur les slides
-        document.querySelectorAll('[id^="slide-"]').forEach(slide => {
-          slide.setAttribute('aria-current', 'false');
+        document.querySelectorAll('[id^="slide-"]').forEach((slide, index) => {
+          slide.setAttribute('aria-current', index === currentIndex ? 'true' : 'false');
         });
-        
-        if (currentSlide) {
-          currentSlide.setAttribute('aria-current', 'true');
-        }
       };
 
       prevBtn.addEventListener('click', () => {
