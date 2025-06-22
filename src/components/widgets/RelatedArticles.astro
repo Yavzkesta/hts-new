@@ -31,12 +31,12 @@ const ariaLabels = {
         role="list"
       >
         {
-          articles.map((article) => {
+          articles.map((article, index) => {
             // Extraire le slug sans le préfixe de langue
             const cleanSlug = article.slug.includes('/') ? article.slug.split('/').pop() : article.slug;
 
             return (
-              <div class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 px-4" role="listitem">
+              <div class="flex-shrink-0 w-full sm:w-1/2 lg:w-1/3 xl:w-1/4 px-4" role="listitem" id={`slide-${index}`}>
                 <NewsCard
                   title={article.data.title}
                   description={article.data.description}
@@ -55,22 +55,27 @@ const ariaLabels = {
       </div>
     </div>
 
-    <!-- Navigation buttons with improved accessibility -->
+    <!-- Navigation buttons with explicit accessible names -->
     <button 
+      type="button"
       id="prev-btn" 
       aria-label={ariaLabels.prev}
-      disabled={true}
+      disabled
       class="absolute left-0 top-1/2 transform -translate-y-1/2 text-white rounded-full p-2 shadow-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
     >
+      <span class="sr-only">{ariaLabels.prev}</span>
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
       </svg>
     </button>
     <button 
+      type="button"
       id="next-btn" 
       aria-label={ariaLabels.next}
+      disabled
       class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-slate-800 text-white rounded-full p-2 shadow-lg hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 disabled:opacity-50 disabled:cursor-not-allowed"
     >
+      <span class="sr-only">{ariaLabels.next}</span>
       <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
       </svg>
@@ -84,10 +89,22 @@ const ariaLabels = {
       const nextBtn = document.getElementById('next-btn');
 
       if (!slider || !prevBtn || !nextBtn) return;
+      
       let currentIndex = 0;
       let itemsPerView = getItemsPerView();
       const totalItems = slider.children.length;
       let maxIndex = Math.max(0, totalItems - itemsPerView);
+
+      // Assurez-vous que les boutons ont des attributs aria-label
+      if (!prevBtn.getAttribute('aria-label')) {
+        const prevText = prevBtn.querySelector('.sr-only')?.textContent || 'Previous';
+        prevBtn.setAttribute('aria-label', prevText);
+      }
+      
+      if (!nextBtn.getAttribute('aria-label')) {
+        const nextText = nextBtn.querySelector('.sr-only')?.textContent || 'Next';
+        nextBtn.setAttribute('aria-label', nextText);
+      }
 
       function getItemsPerView() {
         const width = window.innerWidth;
