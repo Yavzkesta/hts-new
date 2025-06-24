@@ -11,7 +11,7 @@ hero:
   title: "Découvrez l'hébergement FiveM n°1 : HebergTonServ"
   subtitle: "Profitez d'une infrastructure haut de gamme pour vos serveurs RP. Bénéficiez de processeurs AMD Ryzen, stockage SSD NVMe, et d'une protection Anti-DDoS avancée. Testez gratuitement pendant 24 heures !"
   image:
-    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4"
+    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.webp"
     alt: "Hébergeur FiveM - Serveur FiveM RP"
   actions:
     - variant: "primary"
@@ -226,21 +226,21 @@ panelFeatures:
     - title: "Connexion sécurisée SFTP"
       description: "Accédez à vos fichiers en toute sécurité grâce à une connexion SFTP pour gérer votre hébergement FiveM."
       image:
-        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.webp"
         alt: "Connexion sécurisée SFTP"
     - title: "Gestionnaire de fichiers pour votre hébergement FiveM"
       description: "Gérez facilement les fichiers de votre serveur avec un gestionnaire de fichiers intuitif et performant."
       image:
-        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.webp"
         alt: "Gestionnaire de fichiers"
     - title: "Ajouter vos amis à utiliser votre serveur FiveM"
       description: "Invitez vos amis ou collaborateurs à gérer et administrer votre serveur FiveM avec des permissions personnalisées."
       image:
-        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.webp"
         alt: "Ajouter vos amis"
     - title: "Gestion simplifiée de vos bases de données sur votre hébergement FiveM"
       description: "Administrez vos bases de données avec une interface simple et efficace pour garantir une gestion optimale de votre serveur FiveM."
       image:
-        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.webp"
         alt: "Gestion simplifiée des bases de données"
 ---

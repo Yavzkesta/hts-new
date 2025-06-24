@@ -11,7 +11,7 @@ hero:
   title: "Discover the #1 Minecraft hosting: HebergTonServ"
   subtitle: "Enjoy a high-end infrastructure for your Minecraft servers. Benefit from AMD Ryzen processors, NVMe SSD storage, and advanced Anti-DDoS protection. Test for free for 24 hours!"
   image:
-    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325707/minecraft"
+    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325707/minecraft.webp"
     alt: "Minecraft Host - Minecraft Server"
   actions:
     - variant: "primary"

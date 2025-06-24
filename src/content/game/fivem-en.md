@@ -11,7 +11,7 @@ hero:
   title: "Discover the #1 FiveM Hosting: HebergTonServ"
   subtitle: "Take advantage of our high-end infrastructure for your RP servers. Benefit from AMD Ryzen processors, NVMe SSD storage, and advanced Anti-DDoS protection. Try it free for 24 hours!"
   image:
-    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4"
+    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.webp"
     alt: "FiveM Host - FiveM RP Server"
   actions:
     - variant: "primary"
@@ -205,21 +205,21 @@ panelFeatures:
     - title: "Secure SFTP Connection"
       description: "Access your files securely through SFTP connection to manage your FiveM hosting."
       image:
-        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.webp"
         alt: "Secure SFTP Connection"
     - title: "File Manager for your FiveM hosting"
       description: "Easily manage your server files with an intuitive and powerful file manager."
       image:
-        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.webp"
         alt: "File Manager"
     - title: "Add your friends to use your FiveM server"
       description: "Invite your friends or collaborators to manage and administer your FiveM server with customized permissions."
       image:
-        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.webp"
         alt: "Add your friends"
     - title: "Simplified Database Management on your FiveM hosting"
       description: "Manage your databases with a simple and efficient interface to ensure optimal management of your FiveM server."
       image:
-        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+        src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.webp"
         alt: "Simplified Database Management"
 ---
