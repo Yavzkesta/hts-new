@@ -1,0 +1,85 @@
+---
+// Composant pour gérer le chargement optimisé des ressources
+---
+
+<script is:inline>
+  // Configuration pour le chargement optimisé
+  const CRITICAL_CSS_LOADED = false;
+  
+  // Liste des fichiers CSS problématiques
+  const NON_CRITICAL_CSS = [
+    '/_astro/aos.DvB2Xm2x.css',
+    '/_astro/terms.CwckJ63I.css'
+  ];
+  
+  // Fonction pour charger une feuille de style de manière asynchrone
+  function loadCSSAsync(href) {
+    // Éviter les doublons
+    if (document.querySelector(`link[href="${href}"]`)) {
+      return;
+    }
+    
+    const link = document.createElement('link');
+    link.rel = 'preload';
+    link.as = 'style';
+    link.href = href;
+    link.onload = function() {
+      this.onload = null;
+      this.rel = 'stylesheet';
+    };
+    document.head.appendChild(link);
+  }
+  
+  // Fonction pour préinitialiser les éléments AOS
+  function preInitAOSElements() {
+    const aosElements = document.querySelectorAll('[data-aos]');
+    aosElements.forEach(el => {
+      // Appliquer des styles de base pour éviter les sauts
+      el.style.opacity = '0';
+      
+      // Observer l'élément pour l'animer même sans AOS
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              el.style.opacity = '1';
+              el.style.transition = 'opacity 0.8s ease-out-cubic';
+              el.style.transform = 'translateY(0)';
+            }, 100);
+            observer.unobserve(el);
+          }
+        });
+      }, { threshold: 0.1 });
+      
+      observer.observe(el);
+    });
+  }
+  
+  // Supprimer les liens CSS existants pour ces fichiers
+  document.addEventListener('DOMContentLoaded', () => {
+    // Préinitialiser les éléments AOS
+    preInitAOSElements();
+    
+    // Supprimer les liens CSS problématiques
+    document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+      const href = link.getAttribute('href');
+      if (href && NON_CRITICAL_CSS.some(css => href.includes(css.split('/').pop().split('.')[0]))) {
+        // Supprimer le lien existant
+        link.parentNode.removeChild(link);
+      }
+    });
+    
+    // Charger les CSS de manière asynchrone après le chargement initial
+    if (document.readyState === 'complete') {
+      setTimeout(() => {
+        NON_CRITICAL_CSS.forEach(href => loadCSSAsync(href));
+      }, 100);
+    } else {
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          NON_CRITICAL_CSS.forEach(href => loadCSSAsync(href));
+        }, 100);
+      });
+    }
+  });
+</script>

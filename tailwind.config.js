@@ -18,11 +18,9 @@ export default {
         serif: ['var(--aw-font-serif, ui-serif)', ...defaultTheme.fontFamily.serif],
         heading: ['var(--aw-font-heading, ui-sans-serif)', ...defaultTheme.fontFamily.sans],
       },
-
       animation: {
         fade: 'fadeInUp 1s both',
       },
-
       keyframes: {
         fadeInUp: {
           '0%': { opacity: 0, transform: 'translateY(2rem)' },
@@ -38,4 +36,16 @@ export default {
     }),
   ],
   darkMode: 'class',
+  
+  // Optimisation pour la production
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
+  
+  // Séparation des styles critiques et non-critiques
+  safelist: [
+    // Classes critiques qui doivent toujours être incluses
+    'max-w-6xl', 'mx-auto', 'flex', 'flex-col', 'items-center', 'gap-8', 'text-center',
+    'container', 'py-4', 'px-4', 'md:px-6', 'lg:px-8'
+  ]
 };
