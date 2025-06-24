@@ -9,8 +9,8 @@ import CommonMeta from '~/components/common/CommonMeta.astro';
 import Metadata from '~/components/common/Metadata.astro';
 import SiteVerification from '~/components/common/SiteVerification.astro';
 import ApplyColorMode from '~/components/common/ApplyColorMode.astro';
+import BasicScripts from '~/components/common/BasicScripts.astro';
 import CriticalStyles from '~/components/common/CriticalStyles.astro';
-import OptimizedLoading from '~/components/common/OptimizedLoading.astro';
 
 import type { MetaData } from '~/types';
 
@@ -38,6 +38,50 @@ const { metadata = {} } = Astro.props;
   <body class="antialiased text-default bg-page tracking-tight">
     <ApplyColorMode />
     <slot />
-    <OptimizedLoading />
+    <BasicScripts />
+    
+    <!-- Script pour optimiser le chargement des ressources -->
+    <script is:inline>
+      // Fonction pour optimiser le chargement des ressources CSS
+      function optimizeResourceLoading() {
+        // Attendre que le contenu principal soit chargé
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+          // Fonction pour différer le chargement des ressources non critiques
+          function deferNonCriticalResources() {
+            // Sélectionner tous les liens CSS
+            document.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+              const href = link.getAttribute('href');
+              // Si c'est un des fichiers CSS qui bloque le rendu
+              if (href && (href.includes('GameFeaturePanel') || href.includes('terms'))) {
+                // Créer un nouveau lien avec chargement différé
+                const newLink = document.createElement('link');
+                newLink.rel = 'stylesheet';
+                newLink.href = href;
+                newLink.media = 'print';
+                newLink.onload = function() {
+                  this.media = 'all';
+                };
+                // Remplacer l'ancien lien par le nouveau
+                link.parentNode.insertBefore(newLink, link);
+                link.parentNode.removeChild(link);
+              }
+            });
+          }
+
+          // Utiliser requestIdleCallback si disponible, sinon setTimeout
+          if (window.requestIdleCallback) {
+            window.requestIdleCallback(deferNonCriticalResources);
+          } else {
+            setTimeout(deferNonCriticalResources, 0);
+          }
+        } else {
+          // Si le document n'est pas encore prêt, attendre qu'il le soit
+          document.addEventListener('DOMContentLoaded', optimizeResourceLoading);
+        }
+      }
+
+      // Lancer l'optimisation
+      optimizeResourceLoading();
+    </script>
   </body>
 </html>
