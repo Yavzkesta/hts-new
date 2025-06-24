@@ -23,3 +23,42 @@
     margin-bottom: 2rem;
   }
 }
+
+/* Correction pour les balises h1 dans les éléments sémantiques (article, aside, nav, section) */
+article h1, aside h1, nav h1, section h1 {
+  font-size: 2rem; /* Taille de base équivalente à text-4xl */
+}
+
+@media (min-width: 768px) {
+  article h1, aside h1, nav h1, section h1 {
+    font-size: 2.5rem; /* Taille pour écrans moyens et grands, équivalente à text-5xl */
+  }
+}
+
+/* Préserver les tailles personnalisées définies par des classes */
+h1.text-4xl, h1.text-5xl, h1.text-6xl {
+  font-size: revert;
+}
+
+/* Puis appliquer les tailles spécifiques */
+h1.text-4xl {
+  font-size: 2.25rem;
+}
+
+h1.text-5xl {
+  font-size: 3rem;
+}
+
+h1.text-6xl {
+  font-size: 3.75rem;
+}
+
+@media (min-width: 768px) {
+  h1.md\:text-5xl {
+    font-size: 3rem;
+  }
+  
+  h1.md\:text-6xl {
+    font-size: 3.75rem;
+  }
+}
