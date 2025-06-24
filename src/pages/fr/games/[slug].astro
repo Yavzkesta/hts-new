@@ -59,53 +59,6 @@ const sortedArticles = relatedArticles.sort(
   (a, b) => getPublishTimestamp(b) - getPublishTimestamp(a)
 );
 
-// Fonction pour générer une URL Cloudinary directement à partir d'un ID d'image
-function getCloudinaryImageUrl(imageId, options = {}) {
-  if (!imageId) return '';
-  
-  let finalImageId = imageId;
-  
-  // Si l'image est déjà une URL Cloudinary complète, extraire l'ID
-  if (typeof imageId === 'string' && imageId.includes('res.cloudinary.com')) {
-    // Extraire l'ID de l'image à partir de l'URL complète
-    const urlParts = imageId.split('/');
-    const idPart = urlParts[urlParts.length - 1];
-    // Extraire l'ID sans l'extension
-    finalImageId = idPart.split('.')[0];
-  }
-  
-  // Construire les transformations
-  const defaults = {
-    width: 800,
-    height: 600,
-    quality: 80,
-    format: 'webp', // Utiliser WebP par défaut
-    crop: 'fill',
-  };
-  
-  // Fusionner les options avec les valeurs par défaut
-  const opts = { ...defaults, ...options };
-  
-  // Construire la chaîne de transformations
-  const transformations = [
-    `w_${opts.width}`,
-    `h_${opts.height}`,
-    `c_${opts.crop}`,
-    `q_${opts.quality}`,
-    `f_${opts.format}`,
-  ];
-  
-  // Ajouter gravity si spécifié
-  if (opts.gravity) {
-    transformations.push(`g_${opts.gravity}`);
-  }
-  
-  const transformString = transformations.join(',');
-  
-  // Construire l'URL Cloudinary avec extension explicite
-  return `https://res.cloudinary.com/da68srujg/image/upload/${transformString}/${finalImageId}.${opts.format}`;
-}
-
 // Create JSON-LD
 const jsonLd = {
   "@context": "https://schema.org",
@@ -172,12 +125,6 @@ const faqItems = game.data.faqs?.map(faq => ({
 // Obtenir les données d'en-tête pour la page
 const headerData = getHeaderData('fr');
 
-// Dimensions des images pour éviter les décalages de mise en page (CLS)
-const heroImageDimensions = { width: 500, height: 500 };
-const featureImageDimensions = { width: 600, height: 400 };
-const testimonialImageDimensions = { width: 100, height: 100 };
-const panelFeatureImageDimensions = { width: 400, height: 400 };
-
 // Préparer les données du héros
 let optimizedHero = { ...game.data.hero };
 if (optimizedHero.image) {
@@ -185,9 +132,9 @@ if (optimizedHero.image) {
   if (typeof optimizedHero.image.src === 'string') {
     optimizedHero.image = {
       ...optimizedHero.image,
-      src: getCloudinaryImageUrl(optimizedHero.image.src, { 
-        width: heroImageDimensions.width, 
-        height: heroImageDimensions.height, 
+      src: getCloudinaryUrl(optimizedHero.image.src, 'games', { 
+        width: 500, 
+        height: 500, 
         quality: 85,
         format: 'webp'
       })
@@ -200,9 +147,9 @@ const optimizedFeatures = game.data.features?.map(feature => {
   if (feature.image && typeof feature.image === 'string') {
     return {
       ...feature,
-      image: getCloudinaryImageUrl(feature.image, { 
-        width: featureImageDimensions.width, 
-        height: featureImageDimensions.height,
+      image: getCloudinaryUrl(feature.image, 'games', { 
+        width: 600, 
+        height: 400,
         quality: 80,
         format: 'webp'
       })
@@ -216,9 +163,9 @@ const optimizedTestimonials = game.data.testimonials?.map(testimonial => {
   if (testimonial.image && typeof testimonial.image === 'string') {
     return {
       ...testimonial,
-      image: getCloudinaryImageUrl(testimonial.image, { 
-        width: testimonialImageDimensions.width, 
-        height: testimonialImageDimensions.height, 
+      image: getCloudinaryUrl(testimonial.image, 'testimonials', { 
+        width: 100, 
+        height: 100, 
         crop: 'fill',
         gravity: 'face',
         quality: 80,
@@ -235,62 +182,41 @@ if (game.data.panelFeatures) {
   optimizedPanelFeatures = {
     ...game.data.panelFeatures,
     features: game.data.panelFeatures.features.map(feature => {
-      if (feature.image) {
-        // Si l'image est un objet avec src
-        if (typeof feature.image === 'object' && feature.image.src) {
-          return {
-            ...feature,
-            image: {
-              src: getCloudinaryImageUrl(feature.image.src, { 
-                width: panelFeatureImageDimensions.width, 
-                height: panelFeatureImageDimensions.height,
-                quality: 85,
-                format: 'webp'
-              }),
-              alt: feature.image.alt || feature.title || ''
-            }
-          };
-        }
-        // Si l'image est une chaîne de caractères
-        else if (typeof feature.image === 'string') {
-          return {
-            ...feature,
-            image: {
-              src: getCloudinaryImageUrl(feature.image, { 
-                width: panelFeatureImageDimensions.width, 
-                height: panelFeatureImageDimensions.height,
-                quality: 85,
-                format: 'webp'
-              }),
-              alt: feature.title || ''
-            }
-          };
-        }
+      if (feature.image && typeof feature.image === 'string') {
+        return {
+          ...feature,
+          image: getCloudinaryUrl(feature.image, 'games', { 
+            width: 500, 
+            height: 300,
+            quality: 80,
+            format: 'webp'
+          })
+        };
       }
       return feature;
     })
   };
 }
 
-// Fonction pour transformer les URL d'image en HTML pour les images externes avec dimensions explicites
-function createExternalImageHTML(imageId, alt = '', dimensions = { width: 750, height: 750 }) {
+// Fonction pour transformer les URL d'image en HTML pour les images externes
+function createExternalImageHTML(imageId, alt = '') {
   if (!imageId) return '';
   
   // Si l'URL est déjà une URL externe complète et n'est pas une URL Cloudinary
   if (imageId.startsWith('http') && !imageId.includes('res.cloudinary.com')) {
-    return `<img src="${imageId}" alt="${alt}" width="${dimensions.width}" height="${dimensions.height}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
+    return `<img src="${imageId}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager" width="750" height="750">`;
   }
   
-  // Pour les URLs Cloudinary ou les IDs d'image, créer une URL Cloudinary optimisée
-  const cloudinaryUrl = getCloudinaryImageUrl(imageId, { 
-    width: dimensions.width, 
-    height: dimensions.height, 
+  // Sinon, créer une URL Cloudinary
+  const cloudinaryUrl = getCloudinaryUrl(imageId, 'games', { 
+    width: 750, 
+    height: 750, 
     quality: 90,
-    crop: 'auto',
+    crop: 'fill',
     format: 'webp'
   });
   
-  return `<img src="${cloudinaryUrl}" alt="${alt}" width="${dimensions.width}" height="${dimensions.height}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager">`;
+  return `<img src="${cloudinaryUrl}" alt="${alt}" class="mx-auto rounded-md w-full h-auto object-cover" loading="eager" width="750" height="750">`;
 }
 
 // Préparer l'image du héros en HTML si nécessaire
@@ -298,8 +224,7 @@ let heroImageHTML = '';
 if (game.data.hero?.image?.src && typeof game.data.hero.image.src === 'string') {
   heroImageHTML = createExternalImageHTML(
     game.data.hero.image.src, 
-    game.data.hero.image.alt || game.data.title || '',
-    heroImageDimensions
+    game.data.hero.image.alt || game.data.title || ''
   );
 }
 ---

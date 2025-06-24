@@ -11,7 +11,7 @@ hero:
   title: "Discover the #1 FiveM Hosting: HebergTonServ"
   subtitle: "Take advantage of our high-end infrastructure for your RP servers. Benefit from AMD Ryzen processors, NVMe SSD storage, and advanced Anti-DDoS protection. Try it free for 24 hours!"
   image:
-    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4"
     alt: "FiveM Host - FiveM RP Server"
   actions:
     - variant: "primary"

@@ -11,7 +11,7 @@ hero:
   title: "Découvrez l'hébergement FiveM n°1 : HebergTonServ"
   subtitle: "Profitez d'une infrastructure haut de gamme pour vos serveurs RP. Bénéficiez de processeurs AMD Ryzen, stockage SSD NVMe, et d'une protection Anti-DDoS avancée. Testez gratuitement pendant 24 heures !"
   image:
-    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4.png"
+    src: "https://res.cloudinary.com/da68srujg/image/upload/v1742325706/gta5_thwgz4"
     alt: "Hébergeur FiveM - Serveur FiveM RP"
   actions:
     - variant: "primary"
