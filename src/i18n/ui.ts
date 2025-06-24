@@ -69,6 +69,20 @@ export const ui = {
     'cta.title': 'Hébergez vos serveurs avec HebergTonServ',
     'cta.subtitle': 'Découvrez nos offres et profitez d\'une expérience de jeu sans compromis.',
     'cta.action': 'Commencez maintenant',
+    
+    // Traductions pour le footer
+    'footer.hosting': 'Hébergement',
+    'footer.services': 'Services',
+    'footer.company': 'Entreprise',
+    'footer.about': 'À propos',
+    'footer.news': 'Actualités',
+    'footer.contact': 'Contact',
+    'footer.clientArea': 'Espace Client',
+    'footer.terms': 'Conditions Générales',
+    'footer.privacy': 'Politique de Confidentialité',
+    'footer.description': 'Votre partenaire de confiance pour l\'hébergement de jeux en ligne.',
+    'footer.description2': 'Serveurs performants, latence minimale et assistance experte pour une expérience de jeu optimale.',
+    'footer.copyright': 'Tous droits réservés.',
   },
   en: {
     'nav.home': 'Home',
@@ -133,5 +147,19 @@ export const ui = {
     'cta.title': 'Host your servers with HebergTonServ',
     'cta.subtitle': 'Discover our offers and enjoy a gaming experience without compromise.',
     'cta.action': 'Get started now',
+    
+    // Translations for footer
+    'footer.hosting': 'Hosting',
+    'footer.services': 'Services',
+    'footer.company': 'Company',
+    'footer.about': 'About',
+    'footer.news': 'News',
+    'footer.contact': 'Contact',
+    'footer.clientArea': 'Client Area',
+    'footer.terms': 'Terms & Conditions',
+    'footer.privacy': 'Privacy Policy',
+    'footer.description': 'Your trusted partner for online game hosting.',
+    'footer.description2': 'High-performance servers, minimal latency, and expert support for an optimal gaming experience.',
+    'footer.copyright': 'All rights reserved.',
   },
 };
